@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Headers, HttpResponse, IHttpClient, QueryParams } from './types.js';
+import type { Headers, HttpResponse, IHttpClient, QueryParams } from './types.js';
 import { baseUrl } from '../../config.js';
 
 //http client wiht axios

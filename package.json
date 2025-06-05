@@ -1,12 +1,16 @@
 {
-  "name": "stas-sdk-v2",
-  "version": "1.0.0",
+  "name": "neucron-sdk-v2",
+  "version": "1.0.1",
   "description": "",
-  "main": "src/index.ts",
+  "type": "module",
+  "main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"module": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "vitest --run",
-    "build": "tsc",
-    "start": "node dist/index.ts",
+    "build": "rm -rf dist/* && tsc",
     "typecheck": "tsc --noEmit",
     "dev": "ts-node src/index.ts",
     "lint": "eslint . --ext .js,.ts,.jsx,.tsx",

@@ -8,7 +8,7 @@ import {
     getAssetListSchema,
     updateAssetSchema,
 } from './schema.js';
-import {
+import type {
     TransferAsset,
     CreateAsset,
     MintAsset,

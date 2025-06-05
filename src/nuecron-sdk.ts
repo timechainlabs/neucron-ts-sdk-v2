@@ -1,10 +1,10 @@
 import { Authentication } from './services/authentication/index.js';
-import { Config } from './config.js';
+import type { Config } from './config.js';
 import { Wallet } from './services/wallet/index.js';
 import { Team } from './services/team/index.js';
 import { Assets } from './services/assets/index.js';
 
-export default class NeucronSDK {
+export class NeucronSDK {
     readonly auth: Authentication;
     readonly wallet: Wallet;
     readonly team: Team;

@@ -1,6 +1,6 @@
-import { HttpResponse, IHttpClient } from '../../utils/http/types.js';
-import { Config } from '../../config.js';
-import { LoginBody, LoginResponse, SignUpBody, SignupResponse } from './types.js';
+import type { HttpResponse, IHttpClient } from '../../utils/http/types.js';
+import type { Config } from '../../config.js';
+import type { LoginBody, LoginResponse, SignUpBody, SignupResponse } from './types.js';
 import { HttpClient } from '../../utils/http/http-client.js';
 import Validator from './validator.js';
 import { handleError } from '../../utils/errors/helper.js';

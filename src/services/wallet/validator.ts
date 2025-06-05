@@ -1,5 +1,5 @@
 import { createPaymailSchema, createWalletSchema, paymailListSchema } from './schema.js';
-import { CreatePaymailBody, CreateWalletBody, PayamailListBody } from './types.js';
+import type { CreatePaymailBody, CreateWalletBody, PayamailListBody } from './types.js';
 
 export default class Validator {
     createWallet(options: CreateWalletBody) {

@@ -1,7 +1,7 @@
 import { HttpClient } from '../../utils/http/http-client.js';
-import { Headers, HttpResponse, QueryParams } from '../../utils/http/types.js';
+import type { Headers, HttpResponse, QueryParams } from '../../utils/http/types.js';
 import { Authentication } from '../authentication/index.js';
-import {
+import type {
     CreatePaymailBody,
     CreatePaymailResponse,
     CreateWalletBody,

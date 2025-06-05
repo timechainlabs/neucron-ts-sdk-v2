@@ -1,7 +1,7 @@
 import { ZodError } from 'zod';
 import axios from 'axios';
 import { NeucronError } from './sdk-error.js';
-import { Headers } from '../http/types.js';
+import type { Headers } from '../http/types.js';
 
 export function handleError(err: unknown): never {
     if (axios.isAxiosError(err) && err.response) {

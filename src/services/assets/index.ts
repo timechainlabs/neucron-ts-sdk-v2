@@ -1,10 +1,10 @@
 import { HttpClient } from '../../utils/http/http-client.js';
-import { Headers, HttpResponse, QueryParams } from '../../utils/http/types.js';
+import type { Headers, HttpResponse, QueryParams } from '../../utils/http/types.js';
 import { Authentication } from '../authentication/index.js';
 
 import Validator from './validator.js';
 import { handleError } from '../../utils/errors/helper.js';
-import {
+import type {
     CreateAsset,
     CreateAssetResponse,
     GetAssetList,
