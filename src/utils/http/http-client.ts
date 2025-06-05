@@ -1,0 +1,76 @@
+import axios from 'axios';
+import { Headers, HttpResponse, IHttpClient, QueryParams } from './types';
+import { baseUrl } from '../../config';
+
+//http client wiht axios
+export class HttpClient implements IHttpClient {
+    private globalHeader: Record<string, string>;
+    constructor() {
+        this.globalHeader = {
+            'Content-Type': 'application/json',
+        };
+    }
+    async post<T>(reqPath: string, data: unknown, headers: Headers, params?: QueryParams): Promise<HttpResponse<T>> {
+        const url = baseUrl + `${reqPath}`;
+        const response = await axios.post(url, data, {
+            headers: {
+                ...this.globalHeader,
+                ...headers,
+            },
+            params,
+        });
+        return {
+            data: response.data,
+            headers: response.headers as Headers,
+            status: response.status,
+        };
+    }
+
+    async get<T>(reqPath: string, headers: Headers, params?: QueryParams): Promise<HttpResponse<T>> {
+        const url = baseUrl + `${reqPath}`;
+        const response = await axios.get(url, {
+            headers: {
+                ...this.globalHeader,
+                ...headers,
+            },
+            params,
+        });
+        return {
+            data: response.data,
+            headers: response.headers as Headers,
+            status: response.status,
+        };
+    }
+
+    async put<T>(reqPath: string, data: unknown, headers: Headers, params?: QueryParams): Promise<HttpResponse<T>> {
+        const url = baseUrl + `${reqPath}`;
+        const response = await axios.put(url, data, {
+            headers: {
+                ...this.globalHeader,
+                ...headers,
+            },
+            params,
+        });
+        return {
+            data: response.data,
+            headers: response.headers as Headers,
+            status: response.status,
+        };
+    }
+
+    async delete<T>(reqPath: string, headers: Headers, params: QueryParams): Promise<HttpResponse<T>> {
+        const url = baseUrl + `${reqPath}`;
+        const response = await axios.delete(url, {
+            headers: {
+                ...this.globalHeader,
+                ...headers,
+            },
+            params,
+        });
+        return {
+            data: response.data,
+            headers: response.headers as Headers,
+            status: response.status,
+        };
+    }
+}

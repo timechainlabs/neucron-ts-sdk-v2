@@ -1,0 +1,10 @@
+# Ignore artifacts:
+coverage
+node_modules
+dist
+.yam.lock
+package-lock.json
+pnpm-lock.yaml
+.gitignore
+README.md
+package.json
