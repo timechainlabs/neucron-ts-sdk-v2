@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { Headers, HttpResponse, IHttpClient, QueryParams } from './types';
-import { baseUrl } from '../../config';
+import { Headers, HttpResponse, IHttpClient, QueryParams } from './types.js';
+import { baseUrl } from '../../config.js';
 
 //http client wiht axios
 export class HttpClient implements IHttpClient {

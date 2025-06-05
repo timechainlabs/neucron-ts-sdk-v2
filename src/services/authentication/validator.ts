@@ -1,5 +1,5 @@
-import { loginSchema, signUpSchema } from './schema';
-import { LoginBody, SignUpBody } from './types';
+import { loginSchema, signUpSchema } from './schema.js';
+import { LoginBody, SignUpBody } from './types.js';
 
 export default class Validator {
     sigup(option: SignUpBody) {

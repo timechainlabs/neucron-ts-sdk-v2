@@ -7,7 +7,7 @@ import {
     getLedgerListSchema,
     getAssetListSchema,
     updateAssetSchema,
-} from './schema';
+} from './schema.js';
 import {
     TransferAsset,
     CreateAsset,
@@ -17,7 +17,7 @@ import {
     GetLedgerList,
     GetAssetList,
     UpdateAsset,
-} from './types';
+} from './types.js';
 
 export default class Validator {
     createAsset(asset: CreateAsset) {

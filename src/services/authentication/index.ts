@@ -1,10 +1,10 @@
-import { HttpResponse, IHttpClient } from '../../utils/http/types';
-import { Config } from '../../config';
-import { LoginBody, LoginResponse, SignUpBody, SignupResponse } from './types';
-import { HttpClient } from '../../utils/http/http-client';
-import Validator from './validator';
-import { handleError } from '../../utils/errors/helper';
-import { NeucronError } from '../../utils/errors/sdk-error';
+import { HttpResponse, IHttpClient } from '../../utils/http/types.js';
+import { Config } from '../../config.js';
+import { LoginBody, LoginResponse, SignUpBody, SignupResponse } from './types.js';
+import { HttpClient } from '../../utils/http/http-client.js';
+import Validator from './validator.js';
+import { handleError } from '../../utils/errors/helper.js';
+import { NeucronError } from '../../utils/errors/sdk-error.js';
 
 export class Authentication {
     private token: string;

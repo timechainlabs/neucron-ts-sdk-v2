@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { createPaymailSchema, createWalletSchema, paymailListSchema } from './schema';
+import { createPaymailSchema, createWalletSchema, paymailListSchema } from './schema.js';
 
 export type CreateWalletBody = z.infer<typeof createWalletSchema>;
 export type CreateWalletReponse = {

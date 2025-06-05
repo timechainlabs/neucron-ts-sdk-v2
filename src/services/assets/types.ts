@@ -8,7 +8,7 @@ import {
     redeemAssetSchema,
     transferAssetSchema,
     updateAssetSchema,
-} from './schema';
+} from './schema.js';
 
 export type CreateAsset = z.infer<typeof createAssetSchema>;
 export type CreateAssetResponse = { assetID: string };

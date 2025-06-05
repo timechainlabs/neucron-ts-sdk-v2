@@ -1,5 +1,5 @@
 import z from 'zod';
-import { loginSchema, signUpSchema, platform } from './schema';
+import { loginSchema, signUpSchema, platform } from './schema.js';
 
 export type SignUpBody = z.infer<typeof signUpSchema>;
 export type SignupResponse = {

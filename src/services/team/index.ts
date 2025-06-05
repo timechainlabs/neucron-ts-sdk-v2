@@ -1,10 +1,10 @@
-import { HttpClient } from '../../utils/http/http-client';
-import { Headers, HttpResponse, QueryParams } from '../../utils/http/types';
-import { Authentication } from '../authentication';
+import { HttpClient } from '../../utils/http/http-client.js';
+import { Headers, HttpResponse, QueryParams } from '../../utils/http/types.js';
+import { Authentication } from '../authentication/index.js';
 
-import Validator from './validator';
-import { handleError } from '../../utils/errors/helper';
-import { TeamListResponse, MemberList, MemberListResponse } from './types';
+import Validator from './validator.js';
+import { handleError } from '../../utils/errors/helper.js';
+import { TeamListResponse, MemberList, MemberListResponse } from './types.js';
 
 export class Team {
     private readonly validator: Validator;

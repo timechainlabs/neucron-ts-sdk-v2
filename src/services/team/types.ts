@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { memberListSchema } from './schema';
+import { memberListSchema } from './schema.js';
 
 export type TeamListResponse = {
     business_id: string;

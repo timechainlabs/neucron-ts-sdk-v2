@@ -1,5 +1,5 @@
-import { memberListSchema } from './schema';
-import { MemberList } from './types';
+import { memberListSchema } from './schema.js';
+import { MemberList } from './types.js';
 
 export default class Validator {
     memberList(member: MemberList): void {

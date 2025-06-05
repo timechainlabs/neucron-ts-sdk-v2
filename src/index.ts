@@ -1,10 +1,10 @@
 //main sdk
-export { default } from './nuecron-sdk';
+export { default } from './nuecron-sdk.js';
 
 //error type
-export { NeucronError } from './utils/errors/sdk-error';
+export { NeucronError } from './utils/errors/sdk-error.js';
 //types
-export * from './services/authentication/types';
-export * from './services/wallet/types';
-export * from './services/assets/types';
-export * from './services/team/types';
+export * from './services/authentication/types.js';
+export * from './services/wallet/types.js';
+export * from './services/assets/types.js';
+export * from './services/team/types.js';
