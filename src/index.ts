@@ -1,5 +1,6 @@
 //main sdk
-export { NeucronSDK } from './nuecron-sdk.js';
+import { NeucronSDK } from './nuecron-sdk.js';
+export default NeucronSDK;
 
 //error type
 export { NeucronError } from './utils/errors/sdk-error.js';
