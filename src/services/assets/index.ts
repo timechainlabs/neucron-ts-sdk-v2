@@ -22,6 +22,7 @@ import type {
     UpdateAsset,
     UpdateAssetResponse,
 } from './types.js';
+import { Routes } from '../../utils/routes/index.js';
 
 export class Assets {
     private readonly validator: Validator;
@@ -35,7 +36,7 @@ export class Assets {
         try {
             this.auth.validate();
             this.validator.createAsset(options);
-            const reqPath = '/asset/register';
+            const reqPath = Routes.ASSET.REGISTER;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
@@ -50,7 +51,7 @@ export class Assets {
         try {
             this.auth.validate();
             this.validator.updateAsset(options);
-            const reqPath = '/asset/update';
+            const reqPath = Routes.ASSET.UPDATE;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
@@ -65,7 +66,7 @@ export class Assets {
         try {
             this.auth.validate();
             this.validator.mintAsset(options);
-            const reqPath = '/asset/mint';
+            const reqPath = Routes.ASSET.MINT;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
@@ -83,7 +84,7 @@ export class Assets {
         try {
             this.auth.validate();
             this.validator.transferAsset(options);
-            const reqPath = '/asset/transfer';
+            const reqPath = Routes.ASSET.TRANSFER;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
@@ -98,7 +99,7 @@ export class Assets {
         try {
             this.auth.validate();
             this.validator.mergeAsset(options);
-            const reqPath = '/asset/merge';
+            const reqPath = Routes.ASSET.MERGE;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
@@ -113,7 +114,7 @@ export class Assets {
         try {
             this.auth.validate();
             this.validator.redeemAsset(options);
-            const reqPath = '/asset/redeem';
+            const reqPath = Routes.ASSET.REDEEM;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
@@ -131,7 +132,7 @@ export class Assets {
         try {
             this.auth.validate();
             this.validator.ledgerList(options);
-            const reqPath = '/asset/ledgerlist';
+            const reqPath = Routes.ASSET.LEDGERLIST;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
@@ -153,7 +154,7 @@ export class Assets {
         try {
             this.auth.validate();
             this.validator.assetList(options);
-            const reqPath = '/asset/assetlist';
+            const reqPath = Routes.ASSET.ASSETLIST;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };

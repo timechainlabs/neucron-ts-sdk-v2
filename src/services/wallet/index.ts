@@ -12,6 +12,7 @@ import type {
 } from './types.js';
 import Validator from './validator.js';
 import { handleError } from '../../utils/errors/helper.js';
+import { Routes } from '../../utils/routes/index.js';
 
 export class Wallet {
     private readonly validator: Validator;
@@ -25,7 +26,7 @@ export class Wallet {
         try {
             this.auth.validate();
             this.validator.createWallet(options);
-            const reqPath = '/wallet/create';
+            const reqPath = Routes.WALLET.CREATE;
 
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
@@ -44,7 +45,7 @@ export class Wallet {
     async walletList(): Promise<HttpResponse<ListWalletsResponse>> {
         try {
             this.auth.validate();
-            const reqPath = '/wallet/list';
+            const reqPath = Routes.WALLET.LIST;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
@@ -59,7 +60,7 @@ export class Wallet {
         try {
             this.auth.validate();
             this.validator.createPaymail(options);
-            const reqPath = '/wallet/paymail/create';
+            const reqPath = Routes.WALLET.PAYMAIL_CREATE;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
@@ -78,7 +79,7 @@ export class Wallet {
         try {
             this.auth.validate();
             this.validator.paymailList(options);
-            const reqPath = '/wallet/paymail/list';
+            const reqPath = Routes.WALLET.PAYMAIL_LIST;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };

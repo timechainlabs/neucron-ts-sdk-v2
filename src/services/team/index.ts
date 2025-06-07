@@ -5,6 +5,7 @@ import { Authentication } from '../authentication/index.js';
 import Validator from './validator.js';
 import { handleError } from '../../utils/errors/helper.js';
 import type { TeamListResponse, MemberList, MemberListResponse } from './types.js';
+import { Routes } from '../../utils/routes/index.js';
 
 export class Team {
     private readonly validator: Validator;
@@ -17,7 +18,7 @@ export class Team {
     async getTeamList(): Promise<HttpResponse<TeamListResponse>> {
         try {
             this.auth.validate();
-            const reqPath = '/team/list';
+            const reqPath = Routes.TEAM.LIST;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
@@ -31,7 +32,7 @@ export class Team {
         try {
             this.auth.validate();
             this.validator.memberList(options);
-            const reqPath = '/team/members';
+            const reqPath = Routes.TEAM.MEMBERS;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
                 'X-Neucron-Team-ID': options.XNeucronTeamID,

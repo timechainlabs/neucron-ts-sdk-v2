@@ -5,6 +5,7 @@ import { HttpClient } from '../../utils/http/http-client.js';
 import Validator from './validator.js';
 import { handleError } from '../../utils/errors/helper.js';
 import { NeucronError } from '../../utils/errors/sdk-error.js';
+import { Routes } from '../../utils/routes/index.js';
 
 export class Authentication {
     private token: string;
@@ -33,11 +34,10 @@ export class Authentication {
         }
     }
 
-    public async singUp(option: SignUpBody): Promise<HttpResponse<SignupResponse>> {
+    public async signUp(option: SignUpBody): Promise<HttpResponse<SignupResponse>> {
         try {
-            //throws error if this not passes
-            this.validator.sigup(option);
-            const reqPath = '/auth/signup';
+            this.validator.signUp(option);
+            const reqPath = Routes.AUTH.SIGNUP;
             const resp = await this.httpClient.post<SignupResponse>(reqPath, option);
             return resp;
         } catch (err) {
@@ -49,7 +49,7 @@ export class Authentication {
         try {
             //throws error if this not passes
             this.validator.login(option);
-            const reqPath = '/auth/login';
+            const reqPath = Routes.AUTH.LOGIN;
             const resp = await this.httpClient.post<LoginResponse>(reqPath, option);
             const data: { token: string } = resp.data as { token: string };
             this.setToken(data.token);

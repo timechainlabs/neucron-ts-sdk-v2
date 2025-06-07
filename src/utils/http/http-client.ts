@@ -1,6 +1,6 @@
 import axios from 'axios';
 import type { Headers, HttpResponse, IHttpClient, QueryParams } from './types.js';
-import { baseUrl } from '../../config.js';
+import { BASE_URL } from '../../config.js';
 
 //http client wiht axios
 export class HttpClient implements IHttpClient {
@@ -11,7 +11,7 @@ export class HttpClient implements IHttpClient {
         };
     }
     async post<T>(reqPath: string, data: unknown, headers: Headers, params?: QueryParams): Promise<HttpResponse<T>> {
-        const url = baseUrl + `${reqPath}`;
+        const url = BASE_URL + `${reqPath}`;
         const response = await axios.post(url, data, {
             headers: {
                 ...this.globalHeader,
@@ -27,7 +27,7 @@ export class HttpClient implements IHttpClient {
     }
 
     async get<T>(reqPath: string, headers: Headers, params?: QueryParams): Promise<HttpResponse<T>> {
-        const url = baseUrl + `${reqPath}`;
+        const url = BASE_URL + `${reqPath}`;
         const response = await axios.get(url, {
             headers: {
                 ...this.globalHeader,
@@ -43,7 +43,7 @@ export class HttpClient implements IHttpClient {
     }
 
     async put<T>(reqPath: string, data: unknown, headers: Headers, params?: QueryParams): Promise<HttpResponse<T>> {
-        const url = baseUrl + `${reqPath}`;
+        const url = BASE_URL + `${reqPath}`;
         const response = await axios.put(url, data, {
             headers: {
                 ...this.globalHeader,
@@ -59,7 +59,7 @@ export class HttpClient implements IHttpClient {
     }
 
     async delete<T>(reqPath: string, headers: Headers, params: QueryParams): Promise<HttpResponse<T>> {
-        const url = baseUrl + `${reqPath}`;
+        const url = BASE_URL + `${reqPath}`;
         const response = await axios.delete(url, {
             headers: {
                 ...this.globalHeader,
