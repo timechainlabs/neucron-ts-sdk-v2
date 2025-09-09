@@ -20,7 +20,11 @@ export const Routes = {
         PAYMAIL_CREATE: '/wallet/paymail/create',
         PAYMAIL_LIST: '/wallet/paymail/list',
     },
-
+    PAY: {
+        ADDRESS: '/pay/address',
+        EMAIL: '/pay/email',
+        PAYMAIL: '/pay/paymail',
+    },
     TEAM: {
         LIST: '/team/list',
         MEMBERS: '/team/members',
