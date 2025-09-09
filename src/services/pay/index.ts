@@ -1,12 +1,10 @@
+import type { Headers, HttpResponse, QueryParams } from '../../utils/http/types.js';
+import type { PayWithAddressBody, PayWithEmailBody, PayWithPaymailBody, PayResponse } from './types.js';
 import { HttpClient } from '../../utils/http/http-client.js';
-import type { Headers, HttpResponse } from '../../utils/http/types.js';
 import { Authentication } from '../authentication/index.js';
-
 import Validator from './validator.js';
 import { handleError } from '../../utils/errors/helper.js';
-import type { PayWithAddressBody, PayWithEmailBody, PayWithPaymailBody } from './types.js';
 import { Routes } from '../../utils/routes/index.js';
-import type { PayResponse } from './types.js';
 
 export class Pay {
     private readonly validator: Validator;
@@ -24,7 +22,10 @@ export class Pay {
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
-            const res = await this.httpClient.post<PayResponse>(reqPath, options, headers);
+            const params: QueryParams = {
+                walletID: options.walletID,
+            };
+            const res = await this.httpClient.post<PayResponse>(reqPath, options, headers, params);
             this.validator.payResponse(res.data);
             return res;
         } catch (err) {
@@ -39,7 +40,10 @@ export class Pay {
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
-            const res = await this.httpClient.post<PayResponse>(reqPath, options, headers);
+            const params: QueryParams = {
+                walletID: options.walletID,
+            };
+            const res = await this.httpClient.post<PayResponse>(reqPath, options, headers, params);
             this.validator.payResponse(res.data);
             return res;
         } catch (err) {
@@ -54,7 +58,10 @@ export class Pay {
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
-            const res = await this.httpClient.post<PayResponse>(reqPath, options, headers);
+            const params: QueryParams = {
+                walletID: options.walletID,
+            };
+            const res = await this.httpClient.post<PayResponse>(reqPath, options, headers, params);
             this.validator.payResponse(res.data);
             return res;
         } catch (err) {

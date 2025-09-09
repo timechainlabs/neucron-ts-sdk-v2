@@ -1,4 +1,4 @@
-import type z from 'zod';
+import type { z } from 'zod';
 import { payWithAddressSchema, payWithEmailSchema, payWithPaymailSchema, payResponseSchema } from './schema.js';
 
 export type PayWithAddressBody = z.infer<typeof payWithAddressSchema>;
