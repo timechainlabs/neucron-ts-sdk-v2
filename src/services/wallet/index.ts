@@ -1,15 +1,16 @@
-import { HttpClient } from '../../utils/http/http-client.js';
 import type { Headers, HttpResponse, QueryParams } from '../../utils/http/types.js';
-import { Authentication } from '../authentication/index.js';
 import type {
-    CreatePaymailBody,
-    CreatePaymailResponse,
     CreateWalletBody,
     CreateWalletReponse,
-    ListWalletsResponse,
-    PayamailListBody,
-    PaymailListResponse,
+    UpdateDefaultWalletBody,
+    UpdateDefaultWalletResponse,
+    WalletListResponse,
+    WalletAddressBody,
+    CreateAddressResponse,
+    WalletAddressListResponse,
 } from './types.js';
+import { HttpClient } from '../../utils/http/http-client.js';
+import { Authentication } from '../authentication/index.js';
 import Validator from './validator.js';
 import { handleError } from '../../utils/errors/helper.js';
 import { Routes } from '../../utils/routes/index.js';
@@ -27,7 +28,6 @@ export class Wallet {
             this.auth.validate();
             this.validator.createWallet(options);
             const reqPath = Routes.WALLET.CREATE;
-
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
@@ -36,57 +36,75 @@ export class Wallet {
                 paymailName: options.paymailName,
             };
             const resp = await this.httpClient.post<CreateWalletReponse>(reqPath, null, headers, params);
+            this.validator.createWalletResponse(resp.data);
             return resp;
         } catch (err) {
             handleError(err);
         }
     }
 
-    async walletList(): Promise<HttpResponse<ListWalletsResponse>> {
+    async walletList(): Promise<HttpResponse<WalletListResponse>> {
         try {
             this.auth.validate();
             const reqPath = Routes.WALLET.LIST;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
-            const resp = await this.httpClient.get<ListWalletsResponse>(reqPath, headers);
+            const resp = await this.httpClient.get<WalletListResponse>(reqPath, headers);
+            this.validator.walletListResponse(resp.data);
             return resp;
         } catch (err) {
             handleError(err);
         }
     }
 
-    async createPaymail(options: CreatePaymailBody): Promise<HttpResponse<CreatePaymailResponse>> {
+    async updateDefaultWallet(options: UpdateDefaultWalletBody): Promise<HttpResponse<UpdateDefaultWalletResponse>> {
         try {
             this.auth.validate();
-            this.validator.createPaymail(options);
-            const reqPath = Routes.WALLET.PAYMAIL_CREATE;
+            this.validator.updateDefaultWallet(options);
+            const reqPath = Routes.WALLET.UPDATE_DEFAULT;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
             const params: QueryParams = {
                 walletID: options.walletID,
-                paymailName: options.paymailName,
             };
-            const resp = await this.httpClient.post<CreatePaymailResponse>(reqPath, null, headers, params);
+            const resp = await this.httpClient.put<UpdateDefaultWalletResponse>(reqPath, null, headers, params);
+            this.validator.updateDefaultWalletResponse(resp.data);
             return resp;
         } catch (err) {
             handleError(err);
         }
     }
 
-    async paymailList(options: PayamailListBody): Promise<HttpResponse<PaymailListResponse>> {
+    async createAddress(options: WalletAddressBody): Promise<HttpResponse<CreateAddressResponse>> {
         try {
             this.auth.validate();
-            this.validator.paymailList(options);
-            const reqPath = Routes.WALLET.PAYMAIL_LIST;
+            this.validator.walletAddress(options);
+            const reqPath = Routes.WALLET.ADDRESS_CREATE;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
             const params: QueryParams = {
                 walletID: options.walletID,
             };
-            const resp = await this.httpClient.get<PaymailListResponse>(reqPath, headers, params);
+            const resp = await this.httpClient.post<CreateAddressResponse>(reqPath, null, headers, params);
+            this.validator.createAddressResponse(resp.data);
+            return resp;
+        } catch (err) {
+            handleError(err);
+        }
+    }
+
+    async walletAddressList(): Promise<HttpResponse<WalletAddressListResponse>> {
+        try {
+            this.auth.validate();
+            const reqPath = Routes.WALLET.ADDRESS_LIST;
+            const headers: Headers = {
+                Authorization: this.auth.getToken(),
+            };
+            const resp = await this.httpClient.get<WalletAddressListResponse>(reqPath, headers);
+            this.validator.walletAddressListResponse(resp.data);
             return resp;
         } catch (err) {
             handleError(err);

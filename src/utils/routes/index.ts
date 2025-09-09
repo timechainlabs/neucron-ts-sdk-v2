@@ -13,12 +13,12 @@ export const Routes = {
         LEDGERLIST: '/asset/ledgerlist',
         ASSETLIST: '/asset/assetlist',
     },
-
     WALLET: {
         CREATE: '/wallet/create',
+        UPDATE_DEFAULT: '/wallet/default',
         LIST: '/wallet/list',
-        PAYMAIL_CREATE: '/wallet/paymail/create',
-        PAYMAIL_LIST: '/wallet/paymail/list',
+        ADDRESS_CREATE: '/wallet/address/create',
+        ADDRESS_LIST: '/wallet/addresses',
     },
     PAY: {
         ADDRESS: '/pay/address',
