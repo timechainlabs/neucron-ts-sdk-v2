@@ -13,6 +13,10 @@ export const Routes = {
         LEDGERLIST: '/asset/ledgerlist',
         ASSETLIST: '/asset/assetlist',
     },
+    DATA_INTEGRITY: {
+        FILE_UPLOAD: '/data-integrity/file/upload',
+        TEXT_UPLOAD: '/data-integrity/text/upload',
+    },
     WALLET: {
         CREATE: '/wallet/create',
         UPDATE_DEFAULT: '/wallet/default',
