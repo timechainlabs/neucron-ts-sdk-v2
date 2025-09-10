@@ -39,6 +39,7 @@ export class Authentication {
             this.validator.signUp(option);
             const reqPath = Routes.AUTH.SIGNUP;
             const resp = await this.httpClient.post<SignupResponse>(reqPath, option);
+            this.validator.signUpResponse(resp.data);
             return resp;
         } catch (err) {
             handleError(err);
@@ -52,6 +53,7 @@ export class Authentication {
             const reqPath = Routes.AUTH.LOGIN;
             const resp = await this.httpClient.post<LoginResponse>(reqPath, option);
             const data: { token: string } = resp.data as { token: string };
+            this.validator.loginResponse(resp.data);
             this.setToken(data.token);
             return resp;
         } catch (err) {
