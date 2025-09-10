@@ -20,6 +20,12 @@ export const Routes = {
         ADDRESS_CREATE: '/wallet/address/create',
         ADDRESS_LIST: '/wallet/addresses',
     },
+    PAYMAIL: {
+        CREATE: '/paymail/create',
+        LIST: '/paymail/list',
+        UPDATE_DEFAULT: '/paymail/default',
+        DELETE: '/paymail/delete',
+    },
     PAY: {
         ADDRESS: '/pay/address',
         EMAIL: '/pay/email',
