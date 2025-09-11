@@ -1,17 +1,9 @@
 import z from 'zod';
-import { loginSchema, signUpSchema, platform } from './schema.js';
+import { loginSchema, signUpSchema, platform, loginResponseSchema, signUpResponseSchema } from './schema.js';
 
 export type SignUpBody = z.infer<typeof signUpSchema>;
-export type SignupResponse = {
-    paymail_id: string;
-    token: string;
-    user_id: string;
-    wallet_id: string;
-};
+export type SignupResponse = z.infer<typeof signUpResponseSchema>;
 
 export type Platform = z.infer<typeof platform>;
 export type LoginBody = z.infer<typeof loginSchema>;
-export type LoginResponse = {
-    platforms: Platform[];
-    token: string;
-};
+export type LoginResponse = z.infer<typeof loginResponseSchema>;

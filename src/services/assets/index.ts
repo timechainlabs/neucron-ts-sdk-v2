@@ -7,20 +7,27 @@ import { handleError } from '../../utils/errors/helper.js';
 import type {
     CreateAsset,
     CreateAssetResponse,
-    GetAssetList,
-    GetAssetListResponse,
-    GetLedgerList,
-    GetLedgerListResponse,
-    MergeAsset,
-    MergeAssetResponse,
-    MintAsset,
-    MintAssetResponse,
-    RedeemAsset,
-    RedeemAssetResponse,
-    TransferAsset,
-    TransferAssetResponse,
     UpdateAsset,
     UpdateAssetResponse,
+    AssetDetails,
+    AssetDetailsResponse,
+    AssetDelete,
+    AssetDeleteResponse,
+    MintAsset,
+    MintAssetResponse,
+    TransferAsset,
+    TransferAssetResponse,
+    MergeAsset,
+    MergeAssetResponse,
+    RedeemAsset,
+    RedeemAssetResponse,
+    LedgerList,
+    LedgerListResponse,
+    AssetList,
+    AssetListResponse,
+    LedgerDetails,
+    LedgerDetailsResponse,
+    AssetStatsResponse,
 } from './types.js';
 import { Routes } from '../../utils/routes/index.js';
 
@@ -40,13 +47,14 @@ export class Assets {
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
-
             const response = await this.httpClient.post<CreateAssetResponse>(reqPath, options, headers);
+            this.validator.createAssetResponse(response.data);
             return response;
         } catch (error) {
             handleError(error);
         }
     }
+
     async updateAsset(options: UpdateAsset): Promise<HttpResponse<UpdateAssetResponse>> {
         try {
             this.auth.validate();
@@ -55,13 +63,52 @@ export class Assets {
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
-
             const response = await this.httpClient.put<UpdateAssetResponse>(reqPath, options, headers);
+            this.validator.updateAssetResponse(response.data);
             return response;
         } catch (error) {
             handleError(error);
         }
     }
+
+    async getAssetDetails(options: AssetDetails): Promise<HttpResponse<AssetDetailsResponse>> {
+        try {
+            this.auth.validate();
+            this.validator.assetDetails(options);
+            const reqPath = Routes.ASSET.DETAILS;
+            const headers: Headers = {
+                Authorization: this.auth.getToken(),
+            };
+            const params: QueryParams = {
+                assetID: options.assetID,
+            };
+            const response = await this.httpClient.get<AssetDetailsResponse>(reqPath, headers, params);
+            this.validator.assetDetailsResponse(response.data);
+            return response;
+        } catch (error) {
+            handleError(error);
+        }
+    }
+
+    async deleteAsset(options: AssetDelete): Promise<HttpResponse<AssetDeleteResponse>> {
+        try {
+            this.auth.validate();
+            this.validator.deleteAsset(options);
+            const reqPath = Routes.ASSET.DELETE;
+            const headers: Headers = {
+                Authorization: this.auth.getToken(),
+            };
+            const params: QueryParams = {
+                assetID: options.assetID,
+            };
+            const response = await this.httpClient.delete<AssetDeleteResponse>(reqPath, headers, params);
+            this.validator.deleteAssetResponse(response.data);
+            return response;
+        } catch (error) {
+            handleError(error);
+        }
+    }
+
     async mint(options: MintAsset): Promise<HttpResponse<MintAssetResponse>> {
         try {
             this.auth.validate();
@@ -74,6 +121,7 @@ export class Assets {
                 assetID: options.assetID,
             };
             const response = await this.httpClient.post<MintAssetResponse>(reqPath, null, headers, params);
+            this.validator.mintAssetResponse(response.data);
             return response;
         } catch (error) {
             handleError(error);
@@ -89,6 +137,7 @@ export class Assets {
                 Authorization: this.auth.getToken(),
             };
             const response = await this.httpClient.post<TransferAssetResponse>(reqPath, options, headers);
+            this.validator.transferAssetResponse(response.data);
             return response;
         } catch (error) {
             handleError(error);
@@ -103,7 +152,11 @@ export class Assets {
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
-            const response = await this.httpClient.post<MergeAssetResponse>(reqPath, options, headers);
+            const params: QueryParams = {
+                walletID: options.walletID,
+            };
+            const response = await this.httpClient.post<MergeAssetResponse>(reqPath, options, headers, params);
+            this.validator.mergeAssetResponse(response.data);
             return response;
         } catch (error) {
             handleError(error);
@@ -122,13 +175,14 @@ export class Assets {
                 utxoID: options.utxoID,
             };
             const response = await this.httpClient.post<RedeemAssetResponse>(reqPath, null, headers, params);
+            this.validator.redeemAssetResponse(response.data);
             return response;
         } catch (error) {
             handleError(error);
         }
     }
 
-    async getLedgerList(options: GetLedgerList): Promise<HttpResponse<GetLedgerListResponse>> {
+    async getLedgerList(options: LedgerList): Promise<HttpResponse<LedgerListResponse>> {
         try {
             this.auth.validate();
             this.validator.ledgerList(options);
@@ -136,21 +190,21 @@ export class Assets {
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
-            const body = options.status;
-
+            const body = { status: options.status };
             const params: QueryParams = {
                 walletID: options.walletID,
                 pageNumber: options.pageNumber,
                 pageSize: options.pageSize,
             };
-            const response = await this.httpClient.post<GetLedgerListResponse>(reqPath, body, headers, params);
+            const response = await this.httpClient.post<LedgerListResponse>(reqPath, body, headers, params);
+            this.validator.ledgerListResponse(response.data);
             return response;
         } catch (error) {
             handleError(error);
         }
     }
 
-    async getAssetList(options?: GetAssetList): Promise<HttpResponse<GetAssetListResponse>> {
+    async getAssetList(options?: AssetList): Promise<HttpResponse<AssetListResponse>> {
         try {
             this.auth.validate();
             this.validator.assetList(options);
@@ -161,11 +215,47 @@ export class Assets {
             const params: QueryParams = {
                 searchQuery: options?.searchQuery,
                 status: options?.status,
+                type: options?.type,
                 walletID: options?.walletID,
                 pageNumber: options?.pageNumber,
                 pageSize: options?.pageSize,
             };
-            const response = await this.httpClient.get<GetAssetListResponse>(reqPath, headers, params);
+            const response = await this.httpClient.get<AssetListResponse>(reqPath, headers, params);
+            this.validator.assetListResponse(response.data);
+            return response;
+        } catch (error) {
+            handleError(error);
+        }
+    }
+
+    async getLedgerDetails(options: LedgerDetails): Promise<HttpResponse<LedgerDetailsResponse>> {
+        try {
+            this.auth.validate();
+            this.validator.ledgerDetails(options);
+            const reqPath = Routes.ASSET.LEDGER_DETAILS;
+            const headers: Headers = {
+                Authorization: this.auth.getToken(),
+            };
+            const params: QueryParams = {
+                assetID: options.assetID,
+            };
+            const response = await this.httpClient.get<LedgerDetailsResponse>(reqPath, headers, params);
+            this.validator.ledgerDetailsResponse(response.data);
+            return response;
+        } catch (error) {
+            handleError(error);
+        }
+    }
+
+    async getAssetStats(): Promise<HttpResponse<AssetStatsResponse>> {
+        try {
+            this.auth.validate();
+            const reqPath = Routes.ASSET.ASSETLIST;
+            const headers: Headers = {
+                Authorization: this.auth.getToken(),
+            };
+            const response = await this.httpClient.get<AssetStatsResponse>(reqPath, headers);
+            this.validator.assetStatsResponse(response.data);
             return response;
         } catch (error) {
             handleError(error);
