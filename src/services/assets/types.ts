@@ -1,35 +1,61 @@
 import z from 'zod';
 import {
     createAssetSchema,
-    getAssetListSchema,
-    getLedgerListSchema,
+    createAssetResponseSchema,
+    updateAssetSchema,
+    updateAssetResponseSchema,
+    assetListSchema,
+    ledgerListSchema,
     mergeAssetSchema,
     mintAssetSchema,
     redeemAssetSchema,
     transferAssetSchema,
-    updateAssetSchema,
+    redeemAssetResponseSchema,
+    mergeAssetResponseSchema,
+    mintAssetResponseSchema,
+    transferAssetResponseSchema,
+    assetDetailsSchema,
+    assetDetailsResponseSchema,
+    assetDeleteSchema,
+    assetDeleteResponseSchema,
+    assetStatsResponseSchema,
+    ledgerListResponseSchema,
+    assetListResponseSchema,
+    ledgerDetailsSchema,
+    ledgerDetailsResponseSchema,
 } from './schema.js';
 
 export type CreateAsset = z.infer<typeof createAssetSchema>;
-export type CreateAssetResponse = { assetID: string };
+export type CreateAssetResponse = z.infer<typeof createAssetResponseSchema>;
 
 export type UpdateAsset = z.infer<typeof updateAssetSchema>;
-export type UpdateAssetResponse = { message: string };
+export type UpdateAssetResponse = z.infer<typeof updateAssetResponseSchema>;
+
+export type AssetDetails = z.infer<typeof assetDetailsSchema>;
+export type AssetDetailsResponse = z.infer<typeof assetDetailsResponseSchema>;
+
+export type AssetDelete = z.infer<typeof assetDeleteSchema>;
+export type AssetDeleteResponse = z.infer<typeof assetDeleteResponseSchema>;
 
 export type MintAsset = z.infer<typeof mintAssetSchema>;
-export type MintAssetResponse = unknown;
+export type MintAssetResponse = z.infer<typeof mintAssetResponseSchema>;
 
 export type TransferAsset = z.infer<typeof transferAssetSchema>;
-export type TransferAssetResponse = unknown;
+export type TransferAssetResponse = z.infer<typeof transferAssetResponseSchema>;
 
 export type MergeAsset = z.infer<typeof mergeAssetSchema>;
-export type MergeAssetResponse = unknown;
+export type MergeAssetResponse = z.infer<typeof mergeAssetResponseSchema>;
 
 export type RedeemAsset = z.infer<typeof redeemAssetSchema>;
-export type RedeemAssetResponse = unknown;
+export type RedeemAssetResponse = z.infer<typeof redeemAssetResponseSchema>;
 
-export type GetLedgerList = z.infer<typeof getLedgerListSchema>;
-export type GetLedgerListResponse = unknown;
+export type LedgerList = z.infer<typeof ledgerListSchema>;
+export type LedgerListResponse = z.infer<typeof ledgerListResponseSchema>;
 
-export type GetAssetList = z.infer<typeof getAssetListSchema>;
-export type GetAssetListResponse = unknown;
+export type AssetList = z.infer<typeof assetListSchema>;
+export type AssetListResponse = z.infer<typeof assetListResponseSchema>;
+
+export type LedgerDetails = z.infer<typeof ledgerDetailsSchema>;
+export type LedgerDetailsResponse = z.infer<typeof ledgerDetailsResponseSchema>;
+
+export type AssetStatsResponse = z.infer<typeof assetStatsResponseSchema>;

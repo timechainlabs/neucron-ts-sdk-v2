@@ -6,12 +6,16 @@ export const Routes = {
     ASSET: {
         REGISTER: '/asset/register',
         UPDATE: '/asset/update',
+        DETAILS: '/asset/details',
         MINT: '/asset/mint',
         TRANSFER: '/asset/transfer',
         MERGE: '/asset/merge',
         REDEEM: '/asset/redeem',
-        LEDGERLIST: '/asset/ledgerlist',
+        DELETE: '/asset/delete',
         ASSETLIST: '/asset/assetlist',
+        LEDGERLIST: '/asset/ledgerlist',
+        LEDGER_DETAILS: '/asset/ledger/details',
+        ASSET_STATS: '/asset/stats',
     },
     DATA_INTEGRITY: {
         FILE_UPLOAD: '/data-integrity/file/upload',
