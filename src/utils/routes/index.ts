@@ -2,6 +2,14 @@ export const Routes = {
     AUTH: {
         LOGIN: '/auth/login',
         SIGNUP: '/auth/signup',
+        EMAIL_EXISTS: '/auth/email/exists',
+        PHONE_EXISTS: '/auth/phone/exists',
+        SEND_VERIFICATION_EMAIL: '/auth/email/send',
+        VERIFY_EMAIL: '/auth/email/verify',
+        FORGOT_PASSWORD: '/auth/password/forgot',
+        UPDATE_PASSWORD: '/auth/user/password',
+        USER_INFO: '/auth/user/info',
+        UPDATE_USER: '/auth/user/update',
     },
     ASSET: {
         REGISTER: '/asset/register',
