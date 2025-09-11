@@ -14,8 +14,8 @@ export class HttpClient implements IHttpClient {
         const url = BASE_URL + `${reqPath}`;
         const response = await axios.post(url, data, {
             headers: {
-                ...this.globalHeader,
                 ...headers,
+                ...(data instanceof FormData ? {} : this.globalHeader),
             },
             params,
         });
@@ -30,7 +30,6 @@ export class HttpClient implements IHttpClient {
         const url = BASE_URL + `${reqPath}`;
         const response = await axios.get(url, {
             headers: {
-                ...this.globalHeader,
                 ...headers,
             },
             params,
@@ -46,8 +45,8 @@ export class HttpClient implements IHttpClient {
         const url = BASE_URL + `${reqPath}`;
         const response = await axios.put(url, data, {
             headers: {
-                ...this.globalHeader,
                 ...headers,
+                ...(data instanceof FormData ? {} : this.globalHeader),
             },
             params,
         });
@@ -62,7 +61,6 @@ export class HttpClient implements IHttpClient {
         const url = BASE_URL + `${reqPath}`;
         const response = await axios.delete(url, {
             headers: {
-                ...this.globalHeader,
                 ...headers,
             },
             params,

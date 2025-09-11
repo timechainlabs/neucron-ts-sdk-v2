@@ -6,23 +6,47 @@ export const Routes = {
     ASSET: {
         REGISTER: '/asset/register',
         UPDATE: '/asset/update',
+        DETAILS: '/asset/details',
         MINT: '/asset/mint',
         TRANSFER: '/asset/transfer',
         MERGE: '/asset/merge',
         REDEEM: '/asset/redeem',
-        LEDGERLIST: '/asset/ledgerlist',
+        DELETE: '/asset/delete',
         ASSETLIST: '/asset/assetlist',
+        LEDGERLIST: '/asset/ledgerlist',
+        LEDGER_DETAILS: '/asset/ledger/details',
+        ASSET_STATS: '/asset/stats',
     },
-
+    DATA_INTEGRITY: {
+        FILE_UPLOAD: '/data-integrity/file/upload',
+        TEXT_UPLOAD: '/data-integrity/text/upload',
+    },
     WALLET: {
         CREATE: '/wallet/create',
+        UPDATE_DEFAULT: '/wallet/default',
         LIST: '/wallet/list',
-        PAYMAIL_CREATE: '/wallet/paymail/create',
-        PAYMAIL_LIST: '/wallet/paymail/list',
+        ADDRESS_CREATE: '/wallet/address/create',
+        ADDRESS_LIST: '/wallet/addresses',
     },
-
+    PAYMAIL: {
+        CREATE: '/paymail/create',
+        LIST: '/paymail/list',
+        UPDATE_DEFAULT: '/paymail/default',
+        DELETE: '/paymail/delete',
+    },
+    PAY: {
+        ADDRESS: '/pay/address',
+        EMAIL: '/pay/email',
+        PAYMAIL: '/pay/paymail',
+    },
     TEAM: {
+        ACCEPT: '/team/accept',
+        INVITES_LIST: '/team/invites',
+        CREATE_INVITE: '/team/invites',
+        PENDING_INVITES: '/team/invites/pending',
         LIST: '/team/list',
-        MEMBERS: '/team/members',
+        MEMBERS_LIST: '/team/members',
+        UPDATE_ROLE: '/team/members/role',
+        REMOVE_MEMBER: '/team/remove',
     },
 } as const;

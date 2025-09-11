@@ -1,36 +1,20 @@
-import { z } from 'zod';
-import { createPaymailSchema, createWalletSchema, paymailListSchema } from './schema.js';
+import type { z } from 'zod';
+import {
+    createWalletResponseSchema,
+    createWalletSchema,
+    updateDefaultWalletSchema,
+    updateDefaultWalletResponseSchema,
+    walletListResponseSchema,
+    walletAddressSchema,
+    createAddressResponseSchema,
+    walletAddressListResponseSchema,
+} from './schema.js';
 
 export type CreateWalletBody = z.infer<typeof createWalletSchema>;
-export type CreateWalletReponse = {
-    paymail_id: string;
-    wallet_id: string;
-};
-
-export type ListWalletsResponse = {
-    wallet_id: string;
-    wallet_name: string;
-    x_pub: string;
-    user_id: string;
-    paymail_id: string;
-    is_default: boolean;
-}[];
-
-type paymailDTO = {
-    id: string;
-    paymail_id: string;
-    xpub_id: string;
-    alias: string;
-    domain: string;
-    user_id: string;
-    wallet_id: string;
-    is_wallet_default: boolean;
-    external_xpub_key: string;
-    external_xpub_num: number;
-};
-
-export type CreatePaymailBody = z.infer<typeof createPaymailSchema>;
-export type CreatePaymailResponse = paymailDTO;
-
-export type PayamailListBody = z.infer<typeof paymailListSchema>;
-export type PaymailListResponse = paymailDTO[];
+export type CreateWalletReponse = z.infer<typeof createWalletResponseSchema>;
+export type WalletListResponse = z.infer<typeof walletListResponseSchema>;
+export type UpdateDefaultWalletBody = z.infer<typeof updateDefaultWalletSchema>;
+export type UpdateDefaultWalletResponse = z.infer<typeof updateDefaultWalletResponseSchema>;
+export type WalletAddressBody = z.infer<typeof walletAddressSchema>;
+export type CreateAddressResponse = z.infer<typeof createAddressResponseSchema>;
+export type WalletAddressListResponse = z.infer<typeof walletAddressListResponseSchema>;
