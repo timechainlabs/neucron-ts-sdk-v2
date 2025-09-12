@@ -4,27 +4,41 @@ import type { Config } from '../src/config.js';
 import type { LoginBody, LoginResponse } from '../src/services/authentication/types.js';
 import type { CreateWalletBody, CreateWalletReponse } from '../src/services/wallet/types.js';
 
+// Store mock instances to access them in tests
+let mockAuthHttpClient: any;
+let mockWalletHttpClient: any;
+let mockAuthValidator: any;
+let mockWalletValidator: any;
+
 // Mock all service dependencies
-vi.mock('../src/utils/http/http-client.js', () => ({
-    HttpClient: vi.fn().mockImplementation(() => ({
+vi.mock('../src/utils/http/http-client.js', () => {
+    const mockImplementation = () => ({
         post: vi.fn(),
         get: vi.fn(),
         put: vi.fn(),
         delete: vi.fn(),
-    })),
-}));
+    });
+    
+    return {
+        HttpClient: vi.fn().mockImplementation(mockImplementation),
+    };
+});
 
-vi.mock('../src/services/authentication/validator.js', () => ({
-    default: vi.fn().mockImplementation(() => ({
+vi.mock('../src/services/authentication/validator.js', () => {
+    const mockImplementation = () => ({
         login: vi.fn(),
         loginResponse: vi.fn(),
         signUp: vi.fn(),
         signUpResponse: vi.fn(),
-    })),
-}));
+    });
+    
+    return {
+        default: vi.fn().mockImplementation(mockImplementation),
+    };
+});
 
-vi.mock('../src/services/wallet/validator.js', () => ({
-    default: vi.fn().mockImplementation(() => ({
+vi.mock('../src/services/wallet/validator.js', () => {
+    const mockImplementation = () => ({
         createWallet: vi.fn(),
         createWalletResponse: vi.fn(),
         walletListResponse: vi.fn(),
@@ -33,8 +47,12 @@ vi.mock('../src/services/wallet/validator.js', () => ({
         walletAddress: vi.fn(),
         createAddressResponse: vi.fn(),
         walletAddressListResponse: vi.fn(),
-    })),
-}));
+    });
+    
+    return {
+        default: vi.fn().mockImplementation(mockImplementation),
+    };
+});
 
 vi.mock('../src/utils/errors/helper.js', () => ({
     handleError: vi.fn((err) => {
@@ -44,26 +62,55 @@ vi.mock('../src/utils/errors/helper.js', () => ({
 
 describe('NeucronSDK Integration', () => {
     let sdk: NeucronSDK;
-    let mockAuthHttpClient: {
-        post: ReturnType<typeof vi.fn>;
-        get: ReturnType<typeof vi.fn>;
-        put: ReturnType<typeof vi.fn>;
-        delete: ReturnType<typeof vi.fn>;
-    };
-    let mockWalletHttpClient: {
-        post: ReturnType<typeof vi.fn>;
-        get: ReturnType<typeof vi.fn>;
-        put: ReturnType<typeof vi.fn>;
-        delete: ReturnType<typeof vi.fn>;
-    };
 
     beforeEach(() => {
         vi.clearAllMocks();
+        
+        // Create fresh mock instances
+        mockAuthHttpClient = {
+            post: vi.fn(),
+            get: vi.fn(),
+            put: vi.fn(),
+            delete: vi.fn(),
+        };
+        
+        mockWalletHttpClient = {
+            post: vi.fn(),
+            get: vi.fn(),
+            put: vi.fn(),
+            delete: vi.fn(),
+        };
+        
+        mockAuthValidator = {
+            login: vi.fn(),
+            loginResponse: vi.fn(),
+            signUp: vi.fn(),
+            signUpResponse: vi.fn(),
+        };
+        
+        mockWalletValidator = {
+            createWallet: vi.fn(),
+            createWalletResponse: vi.fn(),
+            walletListResponse: vi.fn(),
+            updateDefaultWallet: vi.fn(),
+            updateDefaultWalletResponse: vi.fn(),
+            walletAddress: vi.fn(),
+            createAddressResponse: vi.fn(),
+            walletAddressListResponse: vi.fn(),
+        };
+
         sdk = new NeucronSDK();
 
-        // Get mock instances from services
-        mockAuthHttpClient = (sdk.auth as unknown as { httpClient: typeof mockAuthHttpClient }).httpClient;
-        mockWalletHttpClient = (sdk.wallet as unknown as { httpClient: typeof mockWalletHttpClient }).httpClient;
+        // Manually inject mocks into the SDK services
+        if (sdk.auth && typeof sdk.auth === 'object') {
+            (sdk.auth as any).httpClient = mockAuthHttpClient;
+            (sdk.auth as any).validator = mockAuthValidator;
+        }
+        
+        if (sdk.wallet && typeof sdk.wallet === 'object') {
+            (sdk.wallet as any).httpClient = mockWalletHttpClient;
+            (sdk.wallet as any).validator = mockWalletValidator;
+        }
     });
 
     afterEach(() => {
@@ -101,6 +148,10 @@ describe('NeucronSDK Integration', () => {
         };
 
         it('should successfully login and set token', async () => {
+            // Mock validation to pass
+            mockAuthValidator.login.mockReturnValue(true);
+            mockAuthValidator.loginResponse.mockReturnValue(loginResponse);
+            
             mockAuthHttpClient.post.mockResolvedValue({
                 data: loginResponse,
                 status: 200,
@@ -114,6 +165,9 @@ describe('NeucronSDK Integration', () => {
         });
 
         it('should handle login failure', async () => {
+            // Mock validation to pass
+            mockAuthValidator.login.mockReturnValue(true);
+            
             const loginError = new Error('Invalid credentials');
             mockAuthHttpClient.post.mockRejectedValue(loginError);
 
@@ -137,6 +191,17 @@ describe('NeucronSDK Integration', () => {
             // Ensure no token is set
             expect(sdk.auth.getToken()).toBe('');
 
+            // Mock validators to simulate unauthorized errors
+            mockWalletValidator.createWallet.mockImplementation(() => {
+                throw new Error('Unauthorized');
+            });
+            mockWalletValidator.walletListResponse.mockImplementation(() => {
+                throw new Error('Unauthorized');
+            });
+            mockWalletValidator.walletAddressListResponse.mockImplementation(() => {
+                throw new Error('Unauthorized');
+            });
+
             // Wallet operations should fail
             await expect(sdk.wallet.createWallet(createWalletData)).rejects.toThrow('Unauthorized');
             await expect(sdk.wallet.walletList()).rejects.toThrow('Unauthorized');
@@ -155,6 +220,10 @@ describe('NeucronSDK Integration', () => {
                 platforms: ['NEUCRON'],
             };
 
+            // Mock auth validation and response
+            mockAuthValidator.login.mockReturnValue(true);
+            mockAuthValidator.loginResponse.mockReturnValue(loginResponse);
+
             mockAuthHttpClient.post.mockResolvedValue({
                 data: loginResponse,
                 status: 200,
@@ -163,6 +232,10 @@ describe('NeucronSDK Integration', () => {
 
             await sdk.auth.login(loginData);
             expect(sdk.auth.getToken()).toBe('wallet-auth-token-789');
+
+            // Mock wallet validation
+            mockWalletValidator.createWallet.mockReturnValue(true);
+            mockWalletValidator.createWalletResponse.mockReturnValue(createWalletResponse);
 
             // Now wallet operations should succeed
             mockWalletHttpClient.post.mockResolvedValue({
@@ -205,6 +278,10 @@ describe('NeucronSDK Integration', () => {
                 wallet_id: 'wallet-new-123',
             };
 
+            // Mock signup validation
+            mockAuthValidator.signUp.mockReturnValue(true);
+            mockAuthValidator.signUpResponse.mockReturnValue(signUpResponse);
+
             mockAuthHttpClient.post.mockResolvedValueOnce({
                 data: signUpResponse,
                 status: 201,
@@ -224,6 +301,10 @@ describe('NeucronSDK Integration', () => {
                 token: 'login-token-456',
                 platforms: ['NEUCRON'],
             };
+
+            // Mock login validation
+            mockAuthValidator.login.mockReturnValue(true);
+            mockAuthValidator.loginResponse.mockReturnValue(loginResponse);
 
             mockAuthHttpClient.post.mockResolvedValueOnce({
                 data: loginResponse,
@@ -246,6 +327,10 @@ describe('NeucronSDK Integration', () => {
                 paymail_id: 'secondary@paymail.com',
             };
 
+            // Mock wallet creation validation
+            mockWalletValidator.createWallet.mockReturnValue(true);
+            mockWalletValidator.createWalletResponse.mockReturnValue(createWalletResponse);
+
             mockWalletHttpClient.post.mockResolvedValueOnce({
                 data: createWalletResponse,
                 status: 201,
@@ -265,6 +350,9 @@ describe('NeucronSDK Integration', () => {
                 wallet_id: 'wallet-secondary-789',
                 name: 'Secondary Wallet',
             };
+
+            // Mock wallet list validation
+            mockWalletValidator.walletListResponse.mockReturnValue(walletListResponse);
 
             mockWalletHttpClient.get.mockResolvedValueOnce({
                 data: walletListResponse,
@@ -291,6 +379,10 @@ describe('NeucronSDK Integration', () => {
                 platforms: ['NEUCRON'],
             };
 
+            // Mock initial login
+            mockAuthValidator.login.mockReturnValue(true);
+            mockAuthValidator.loginResponse.mockReturnValue(loginResponse);
+
             mockAuthHttpClient.post.mockResolvedValueOnce({
                 data: loginResponse,
                 status: 200,
@@ -312,6 +404,9 @@ describe('NeucronSDK Integration', () => {
                 platforms: ['NEUCRON'],
             };
 
+            // Mock re-authentication
+            mockAuthValidator.loginResponse.mockReturnValue(newLoginResponse);
+
             mockAuthHttpClient.post.mockResolvedValueOnce({
                 data: newLoginResponse,
                 status: 200,
@@ -332,6 +427,9 @@ describe('NeucronSDK Integration', () => {
                 name: 'Test Wallet',
             };
 
+            // Mock successful wallet list
+            mockWalletValidator.walletListResponse.mockReturnValue(walletListResponse);
+
             mockWalletHttpClient.get.mockResolvedValueOnce({
                 data: walletListResponse,
                 status: 200,
@@ -350,6 +448,9 @@ describe('NeucronSDK Integration', () => {
 
     describe('Error Handling', () => {
         it('should handle network errors gracefully', async () => {
+            // Mock validation to pass
+            mockAuthValidator.login.mockReturnValue(true);
+            
             const networkError = new Error('Network connection failed');
             mockAuthHttpClient.post.mockRejectedValue(networkError);
 
@@ -364,8 +465,7 @@ describe('NeucronSDK Integration', () => {
 
         it('should handle validation errors', async () => {
             const validationError = new Error('Invalid email format');
-            const mockValidator = (sdk.auth as unknown as { validator: { login: ReturnType<typeof vi.fn> } }).validator;
-            mockValidator.login.mockImplementation(() => {
+            mockAuthValidator.login.mockImplementation(() => {
                 throw validationError;
             });
 

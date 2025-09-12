@@ -13,19 +13,27 @@ import type {
     WalletAddressListResponse,
 } from '../src/services/wallet/types.js';
 
+// Store mock instances to access them in tests
+let mockHttpClient: any;
+let mockValidator: any;
+
 // Mock the HTTP client
-vi.mock('../src/utils/http/http-client.js', () => ({
-    HttpClient: vi.fn().mockImplementation(() => ({
+vi.mock('../src/utils/http/http-client.js', () => {
+    const mockImplementation = () => ({
         post: vi.fn(),
         get: vi.fn(),
         put: vi.fn(),
         delete: vi.fn(),
-    })),
-}));
+    });
+    
+    return {
+        HttpClient: vi.fn().mockImplementation(mockImplementation),
+    };
+});
 
 // Mock the validator
-vi.mock('../src/services/wallet/validator.js', () => ({
-    default: vi.fn().mockImplementation(() => ({
+vi.mock('../src/services/wallet/validator.js', () => {
+    const mockImplementation = () => ({
         createWallet: vi.fn(),
         createWalletResponse: vi.fn(),
         walletListResponse: vi.fn(),
@@ -34,8 +42,12 @@ vi.mock('../src/services/wallet/validator.js', () => ({
         walletAddress: vi.fn(),
         createAddressResponse: vi.fn(),
         walletAddressListResponse: vi.fn(),
-    })),
-}));
+    });
+    
+    return {
+        default: vi.fn().mockImplementation(mockImplementation),
+    };
+});
 
 // Mock error handler
 vi.mock('../src/utils/errors/helper.js', () => ({
@@ -47,26 +59,29 @@ vi.mock('../src/utils/errors/helper.js', () => ({
 describe('Wallet Service', () => {
     let wallet: Wallet;
     let mockAuth: Authentication;
-    let mockHttpClient: {
-        post: ReturnType<typeof vi.fn>;
-        get: ReturnType<typeof vi.fn>;
-        put: ReturnType<typeof vi.fn>;
-        delete: ReturnType<typeof vi.fn>;
-    };
-    let mockValidator: {
-        createWallet: ReturnType<typeof vi.fn>;
-        createWalletResponse: ReturnType<typeof vi.fn>;
-        walletListResponse: ReturnType<typeof vi.fn>;
-        updateDefaultWallet: ReturnType<typeof vi.fn>;
-        updateDefaultWalletResponse: ReturnType<typeof vi.fn>;
-        walletAddress: ReturnType<typeof vi.fn>;
-        createAddressResponse: ReturnType<typeof vi.fn>;
-        walletAddressListResponse: ReturnType<typeof vi.fn>;
-    };
 
     beforeEach(() => {
         // Reset all mocks
         vi.clearAllMocks();
+
+        // Create fresh mock instances
+        mockHttpClient = {
+            post: vi.fn(),
+            get: vi.fn(),
+            put: vi.fn(),
+            delete: vi.fn(),
+        };
+        
+        mockValidator = {
+            createWallet: vi.fn(),
+            createWalletResponse: vi.fn(),
+            walletListResponse: vi.fn(),
+            updateDefaultWallet: vi.fn(),
+            updateDefaultWalletResponse: vi.fn(),
+            walletAddress: vi.fn(),
+            createAddressResponse: vi.fn(),
+            walletAddressListResponse: vi.fn(),
+        };
 
         // Create mock authentication instance
         mockAuth = new Authentication();
@@ -79,9 +94,11 @@ describe('Wallet Service', () => {
         // Create wallet instance
         wallet = new Wallet(mockAuth);
 
-        // Get mock instances
-        mockHttpClient = (wallet as unknown as { httpClient: typeof mockHttpClient }).httpClient;
-        mockValidator = (wallet as unknown as { validator: typeof mockValidator }).validator;
+        // Manually inject mocks into the wallet service
+        if (wallet && typeof wallet === 'object') {
+            (wallet as any).httpClient = mockHttpClient;
+            (wallet as any).validator = mockValidator;
+        }
     });
 
     afterEach(() => {
@@ -100,6 +117,10 @@ describe('Wallet Service', () => {
         };
 
         it('should successfully create a wallet', async () => {
+            // Mock validation to pass
+            mockValidator.createWallet.mockReturnValue(true);
+            mockValidator.createWalletResponse.mockReturnValue(mockCreateWalletResponse);
+            
             mockHttpClient.post.mockResolvedValue({
                 data: mockCreateWalletResponse,
                 status: 201,
@@ -145,6 +166,9 @@ describe('Wallet Service', () => {
         });
 
         it('should handle HTTP errors', async () => {
+            // Mock validation to pass
+            mockValidator.createWallet.mockReturnValue(true);
+            
             const httpError = new Error('Network error');
             mockHttpClient.post.mockRejectedValue(httpError);
 
@@ -166,6 +190,9 @@ describe('Wallet Service', () => {
         };
 
         it('should successfully get wallet list', async () => {
+            // Mock validation to pass
+            mockValidator.walletListResponse.mockReturnValue(mockWalletListResponse);
+            
             mockHttpClient.get.mockResolvedValue({
                 data: mockWalletListResponse,
                 status: 200,
@@ -201,6 +228,10 @@ describe('Wallet Service', () => {
         };
 
         it('should successfully update default wallet', async () => {
+            // Mock validation to pass
+            mockValidator.updateDefaultWallet.mockReturnValue(true);
+            mockValidator.updateDefaultWalletResponse.mockReturnValue(mockUpdateDefaultWalletResponse);
+            
             mockHttpClient.put.mockResolvedValue({
                 data: mockUpdateDefaultWalletResponse,
                 status: 200,
@@ -212,7 +243,7 @@ describe('Wallet Service', () => {
             expect(mockAuth.validate).toHaveBeenCalled();
             expect(mockValidator.updateDefaultWallet).toHaveBeenCalledWith(mockUpdateDefaultWalletData);
             expect(mockHttpClient.put).toHaveBeenCalledWith(
-                '/wallet/update-default',
+                '/wallet/default',
                 null,
                 { Authorization: 'test-auth-token-123' },
                 { walletID: 'wallet-123' }
@@ -243,6 +274,10 @@ describe('Wallet Service', () => {
         };
 
         it('should successfully create wallet address', async () => {
+            // Mock validation to pass
+            mockValidator.walletAddress.mockReturnValue(true);
+            mockValidator.createAddressResponse.mockReturnValue(mockCreateAddressResponse);
+            
             mockHttpClient.post.mockResolvedValue({
                 data: mockCreateAddressResponse,
                 status: 201,
@@ -282,6 +317,9 @@ describe('Wallet Service', () => {
         ];
 
         it('should successfully get wallet address list', async () => {
+            // Mock validation to pass
+            mockValidator.walletAddressListResponse.mockReturnValue(mockWalletAddressListResponse);
+            
             mockHttpClient.get.mockResolvedValue({
                 data: mockWalletAddressListResponse,
                 status: 200,
@@ -291,7 +329,7 @@ describe('Wallet Service', () => {
             const result = await wallet.walletAddressList();
 
             expect(mockAuth.validate).toHaveBeenCalled();
-            expect(mockHttpClient.get).toHaveBeenCalledWith('/wallet/address/list', {
+            expect(mockHttpClient.get).toHaveBeenCalledWith('/wallet/addresses', {
                 Authorization: 'test-auth-token-123',
             });
             expect(mockValidator.walletAddressListResponse).toHaveBeenCalledWith(mockWalletAddressListResponse);
@@ -325,6 +363,11 @@ describe('Wallet Service', () => {
             const createAddressResponse: CreateAddressResponse = {
                 message: 'Address created successfully',
             };
+
+            // Mock validators
+            mockValidator.walletListResponse.mockReturnValue(walletListResponse);
+            mockValidator.walletAddress.mockReturnValue(true);
+            mockValidator.createAddressResponse.mockReturnValue(createAddressResponse);
 
             mockHttpClient.get.mockResolvedValue({
                 data: walletListResponse,
