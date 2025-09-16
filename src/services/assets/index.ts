@@ -43,7 +43,7 @@ export class Assets {
         try {
             this.auth.validate();
             this.validator.createAsset(options);
-            const reqPath = Routes.ASSET.REGISTER;
+            const reqPath = Routes.UTILITY.REGISTER;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
@@ -59,7 +59,7 @@ export class Assets {
         try {
             this.auth.validate();
             this.validator.updateAsset(options);
-            const reqPath = Routes.ASSET.UPDATE;
+            const reqPath = Routes.UTILITY.UPDATE;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
@@ -113,7 +113,7 @@ export class Assets {
         try {
             this.auth.validate();
             this.validator.mintAsset(options);
-            const reqPath = Routes.ASSET.MINT;
+            const reqPath = Routes.UTILITY.MINT;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
@@ -148,7 +148,7 @@ export class Assets {
         try {
             this.auth.validate();
             this.validator.mergeAsset(options);
-            const reqPath = Routes.ASSET.MERGE;
+            const reqPath = Routes.UTILITY.MERGE;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
@@ -167,7 +167,7 @@ export class Assets {
         try {
             this.auth.validate();
             this.validator.redeemAsset(options);
-            const reqPath = Routes.ASSET.REDEEM;
+            const reqPath = Routes.UTILITY.REDEEM;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };

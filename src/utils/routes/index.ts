@@ -12,23 +12,27 @@ export const Routes = {
         UPDATE_USER: '/auth/user/update',
     },
     ASSET: {
-        REGISTER: '/asset/register',
-        UPDATE: '/asset/update',
-        DETAILS: '/asset/details',
-        MINT: '/asset/mint',
         TRANSFER: '/asset/transfer',
-        MERGE: '/asset/merge',
-        REDEEM: '/asset/redeem',
+        DETAILS: '/asset/details',
         DELETE: '/asset/delete',
         ASSETLIST: '/asset/assetlist',
         LEDGERLIST: '/asset/ledgerlist',
         LEDGER_DETAILS: '/asset/ledger/details',
         ASSET_STATS: '/asset/stats',
+        BALANCES: '/asset/balances', // New endpoint
+    },
+    UTILITY: {
+        REGISTER: '/utility/register',
+        UPDATE: '/utility/update',
+        MINT: '/utility/mint',
+        REDEEM: '/utility/redeem',
+        MERGE: '/utility/merge',
     },
     DATA_INTEGRITY: {
-        FILE_UPLOAD: '/data-integrity/file/upload',
-        TEXT_UPLOAD: '/data-integrity/text/upload',
+        FILE_UPLOAD: '/data-integrity/file',
+        TEXT_UPLOAD: '/data-integrity/text',
     },
+
     WALLET: {
         CREATE: '/wallet/create',
         UPDATE_DEFAULT: '/wallet/default',
@@ -42,11 +46,11 @@ export const Routes = {
         UPDATE_DEFAULT: '/paymail/default',
         DELETE: '/paymail/delete',
     },
-    PAY: {
-        ADDRESS: '/pay/address',
-        EMAIL: '/pay/email',
-        PAYMAIL: '/pay/paymail',
-    },
+    // PAY: {
+    //     ADDRESS: '/pay/address',
+    //     EMAIL: '/pay/email',
+    //     PAYMAIL: '/pay/paymail',
+    // },
     TEAM: {
         ACCEPT: '/team/accept',
         INVITES_LIST: '/team/invites',
