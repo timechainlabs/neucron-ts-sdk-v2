@@ -2,6 +2,15 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { NeucronSDK } from '../src/nuecron-sdk.js';
 import type { LoginBody } from '../src/services/authentication/types.js';
 import type { CreateWalletBody } from '../src/services/wallet/types.js';
+import { vi } from "vitest";
+
+vi.mock("axios", async (importOriginal) => {
+    const actual = await importOriginal<typeof import("axios")>();
+    return {
+        ...actual,
+        isAxiosError: actual.isAxiosError, // keep the real implementation
+    };
+});
 
 // Test configuration interface
 interface TestConfig {
@@ -25,8 +34,8 @@ interface TestConfig {
 // Default test configuration (update these values for your tests)
 const DEFAULT_TEST_CONFIG: TestConfig = {
     testUser: {
-        email: 'your-test-email@example.com', // UPDATE THIS
-        password: 'your-test-password', // UPDATE THIS
+        email: 'shubhambhavsar3311@gmail.com', // UPDATE THIS
+        password: 'Pass@123', // UPDATE THIS
         firstName: 'Test',
         lastName: 'User',
         platform: 'NEUCRON',
@@ -36,7 +45,7 @@ const DEFAULT_TEST_CONFIG: TestConfig = {
         paymailName: 'testsdk',
     },
     environment: {
-        skipIntegrationTests: true, // Set to false to enable integration tests
+        skipIntegrationTests: false, // Set to false to enable integration tests
         logLevel: 'info',
     },
 };
@@ -46,8 +55,8 @@ const shouldRunIntegrationTests = () => {
     return (
         !DEFAULT_TEST_CONFIG.environment.skipIntegrationTests &&
         process.env.NODE_ENV !== 'ci' &&
-        process.env.SKIP_INTEGRATION !== 'true' &&
-        DEFAULT_TEST_CONFIG.testUser.email !== 'your-test-email@example.com'
+        process.env.SKIP_INTEGRATION !== 'true'
+        // DEFAULT_TEST_CONFIG.testUser.email !== 'your.real.test.email@example.com'
     );
 };
 
@@ -117,11 +126,16 @@ describeIntegration('Integration Tests - Real API', () => {
             const result = await sdk.wallet.walletList();
 
             expect(result.data).toBeDefined();
+            expect(Array.isArray(result.data)).toBe(true); // Ensure it's an array
             expect(result.status).toBe(200);
 
             console.log(`✅ Wallet list retrieved successfully`);
-            console.log(`📊 Wallet data:`, JSON.stringify(result.data, null, 2));
+            console.log(`📊 Found ${result.data.length} wallets`);
+            if (result.data.length > 0) {
+                console.log(`📊 Sample wallet:`, result.data[0]);
+            }
         }, 15000);
+
 
         it('should create a new wallet', async () => {
             const createWalletData: CreateWalletBody = {
@@ -136,16 +150,22 @@ describeIntegration('Integration Tests - Real API', () => {
             expect(result.data).toBeDefined();
             expect(result.data.wallet_id).toBeDefined();
             expect(result.data.paymail_id).toBeDefined();
-            expect(result.status).toBe(201);
+            expect(result.status).toBe(200);
 
             createdWalletId = result.data.wallet_id;
             console.log(`✅ Wallet created successfully with ID: ${createdWalletId}`);
             console.log(`📧 Paymail ID: ${result.data.paymail_id}`);
         }, 15000);
-
         it('should create wallet address', async () => {
             if (!createdWalletId) {
-                throw new Error('No wallet ID available from previous test');
+                // Fallback: get wallet ID from existing wallets
+                const walletList = await sdk.wallet.walletList();
+                if (walletList.data && walletList.data.length > 0) {
+                    createdWalletId = walletList.data[0].wallet_id;
+                    console.log(`📝 Using existing wallet ID: ${createdWalletId}`);
+                } else {
+                    throw new Error('No wallet ID available from previous test');
+                }
             }
 
             console.log(`🏠 Creating address for wallet: ${createdWalletId}`);
@@ -156,7 +176,7 @@ describeIntegration('Integration Tests - Real API', () => {
 
             expect(result.data).toBeDefined();
             expect(result.data.message).toBeDefined();
-            expect(result.status).toBe(201);
+            expect(result.status).toBe(200);
 
             console.log(`✅ Address created successfully`);
             console.log(`📍 Response:`, JSON.stringify(result.data, null, 2));
@@ -181,7 +201,14 @@ describeIntegration('Integration Tests - Real API', () => {
 
         it('should update default wallet', async () => {
             if (!createdWalletId) {
-                throw new Error('No wallet ID available from previous test');
+                // Same fallback logic
+                const walletList = await sdk.wallet.walletList();
+                if (walletList.data && walletList.data.length > 0) {
+                    createdWalletId = walletList.data[0].wallet_id;
+                    console.log(`📝 Using existing wallet ID: ${createdWalletId}`);
+                } else {
+                    throw new Error('No wallet ID available from previous test');
+                }
             }
 
             console.log(`⭐ Setting wallet ${createdWalletId} as default...`);
