@@ -196,7 +196,7 @@ describe('Assets Service', () => {
 
       expect(mockValidator.assetList).toHaveBeenCalledWith(mockData);
       expect(mockHttpClient.get).toHaveBeenCalledWith(
-        '/asset/list',
+        '/asset/assetlist',
         { Authorization: 'test-auth-token-123' },
         { searchQuery: undefined, status: undefined, type: undefined, walletID: 'wallet-123', pageNumber: 1, pageSize: 5 }
       );
@@ -217,7 +217,7 @@ describe('Assets Service', () => {
 
       expect(mockValidator.ledgerDetails).toHaveBeenCalledWith(mockData);
       expect(mockHttpClient.get).toHaveBeenCalledWith(
-        '/asset/ledgerdetails',
+        '/asset/ledger/details',
         { Authorization: 'test-auth-token-123' },
         { assetID: 'asset-123' }
       );
@@ -235,7 +235,7 @@ describe('Assets Service', () => {
       const result = await assets.getAssetStats();
 
       expect(mockHttpClient.get).toHaveBeenCalledWith(
-        '/asset/list',
+        '/asset/assetlist',
         { Authorization: 'test-auth-token-123' }
       );
       expect(result.data).toEqual(mockResponse);
