@@ -19,14 +19,13 @@ export const Routes = {
         LEDGERLIST: '/asset/ledgerlist',
         LEDGER_DETAILS: '/asset/ledger/details',
         ASSET_STATS: '/asset/stats',
-        BALANCES: '/asset/balances', // New endpoint
+        BALANCES: '/asset/balances',
     },
     UTILITY: {
         REGISTER: '/utility/register',
         UPDATE: '/utility/update',
         MINT: '/utility/mint',
         REDEEM: '/utility/redeem',
-        MERGE: '/utility/merge',
     },
     DATA_INTEGRITY: {
         FILE_UPLOAD: '/data-integrity/file',
@@ -46,11 +45,6 @@ export const Routes = {
         UPDATE_DEFAULT: '/paymail/default',
         DELETE: '/paymail/delete',
     },
-    // PAY: {
-    //     ADDRESS: '/pay/address',
-    //     EMAIL: '/pay/email',
-    //     PAYMAIL: '/pay/paymail',
-    // },
     TEAM: {
         ACCEPT: '/team/accept',
         INVITES_LIST: '/team/invites',

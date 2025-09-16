@@ -166,14 +166,6 @@ export const transferAssetSchema = z.object({
 
 export const transferAssetResponseSchema = z.any();
 
-export const mergeAssetSchema = z.object({
-    merge_destinations: z.array(destinationSchema),
-    asset_ids: z.array(z.string()),
-    walletID: z.string().optional(),
-});
-
-export const mergeAssetResponseSchema = z.any();
-
 export const redeemAssetSchema = z.object({
     utxoID: z.string(),
 });

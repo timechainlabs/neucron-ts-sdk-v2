@@ -2,7 +2,6 @@ import {
     createAssetSchema,
     transferAssetSchema,
     mintAssetSchema,
-    mergeAssetSchema,
     redeemAssetSchema,
     ledgerListSchema,
     assetListSchema,
@@ -21,14 +20,12 @@ import {
     ledgerDetailsResponseSchema,
     mintAssetResponseSchema,
     transferAssetResponseSchema,
-    mergeAssetResponseSchema,
 } from './schema.js';
 import type {
     TransferAsset,
     CreateAsset,
     CreateAssetResponse,
     MintAsset,
-    MergeAsset,
     RedeemAsset,
     UpdateAsset,
     UpdateAssetResponse,
@@ -42,7 +39,6 @@ import type {
     AssetListResponse,
     MintAssetResponse,
     TransferAssetResponse,
-    MergeAssetResponse,
     LedgerDetails,
     LedgerDetailsResponse,
     AssetDetailsResponse,
@@ -85,12 +81,6 @@ export default class Validator {
     }
     transferAssetResponse(asset: TransferAssetResponse) {
         return transferAssetResponseSchema.parse(asset);
-    }
-    mergeAsset(asset: MergeAsset) {
-        return mergeAssetSchema.parse(asset);
-    }
-    mergeAssetResponse(asset: MergeAssetResponse) {
-        return mergeAssetResponseSchema.parse(asset);
     }
     redeemAsset(asset: RedeemAsset) {
         return redeemAssetSchema.parse(asset);
