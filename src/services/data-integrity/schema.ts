@@ -6,7 +6,7 @@ export const fileUploadSchema = z.object({
 });
 
 export const fileUploadResponseSchema = z.object({
-    txID: z.string().min(1),
+    txid: z.string().min(1),
 });
 
 export const textUploadSchema = z.object({
@@ -16,5 +16,5 @@ export const textUploadSchema = z.object({
 });
 
 export const textUploadResponseSchema = z.object({
-    txID: z.string().min(1),
+    txid: z.string().min(1),
 });
