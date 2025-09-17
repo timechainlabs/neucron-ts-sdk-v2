@@ -179,15 +179,15 @@ describe('Wallet Service', () => {
     });
 
     describe('Wallet List', () => {
-        const mockWalletListResponse: WalletListResponse = {
+        const mockWalletListResponse: WalletListResponse = [{
+            wallet_id: 'wallet-1',
             app_id: null,
-            default_paymail_alias: null,
+            paymail_alias: null,
             is_default: true,
             team_id: null,
             user_id: 'user-123',
-            wallet_id: 'wallet-1',
-            name: 'Test Wallet',
-        };
+            wallet_name: 'Test Wallet',
+        }];
 
         it('should successfully get wallet list', async () => {
             // Mock validation to pass
@@ -350,15 +350,15 @@ describe('Wallet Service', () => {
     describe('Integration Tests', () => {
         it('should maintain authentication state across multiple wallet operations', async () => {
             // Mock responses for multiple operations
-            const walletListResponse: WalletListResponse = {
-                app_id: null,
-                default_paymail_alias: null,
-                is_default: true,
-                team_id: null,
-                user_id: 'user-123',
-                wallet_id: 'wallet-123',
-                name: 'Test Wallet',
-            };
+            const walletListResponse: WalletListResponse = [{
+            wallet_id: 'wallet-789',
+            app_id: null,
+            paymail_alias: null,
+            is_default: true,
+            team_id: null,
+            user_id: 'user-123',
+            wallet_name: 'Test Wallet',
+        }];
 
             const createAddressResponse: CreateAddressResponse = {
                 message: 'Address created successfully',
