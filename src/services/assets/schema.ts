@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const AssetTypeEnum = z.enum(['STAS', 'CERTIFICATE', 'UTILITY', 'SECURITY', 'STABLECOIN', 'MNEE', 'TICKET']);
+const AssetTypeEnum = z.enum(['CERTIFICATE', 'UTILITY', 'SECURITY', 'STABLECOIN', 'MNEE', 'TICKET']);
 
 const ProtocolEnum = z.enum(['STAS-20', 'STAS-789', 'STAS-50', 'STAS-LEGACY', 'NULL']);
 
