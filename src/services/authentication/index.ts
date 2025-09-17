@@ -1,6 +1,22 @@
-import type { HttpResponse, IHttpClient } from '../../utils/http/types.js';
+import type { HttpResponse, IHttpClient, Headers, QueryParams } from '../../utils/http/types.js';
 import type { Config } from '../../config.js';
-import type { LoginBody, LoginResponse, SignUpBody, SignupResponse } from './types.js';
+import type {
+    LoginBody,
+    LoginResponse,
+    SignUpBody,
+    SignupResponse,
+    EmailExistsBody,
+    EmailExistsResponse,
+    PhoneExistsBody,
+    PhoneExistsResponse,
+    ForgotPasswordBody,
+    ForgotPasswordResponse,
+    UpdatePasswordBody,
+    UpdatePasswordResponse,
+    UserInfoResponse,
+    UpdateUserBody,
+    UpdateUserResponse,
+} from './types.js';
 import { HttpClient } from '../../utils/http/http-client.js';
 import Validator from './validator.js';
 import { handleError } from '../../utils/errors/helper.js';
@@ -55,6 +71,111 @@ export class Authentication {
             const data: { token: string } = resp.data as { token: string };
             this.validator.loginResponse(resp.data);
             this.setToken(data.token);
+            return resp;
+        } catch (err) {
+            handleError(err);
+        }
+    }
+
+    async logout() {
+        try {
+            this.validate();
+            this.token = '';
+        } catch (err) {
+            handleError(err);
+        }
+    }
+
+    public async emailExists(option: EmailExistsBody): Promise<HttpResponse<EmailExistsResponse>> {
+        try {
+            this.validator.emailExists(option);
+            const reqPath = Routes.AUTH.EMAIL_EXISTS;
+            const params: QueryParams = {
+                email: option.email,
+            };
+            const resp = await this.httpClient.post<EmailExistsResponse>(reqPath, null, {}, params);
+            this.validator.emailExistsResponse(resp.data);
+            return resp;
+        } catch (err) {
+            handleError(err);
+        }
+    }
+
+    public async phoneExists(option: PhoneExistsBody): Promise<HttpResponse<PhoneExistsResponse>> {
+        try {
+            this.validator.phoneExists(option);
+            const reqPath = Routes.AUTH.PHONE_EXISTS;
+            const params: QueryParams = {
+                countryCode: option.countryCode,
+                phoneNumber: option.phoneNumber,
+            };
+            const resp = await this.httpClient.post<PhoneExistsResponse>(reqPath, null, {}, params);
+            this.validator.phoneExistsResponse(resp.data);
+            return resp;
+        } catch (err) {
+            handleError(err);
+        }
+    }
+
+    public async forgotPassword(option: ForgotPasswordBody): Promise<HttpResponse<ForgotPasswordResponse>> {
+        try {
+            this.validator.forgotPassword(option);
+            const reqPath = Routes.AUTH.FORGOT_PASSWORD;
+            const headers: Headers = {
+                'X-Identifier': option['X-Identifier'],
+            };
+            const params: QueryParams = {
+                email: option.email,
+            };
+            const resp = await this.httpClient.post<ForgotPasswordResponse>(reqPath, null, headers, params);
+            this.validator.forgotPasswordResponse(resp.data);
+            return resp;
+        } catch (err) {
+            handleError(err);
+        }
+    }
+
+    async updatePassword(option: UpdatePasswordBody): Promise<HttpResponse<UpdatePasswordResponse>> {
+        try {
+            this.validate();
+            this.validator.updatePassword(option);
+            const reqPath = Routes.AUTH.UPDATE_PASSWORD;
+            const headers: Headers = {
+                Authorization: this.getToken(),
+            };
+            const resp = await this.httpClient.put<UpdatePasswordResponse>(reqPath, option, headers);
+            this.validator.updatePasswordResponse(resp.data);
+            return resp;
+        } catch (err) {
+            handleError(err);
+        }
+    }
+
+    async userInfo(): Promise<HttpResponse<UserInfoResponse>> {
+        try {
+            this.validate();
+            const reqPath = Routes.AUTH.USER_INFO;
+            const headers: Headers = {
+                Authorization: this.getToken(),
+            };
+            const resp = await this.httpClient.get<UserInfoResponse>(reqPath, headers);
+            this.validator.userInfoResponse(resp.data);
+            return resp;
+        } catch (err) {
+            handleError(err);
+        }
+    }
+
+    async updateUser(option: UpdateUserBody): Promise<HttpResponse<UpdateUserResponse>> {
+        try {
+            this.validate();
+            this.validator.updateUser(option);
+            const reqPath = Routes.AUTH.UPDATE_USER;
+            const headers: Headers = {
+                Authorization: this.getToken(),
+            };
+            const resp = await this.httpClient.put<UpdateUserResponse>(reqPath, option, headers);
+            this.validator.updateUserResponse(resp.data);
             return resp;
         } catch (err) {
             handleError(err);
