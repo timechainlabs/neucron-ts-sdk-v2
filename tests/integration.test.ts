@@ -3,6 +3,8 @@ import { NeucronSDK } from '../src/nuecron-sdk.js';
 import type { LoginBody } from '../src/services/authentication/types.js';
 import type { CreateWalletBody } from '../src/services/wallet/types.js';
 import { vi } from "vitest";
+import dotenv from 'dotenv';
+dotenv.config();
 
 vi.mock("axios", async (importOriginal) => {
     const actual = await importOriginal<typeof import("axios")>();
@@ -34,8 +36,8 @@ interface TestConfig {
 // Default test configuration (update these values for your tests)
 const DEFAULT_TEST_CONFIG: TestConfig = {
     testUser: {
-        email: 'shubhambhavsar3311@gmail.com', // UPDATE THIS
-        password: 'Pass@123', // UPDATE THIS
+        email: process.env.TEST_USER_EMAIL || '',
+        password: process.env.TEST_USER_PASSWORD || '',
         firstName: 'Test',
         lastName: 'User',
         platform: 'NEUCRON',
@@ -88,6 +90,7 @@ describeIntegration('Integration Tests - Real API', () => {
             console.log(`🔐 Attempting login for: ${loginData.email}`);
 
             const result = await sdk.auth.login(loginData);
+            console.log('📝 Login response:', result);
 
             expect(result.data).toBeDefined();
             expect(result.data.token).toBeDefined();
@@ -281,8 +284,8 @@ describeIntegration('Integration Tests - Real API', () => {
 
 // Provide helpful information if integration tests are skipped
 if (!shouldRunIntegrationTests()) {
-    console.log('\n⚠️  Integration tests are SKIPPED.');
-    console.log('ℹ️  To enable integration tests:');
+    console.log('⚠️ Integration tests are SKIPPED.');
+    console.log('ℹ️ To enable integration tests:');
     console.log('   1. Open tests/integration.test.ts');
     console.log('   2. Update DEFAULT_TEST_CONFIG with your real test credentials');
     console.log('   3. Set environment.skipIntegrationTests to false');

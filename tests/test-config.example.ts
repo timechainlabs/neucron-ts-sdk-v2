@@ -1,12 +1,14 @@
 // Example test configuration file
 // Copy this file to test-config.ts and update with your actual test credentials
 // DO NOT commit test-config.ts to version control
+import dotenv from 'dotenv';
+dotenv.config();
 
 export const TEST_CONFIG = {
     // Test user credentials for authentication tests
     testUser: {
-        email: 'your-test-email@example.com',
-        password: 'your-test-password',
+        email: process.env.TEST_USER_EMAIL || '',
+        password: process.env.TEST_USER_PASSWORD || '',
         firstName: 'Test',
         lastName: 'User',
         platform: 'NEUCRON' as const,

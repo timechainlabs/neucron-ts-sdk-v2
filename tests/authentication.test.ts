@@ -143,6 +143,7 @@ describe('Authentication Service', () => {
         status: 200,
         statusText: 'OK',
       });
+      mockValidatorInstance.loginResponse.mockImplementation((data) => data);
 
       const result = await auth.login(mockLoginData);
 
@@ -207,7 +208,7 @@ describe('Authentication Service', () => {
         status: 200,
         statusText: 'OK',
       });
-
+      mockValidatorInstance.loginResponse.mockImplementation((data) => data);
       await auth.login(loginData);
       expect(auth.getToken()).toBe('integration-token-123');
 
