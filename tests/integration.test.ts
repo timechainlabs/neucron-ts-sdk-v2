@@ -2,12 +2,12 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { NeucronSDK } from '../src/nuecron-sdk.js';
 import type { LoginBody } from '../src/services/authentication/types.js';
 import type { CreateWalletBody } from '../src/services/wallet/types.js';
-import { vi } from "vitest";
+import { vi } from 'vitest';
 import dotenv from 'dotenv';
 dotenv.config();
 
-vi.mock("axios", async (importOriginal) => {
-    const actual = await importOriginal<typeof import("axios")>();
+vi.mock('axios', async (importOriginal) => {
+    const actual = await importOriginal<typeof import('axios')>();
     return {
         ...actual,
         isAxiosError: actual.isAxiosError, // keep the real implementation
@@ -31,6 +31,10 @@ interface TestConfig {
         skipIntegrationTests: boolean;
         logLevel: string;
     };
+    testTeam: {
+        teamId: string;
+        inviteEmail: string;
+    };
 }
 
 // Default test configuration (update these values for your tests)
@@ -49,6 +53,10 @@ const DEFAULT_TEST_CONFIG: TestConfig = {
     environment: {
         skipIntegrationTests: false, // Set to false to enable integration tests
         logLevel: 'info',
+    },
+    testTeam: {
+        teamId: process.env.TEST_TEAM_ID || '',
+        inviteEmail: process.env.TEST_INVITE_EMAIL || '',
     },
 };
 
@@ -72,6 +80,7 @@ describeIntegration('Integration Tests - Real API', () => {
 
     beforeAll(async () => {
         sdk = new NeucronSDK();
+
         console.log('🧪 Starting integration tests with real API...');
         console.log('📧 Test user email:', DEFAULT_TEST_CONFIG.testUser.email);
     });
@@ -138,7 +147,6 @@ describeIntegration('Integration Tests - Real API', () => {
                 console.log(`📊 Sample wallet:`, result.data[0]);
             }
         }, 15000);
-
 
         it('should create a new wallet', async () => {
             const createWalletData: CreateWalletBody = {
@@ -279,6 +287,70 @@ describeIntegration('Integration Tests - Real API', () => {
             console.log(`✅ All 5 concurrent requests completed in ${duration}ms`);
             console.log(`⚡ Average response time: ${duration / 5}ms`);
         }, 30000);
+    });
+    describeIntegration('Data Integrity Integration', () => {
+        let createdWalletId: string;
+
+        beforeAll(async () => {
+            const wallets = await sdk.wallet.walletList();
+            createdWalletId = wallets?.data?.[0]?.wallet_id;
+            if (!createdWalletId) {
+                throw new Error('No wallet available for Data Integrity tests');
+            }
+        });
+
+        it('should upload text', async () => {
+            const response = await sdk.dataIntegrity.textUpload({
+                walletID: createdWalletId,
+                text: 'Hello, Neucron!',
+                hashed: 'true',
+            });
+
+            expect(response.data.txid).toBeDefined();
+        });
+
+        it('should upload file', async () => {
+            const file = new File(
+                [Buffer.from('This is test content')], // file content
+                'test.txt', // filename
+                { type: 'text/plain', lastModified: Date.now() }
+            );
+
+            const response = await sdk.dataIntegrity.fileUpload({
+                walletID: createdWalletId, // make sure param key matches SDK schema
+                file,
+            });
+
+            expect(response.data.txid).toBeDefined();
+        });
+    });
+
+    describe('Team Integration', () => {
+        it('should get team list', async () => {
+            const result = await sdk.team.getTeamList();
+
+            expect(result.data).toBeDefined();
+            expect(Array.isArray(result.data)).toBe(true);
+            console.log('✅ Team list retrieved:', result.data);
+        }, 15000);
+
+        it('should get invites list', async () => {
+            const result = await sdk.team.getInvitesList();
+
+            expect(result.data).toBeDefined();
+            console.log('✅ Invites list:', result.data);
+        }, 15000);
+
+        // You can also add createInvite, acceptInvite, etc.
+        // but they need valid test data like teamId and email.
+    });
+
+    describe('Team Integration', () => {
+        it('should get team list', async () => {
+            const result = await sdk.team.getTeamList();
+            expect(result.data).toBeDefined();
+            console.log('✅ Team list:', result.data);
+        }, 15000);
     });
 });
 
