@@ -1,7 +1,9 @@
 import z from 'zod';
 
 const identifierEnum = z.enum(['ASSETYZER', 'NEUCRON']);
-const memberRoleEnum = z.enum(['OWNER', 'ADMINISTRATOR', 'EDITOR', 'VIEWER']);
+const memberRoleEnum = z
+    .string()
+    .transform((val) => val.toUpperCase() as 'EDITOR' | 'OWNER' | 'VIEWER' | 'ADMINISTRATOR');
 const nonEmptyString = z.string().min(1);
 const messageResponseSchema = z.object({
     message: nonEmptyString,

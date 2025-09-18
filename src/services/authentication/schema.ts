@@ -25,7 +25,7 @@ export const loginSchema = z.object({
 });
 
 export const loginResponseSchema = z.object({
-    platforms: z.array(platform),
+    platforms: z.array(platform).optional().default([]),
     token: z.string().min(1),
 });
 
