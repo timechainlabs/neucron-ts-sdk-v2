@@ -20,6 +20,8 @@ import {
     ledgerDetailsResponseSchema,
     mintAssetResponseSchema,
     transferAssetResponseSchema,
+    balancesSchema,
+    balancesResponseSchema,
 } from './schema.js';
 import type {
     TransferAsset,
@@ -43,6 +45,8 @@ import type {
     LedgerDetailsResponse,
     AssetDetailsResponse,
     AssetDetails,
+    BalancesResponse,
+    Balances,
 } from './types.js';
 
 export default class Validator {
@@ -110,5 +114,11 @@ export default class Validator {
     }
     ledgerDetailsResponse(asset: LedgerDetailsResponse) {
         return ledgerDetailsResponseSchema.parse(asset);
+    }
+    balances(asset: Balances) {
+        return balancesSchema.parse(asset);
+    }
+    balancesResponse(asset: BalancesResponse) {
+        return balancesResponseSchema.parse(asset);
     }
 }
