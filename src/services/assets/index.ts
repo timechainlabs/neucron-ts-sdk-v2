@@ -18,6 +18,8 @@ import type {
     LedgerDetails,
     LedgerDetailsResponse,
     AssetStatsResponse,
+    Balances,
+    BalancesResponse,
 } from './types.js';
 import { Routes } from '../../utils/routes/index.js';
 
@@ -157,6 +159,25 @@ export class Assets {
             };
             const response = await this.httpClient.get<AssetStatsResponse>(reqPath, headers);
             this.validator.assetStatsResponse(response.data);
+            return response;
+        } catch (error) {
+            handleError(error);
+        }
+    }
+
+    async getBalances(options: Balances): Promise<HttpResponse<BalancesResponse>> {
+        try {
+            this.auth.validate();
+            this.validator.balances(options);
+            const reqPath = Routes.ASSET.BALANCES;
+            const headers: Headers = {
+                Authorization: this.auth.getToken(),
+            };
+            const params: QueryParams = {
+                walletID: options.walletID,
+            };
+            const response = await this.httpClient.get<BalancesResponse>(reqPath, headers, params);
+            this.validator.balancesResponse(response.data);
             return response;
         } catch (error) {
             handleError(error);
