@@ -31,7 +31,6 @@ export const Routes = {
         FILE_UPLOAD: '/data-integrity/file',
         TEXT_UPLOAD: '/data-integrity/text',
     },
-
     WALLET: {
         CREATE: '/wallet/create',
         UPDATE_DEFAULT: '/wallet/default',
