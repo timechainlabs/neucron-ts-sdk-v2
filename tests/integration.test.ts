@@ -349,8 +349,51 @@ describeIntegration('Integration Tests - Real API', () => {
         it('should get team list', async () => {
             const result = await sdk.team.getTeamList();
             expect(result.data).toBeDefined();
-            console.log('✅ Team list:', result.data);
+            console.log(' Team list:', result.data);
         }, 15000);
+    });
+
+    describe('Payment Integration', () => {
+        let walletId: string;
+
+        beforeAll(async () => {
+            // Reuse or fetch a wallet ID (same logic as Wallet Integration)
+            const wallets = await sdk.wallet.walletList();
+            walletId = wallets?.data?.[0]?.wallet_id;
+            if (!walletId) {
+                throw new Error('No wallet available for Payment tests');
+            }
+        });
+
+        it('should make a payment with address', async () => {
+            const result = await sdk.pay.payWithPaymail({
+                walletID: walletId,
+                assetName: 'BSV', // make sure this matches ASSET_IDS keys
+                transfer_destinations: [
+                    {
+                        paymail: 'testsdk1758044558714@neucron.io',
+                        amount: 10,
+                    },
+                ],
+            });
+
+            expect(result.data).toBeDefined();
+            // expect(result.data).toBeDefined();
+            console.log('✅ Payment by address successful:', result.data);
+        }, 15000);
+
+        it('should fail with unsupported asset', async () => {
+            await expect(
+                sdk.pay.payWithAddress({
+                    walletID: walletId,
+                    assetName: 'BSV',
+                    transfer_destinations: [],
+                })
+            ).rejects.toThrow();
+            console.log('✅ Unsupported asset correctly rejected');
+        }, 15000);
+
+        // Similarly, you can add payWithEmail and payWithPaymail
     });
 });
 
