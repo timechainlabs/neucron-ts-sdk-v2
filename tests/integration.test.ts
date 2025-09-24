@@ -366,13 +366,13 @@ describeIntegration('Integration Tests - Real API', () => {
         });
 
         it('should make a payment with address', async () => {
-            const result = await sdk.pay.payWithPaymail({
+            const result = await sdk.pay.payWithAddress({
                 walletID: walletId,
                 assetName: 'BSV', // make sure this matches ASSET_IDS keys
                 transfer_destinations: [
                     {
-                        paymail: 'testsdk1758044558714@neucron.io',
-                        amount: 10,
+                        paymail: 'must_valid_address',
+                        amount: 1000, //SAT
                     },
                 ],
             });
