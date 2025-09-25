@@ -1,10 +1,11 @@
-import type { Headers, HttpResponse, QueryParams } from '../../utils/http/types.js';
-import type { PayWithAddressBody, PayWithEmailBody, PayWithPaymailBody, PayResponse } from './types.js';
-import { HttpClient } from '../../utils/http/http-client.js';
-import { Authentication } from '../authentication/index.js';
-import Validator from './validator.js';
-import { handleError } from '../../utils/errors/helper.js';
-import { Routes } from '../../utils/routes/index.js';
+import type { Headers, HttpResponse, QueryParams } from "../../utils/http/types.js";
+import type { PayRequest, PayResponse, PayRequestInput } from "./types.js";
+import { HttpClient } from "../../utils/http/http-client.js";
+import { Authentication } from "../authentication/index.js";
+import Validator from "./validator.js";
+import { handleError } from "../../utils/errors/helper.js";
+import { Routes } from "../../utils/routes/index.js";
+import { ASSET_IDS } from "../../utils/constants/asset.js";
 
 export class Pay {
     private readonly validator: Validator;
@@ -15,26 +16,48 @@ export class Pay {
         this.httpClient = new HttpClient();
     }
 
-    async payWithAddress(options: PayWithAddressBody): Promise<HttpResponse<PayResponse>> {
+    private async executePayment(
+        options: PayRequestInput,
+        validateFn: (v: Validator, o: PayRequest) => void
+    ): Promise<HttpResponse<PayResponse>> {
         try {
             this.auth.validate();
-            this.validator.payWithAddress(options);
+
+            const asset_id = ASSET_IDS[options.assetName];
+            if (!asset_id) {
+                throw new Error(`Unsupported asset: ${options.assetName}`);
+            }
+
+            const normalizedOptions: PayRequest = {
+                walletID: options.walletID,
+                asset_id,
+                transfer_destinations: options.transfer_destinations,
+            };
+
+            validateFn(this.validator, normalizedOptions);
 
             const reqPath = Routes.ASSET.TRANSFER;
+
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
+
             const params: QueryParams = {
                 walletID: options.walletID,
             };
 
             const payload = {
-                assetId: options.assetId,
-                amount: options.amount,
-                to: options.to,
+                asset_id: normalizedOptions.asset_id,
+                transfer_destinations: normalizedOptions.transfer_destinations,
             };
 
-            const res = await this.httpClient.post<PayResponse>(reqPath, payload, headers, params);
+            const res = await this.httpClient.post<PayResponse>(
+                reqPath,
+                payload,
+                headers,
+                params
+            );
+
             this.validator.payResponse(res.data);
             return res;
         } catch (err) {
@@ -42,57 +65,15 @@ export class Pay {
         }
     }
 
-    async payWithEmail(options: PayWithEmailBody): Promise<HttpResponse<PayResponse>> {
-        try {
-            this.auth.validate();
-            this.validator.payWithEmail(options);
-
-            const reqPath = Routes.ASSET.TRANSFER;
-            const headers: Headers = {
-                Authorization: this.auth.getToken(),
-            };
-            const params: QueryParams = {
-                walletID: options.walletID,
-            };
-
-            const payload = {
-                assetId: options.assetId,
-                amount: options.amount,
-                to: options.to,
-            };
-
-            const res = await this.httpClient.post<PayResponse>(reqPath, payload, headers, params);
-            this.validator.payResponse(res.data);
-            return res;
-        } catch (err) {
-            handleError(err);
-        }
+    async payWithAddress(options: PayRequestInput): Promise<HttpResponse<PayResponse>> {
+        return this.executePayment(options, (v, o) => v.payWithAddress(o));
     }
 
-    async payWithPaymail(options: PayWithPaymailBody): Promise<HttpResponse<PayResponse>> {
-        try {
-            this.auth.validate();
-            this.validator.payWithPaymail(options);
+    async payWithEmail(options: PayRequestInput): Promise<HttpResponse<PayResponse>> {
+        return this.executePayment(options, (v, o) => v.payWithEmail(o));
+    }
 
-            const reqPath = Routes.ASSET.TRANSFER;
-            const headers: Headers = {
-                Authorization: this.auth.getToken(),
-            };
-            const params: QueryParams = {
-                walletID: options.walletID,
-            };
-
-            const payload = {
-                assetId: options.assetId,
-                amount: options.amount,
-                to: options.to,
-            };
-
-            const res = await this.httpClient.post<PayResponse>(reqPath, payload, headers, params);
-            this.validator.payResponse(res.data);
-            return res;
-        } catch (err) {
-            handleError(err);
-        }
+    async payWithPaymail(options: PayRequestInput): Promise<HttpResponse<PayResponse>> {
+        return this.executePayment(options, (v, o) => v.payWithPaymail(o));
     }
 }

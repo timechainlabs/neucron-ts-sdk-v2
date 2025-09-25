@@ -10,3 +10,6 @@ export * from './services/wallet/types.js';
 export * from './services/assets/types.js';
 export * from './services/team/types.js';
 export * from './services/utility/types.js';
+export * from './services/data-integrity/types.js';
+export * from './services/pay/types.js';
+export * from './services/paymail/types.js';

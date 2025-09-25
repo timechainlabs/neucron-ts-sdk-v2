@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Assets } from '../src/services/assets/index.js';
 import { Authentication } from '../src/services/authentication/index.js';
 import { NeucronError } from '../src/utils/errors/sdk-error.js';
+import { Balances, BalancesResponse } from '../src/services/assets/types.js';
 
 let mockHttpClient: any;
 let mockValidator: any;
@@ -33,6 +34,8 @@ vi.mock('../src/services/assets/validator.js', () => {
     ledgerDetails: vi.fn(),
     ledgerDetailsResponse: vi.fn(),
     assetStatsResponse: vi.fn(),
+    balances: vi.fn(),
+    balancesResponse: vi.fn(),
   });
   return {
     default: vi.fn().mockImplementation(mockImplementation),
@@ -73,11 +76,13 @@ describe('Assets Service', () => {
       ledgerDetails: vi.fn(),
       ledgerDetailsResponse: vi.fn(),
       assetStatsResponse: vi.fn(),
+      balances: vi.fn(),
+      balancesResponse: vi.fn(),
     };
 
     mockAuth = new Authentication();
     mockAuth.setToken('test-auth-token-123');
-    vi.spyOn(mockAuth, 'validate').mockImplementation(() => {});
+    vi.spyOn(mockAuth, 'validate').mockImplementation(() => { });
     vi.spyOn(mockAuth, 'getToken').mockReturnValue('test-auth-token-123');
 
     assets = new Assets(mockAuth);
@@ -239,6 +244,57 @@ describe('Assets Service', () => {
         { Authorization: 'test-auth-token-123' }
       );
       expect(result.data).toEqual(mockResponse);
+    });
+  });
+
+  describe('getBalances', () => {
+    const mockData: Balances = { walletID: 'wallet-123' };
+    const mockResponse: BalancesResponse = [{ asset_id: 'ledger-123', sum: 1 }];
+
+    it('should fetch balances', async () => {
+      mockValidator.balances.mockReturnValue(true);
+      mockValidator.balancesResponse.mockReturnValue(mockResponse);
+      mockHttpClient.get.mockResolvedValue({ data: mockResponse });
+
+      const result = await assets.getBalances(mockData as any);
+
+      expect(mockValidator.balances).toHaveBeenCalledWith(mockData);
+      expect(mockHttpClient.get).toHaveBeenCalledWith(
+        '/asset/balances',
+        { Authorization: 'test-auth-token-123' },
+        mockData
+      );
+      expect(result.data).toEqual(mockResponse);
+    });
+
+    it('should throw error when not authenticated', async () => {
+      const authError = new NeucronError(
+        'Unauthorized',
+        new Error('No token'),
+        { type: 'internal' }
+      );
+
+      vi.spyOn(mockAuth, 'validate').mockImplementation(() => {
+        throw authError;
+      });
+
+      await expect(assets.getBalances(mockData as any)).rejects.toThrow(authError);
+
+      // Make sure no HTTP request is made
+      expect(mockHttpClient.get).not.toHaveBeenCalled();
+    });
+
+    it('should throw error if validator fails', async () => {
+      const validationError = new Error('Invalid options');
+
+      mockValidator.balances.mockImplementation(() => {
+        throw validationError;
+      });
+
+      await expect(assets.getBalances(mockData as any)).rejects.toThrow(validationError);
+
+      // No HTTP request should be made
+      expect(mockHttpClient.get).not.toHaveBeenCalled();
     });
   });
 });
