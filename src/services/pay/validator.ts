@@ -1,26 +1,26 @@
-import { payResponseSchema, payWithAddressSchema, payWithEmailSchema, payWithPaymailSchema } from './schema.js';
-import type { PayResponse, PayWithAddressBody, PayWithEmailBody, PayWithPaymailBody } from './types.js';
+import { payResponseSchema, payRequestSchema } from './schema.js';
+import type { PayRequest, PayResponse } from './types.js';
 
 export default class Validator {
     /**
      * Validate payload for transfer via Address
      */
-    payWithAddress(option: PayWithAddressBody) {
-        return payWithAddressSchema.parse(option);
+    payWithAddress(option: PayRequest) {
+        return payRequestSchema.parse(option);
     }
 
     /**
      * Validate payload for transfer via Email
      */
-    payWithEmail(option: PayWithEmailBody) {
-        return payWithEmailSchema.parse(option);
+    payWithEmail(option: PayRequest) {
+        return payRequestSchema.parse(option);
     }
 
     /**
      * Validate payload for transfer via Paymail
      */
-    payWithPaymail(option: PayWithPaymailBody) {
-        return payWithPaymailSchema.parse(option);
+    payWithPaymail(option: PayRequest) {
+        return payRequestSchema.parse(option);
     }
 
     /**

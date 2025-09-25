@@ -5,14 +5,18 @@ import { Team } from './services/team/index.js';
 import { Assets } from './services/assets/index.js';
 import { Utility } from './services/utility/index.js';
 import { DataIntegrity } from './services/data-integrity/index.js';
-
+import { Pay } from './services/pay/index.js';
+import { Paymail } from './services/paymail/index.js';
 export class NeucronSDK {
     readonly auth: Authentication;
     readonly wallet: Wallet;
-    dataIntegrity: DataIntegrity;
-    team: Team;
+    readonly dataIntegrity: DataIntegrity;
+    readonly team: Team;
     readonly assets: Assets;
     readonly utility: Utility;
+    readonly pay: Pay;
+    readonly paymail: Paymail;
+
     constructor(config?: Config) {
         this.auth = new Authentication(config);
         this.wallet = new Wallet(this.auth);
@@ -20,5 +24,7 @@ export class NeucronSDK {
         this.dataIntegrity = new DataIntegrity(this.auth);
         this.assets = new Assets(this.auth);
         this.utility = new Utility(this.auth);
+        this.pay = new Pay(this.auth);
+        this.paymail = new Paymail(this.auth);
     }
 }
