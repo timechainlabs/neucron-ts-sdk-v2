@@ -15,7 +15,7 @@ import Validator from './validator.js';
 import { handleError } from '../../utils/errors/helper.js';
 import { Routes } from '../../utils/routes/index.js';
 
-export class Wallet {
+export class Paymail {
     private readonly validator: Validator;
     private readonly httpClient: HttpClient;
     constructor(private readonly auth: Authentication) {
