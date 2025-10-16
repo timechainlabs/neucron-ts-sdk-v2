@@ -67,7 +67,7 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.fetchBalance(options);
-            const reqPath = Routes.ASSET.DELETE;
+            const reqPath = Routes.ASSET21.BALANCE;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
             };
