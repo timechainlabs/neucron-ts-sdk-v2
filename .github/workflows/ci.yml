@@ -36,8 +36,8 @@ jobs:
         run: npm run typecheck
 
       # Run tests (Vitest)
-      - name: Run tests
-        run: npm run test:run
+      - name: Run unit tests
+        run: npm run test:unit
 
       # (Optional) Upload coverage report as artifact
       - name: Upload coverage report
