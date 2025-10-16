@@ -3,8 +3,9 @@ import { NeucronSDK } from '../src/nuecron-sdk.js';
 import type { LoginBody } from '../src/services/authentication/types.js';
 import type { CreateWalletBody } from '../src/services/wallet/types.js';
 import { vi } from 'vitest';
-import dotenv from 'dotenv';
-dotenv.config();
+import path from 'path';
+
+process.loadEnvFile(path.join(__dirname, '../.env'));
 
 vi.mock('axios', async (importOriginal) => {
     const actual = await importOriginal<typeof import('axios')>();
