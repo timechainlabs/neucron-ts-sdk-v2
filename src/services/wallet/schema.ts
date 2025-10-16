@@ -30,10 +30,8 @@ export const createWalletResponseSchema = z.object({
 
 export const walletListResponseSchema = z.array(
     z.object({
-        app_id: id.nullable(),
         paymail_alias: nonEmptyString.nullable(),
         is_default: z.boolean(),
-        team_id: id.nullable(),
         user_id: id,
         wallet_id: id,
         wallet_name: nonEmptyString,
