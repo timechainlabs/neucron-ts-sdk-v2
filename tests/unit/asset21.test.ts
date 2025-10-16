@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import type { Mock } from 'vitest';
-import { Assets21 } from '../src/services/asset21/index.js';
-import { Authentication } from '../src/services/authentication/index.js';
-import Validator from '../src/services/asset21/validator.js';
-import type { IHttpClient } from '../src/utils/http/types.js';
+import { Assets21 } from '../../src/services/asset21/index.js';
+import { Authentication } from '../../src/services/authentication/index.js';
+import Validator from '../../src/services/asset21/validator.js';
+import type { IHttpClient } from '../../src/utils/http/types.js';
 
 // Mock modules with factory functions
-vi.mock('../src/utils/http/http-client.js', () => ({
+vi.mock('../../src/utils/http/http-client.js', () => ({
     HttpClient: vi.fn().mockImplementation(() => ({
         get: vi.fn(),
         post: vi.fn(),
@@ -15,7 +15,7 @@ vi.mock('../src/utils/http/http-client.js', () => ({
     })),
 }));
 
-vi.mock('../src/services/asset21/validator.js', () => ({
+vi.mock('../../src/services/asset21/validator.js', () => ({
     default: vi.fn().mockImplementation(() => ({
         // Input validation methods
         getAddressState: vi.fn().mockImplementation((params) => params),
@@ -51,17 +51,17 @@ vi.mock('../src/services/asset21/validator.js', () => ({
     })),
 }));
 
-vi.mock('../src/utils/errors/helper.js', () => ({
+vi.mock('../../src/utils/errors/helper.js', () => ({
     handleError: vi.fn((err) => {
         throw err;
     }),
 }));
 
 // Import the actual implementation after setting up mocks
-import { handleError } from '../src/utils/errors/helper.js';
+import { handleError } from '../../src/utils/errors/helper.js';
 
 // Mock the validator module
-vi.mock('../src/services/asset21/validator.js', () => ({
+vi.mock('../../src/services/asset21/validator.js', () => ({
     default: vi.fn().mockImplementation(() => ({
         getAddressState: vi.fn(),
         // Add other validator methods as needed
@@ -102,7 +102,7 @@ describe('Assets21 Service', () => {
         };
 
         // Get the mock validator from the factory
-        const Validator = (await import('../src/services/asset21/validator.js')).default;
+        const Validator = (await import('../../src/services/asset21/validator.js')).default;
         mockValidator = new Validator();
 
         // Create instance with proper type assertion for testing
