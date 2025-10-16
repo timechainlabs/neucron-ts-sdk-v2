@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { Paymail } from '../src/services/paymail/index.js';
-import { Authentication } from '../src/services/authentication/index.js';
-import { NeucronError } from '../src/utils/errors/sdk-error.js';
+import { Paymail } from '../../src/services/paymail/index.js';
+import { Authentication } from '../../src/services/authentication/index.js';
+import { NeucronError } from '../../src/utils/errors/sdk-error.js';
 import type {
     CreatePaymailBody,
     CreatePaymailResponse,
@@ -11,12 +11,12 @@ import type {
     UpdateDefaultPaymailResponse,
     DeletePaymailBody,
     DeletePaymailResponse,
-} from '../src/services/paymail/types.js';
+} from '../../src/services/paymail/types.js';
 
 let mockHttpClient: any;
 let mockValidator: any;
 
-vi.mock('../src/utils/http/http-client.js', () => {
+vi.mock('../../src/utils/http/http-client.js', () => {
     const mockImplementation = () => ({
         post: vi.fn(),
         get: vi.fn(),
@@ -28,7 +28,7 @@ vi.mock('../src/utils/http/http-client.js', () => {
     };
 });
 
-vi.mock('../src/services/paymail/validator.js', () => {
+vi.mock('../../src/services/paymail/validator.js', () => {
     const mockImplementation = () => ({
         createPaymail: vi.fn(),
         createPaymailResponse: vi.fn(),
@@ -44,7 +44,7 @@ vi.mock('../src/services/paymail/validator.js', () => {
     };
 });
 
-vi.mock('../src/utils/errors/helper.js', () => ({
+vi.mock('../../src/utils/errors/helper.js', () => ({
     handleError: vi.fn((err) => {
         throw err;
     }),

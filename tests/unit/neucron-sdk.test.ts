@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { NeucronSDK } from '../src/nuecron-sdk.js';
-import type { Config } from '../src/config.js';
-import type { LoginBody, LoginResponse } from '../src/services/authentication/types.js';
-import type { CreateWalletBody, CreateWalletReponse } from '../src/services/wallet/types.js';
+import { NeucronSDK } from '../../src/nuecron-sdk.js';
+import type { Config } from '../../src/config.js';
+import type { LoginBody, LoginResponse } from '../../src/services/authentication/types.js';
+import type { CreateWalletBody, CreateWalletReponse } from '../../src/services/wallet/types.js';
 
 // Store mock instances to access them in tests
 let mockAuthHttpClient: any;
@@ -11,33 +11,33 @@ let mockAuthValidator: any;
 let mockWalletValidator: any;
 
 // Mock all service dependencies
-vi.mock('../src/utils/http/http-client.js', () => {
+vi.mock('../../src/utils/http/http-client.js', () => {
     const mockImplementation = () => ({
         post: vi.fn(),
         get: vi.fn(),
         put: vi.fn(),
         delete: vi.fn(),
     });
-    
+
     return {
         HttpClient: vi.fn().mockImplementation(mockImplementation),
     };
 });
 
-vi.mock('../src/services/authentication/validator.js', () => {
+vi.mock('../../src/services/authentication/validator.js', () => {
     const mockImplementation = () => ({
         login: vi.fn(),
         loginResponse: vi.fn(),
         signUp: vi.fn(),
         signUpResponse: vi.fn(),
     });
-    
+
     return {
         default: vi.fn().mockImplementation(mockImplementation),
     };
 });
 
-vi.mock('../src/services/wallet/validator.js', () => {
+vi.mock('../../src/services/wallet/validator.js', () => {
     const mockImplementation = () => ({
         createWallet: vi.fn(),
         createWalletResponse: vi.fn(),
@@ -48,13 +48,13 @@ vi.mock('../src/services/wallet/validator.js', () => {
         createAddressResponse: vi.fn(),
         walletAddressListResponse: vi.fn(),
     });
-    
+
     return {
         default: vi.fn().mockImplementation(mockImplementation),
     };
 });
 
-vi.mock('../src/utils/errors/helper.js', () => ({
+vi.mock('../../src/utils/errors/helper.js', () => ({
     handleError: vi.fn((err) => {
         throw err;
     }),
@@ -65,7 +65,7 @@ describe('NeucronSDK Integration', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
-        
+
         // Create fresh mock instances
         mockAuthHttpClient = {
             post: vi.fn(),
@@ -73,21 +73,21 @@ describe('NeucronSDK Integration', () => {
             put: vi.fn(),
             delete: vi.fn(),
         };
-        
+
         mockWalletHttpClient = {
             post: vi.fn(),
             get: vi.fn(),
             put: vi.fn(),
             delete: vi.fn(),
         };
-        
+
         mockAuthValidator = {
             login: vi.fn(),
             loginResponse: vi.fn(),
             signUp: vi.fn(),
             signUpResponse: vi.fn(),
         };
-        
+
         mockWalletValidator = {
             createWallet: vi.fn(),
             createWalletResponse: vi.fn(),
@@ -106,7 +106,7 @@ describe('NeucronSDK Integration', () => {
             (sdk.auth as any).httpClient = mockAuthHttpClient;
             (sdk.auth as any).validator = mockAuthValidator;
         }
-        
+
         if (sdk.wallet && typeof sdk.wallet === 'object') {
             (sdk.wallet as any).httpClient = mockWalletHttpClient;
             (sdk.wallet as any).validator = mockWalletValidator;
@@ -151,7 +151,7 @@ describe('NeucronSDK Integration', () => {
             // Mock validation to pass
             mockAuthValidator.login.mockReturnValue(true);
             mockAuthValidator.loginResponse.mockReturnValue(loginResponse);
-            
+
             mockAuthHttpClient.post.mockResolvedValue({
                 data: loginResponse,
                 status: 200,
@@ -167,7 +167,7 @@ describe('NeucronSDK Integration', () => {
         it('should handle login failure', async () => {
             // Mock validation to pass
             mockAuthValidator.login.mockReturnValue(true);
-            
+
             const loginError = new Error('Invalid credentials');
             mockAuthHttpClient.post.mockRejectedValue(loginError);
 
@@ -450,7 +450,7 @@ describe('NeucronSDK Integration', () => {
         it('should handle network errors gracefully', async () => {
             // Mock validation to pass
             mockAuthValidator.login.mockReturnValue(true);
-            
+
             const networkError = new Error('Network connection failed');
             mockAuthHttpClient.post.mockRejectedValue(networkError);
 
