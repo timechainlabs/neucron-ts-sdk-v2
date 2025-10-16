@@ -1,0 +1,48 @@
+name: CI (Lint & Test)
+
+on:
+  pull_request:
+    branches: [develop]
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # Lint check
+      - name: Run ESLint
+        run: npm run lint
+
+      # Type check
+      - name: Run TypeScript typecheck
+        run: npm run typecheck
+
+      # Run tests (Vitest)
+      - name: Run tests
+        run: npm run test:run
+
+      # (Optional) Upload coverage report as artifact
+      - name: Upload coverage report
+        if: always() # even if tests fail
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
