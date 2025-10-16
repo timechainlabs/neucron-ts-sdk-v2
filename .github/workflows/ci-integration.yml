@@ -1,18 +1,14 @@
-name: CI (Lint & Unit Test)
+name: CI - Integration Tests
 
 on:
-  pull_request:
-    branches: [develop]
-  push:
-    branches: [develop]
   workflow_dispatch:
 
 jobs:
-  lint-and-test:
+  integration-tests:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repo
+      # Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -27,22 +23,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Lint check
-      - name: Run ESLint
-        run: npm run lint
-
-      # Type check
-      - name: Run TypeScript typecheck
-        run: npm run typecheck
-
-      # Run tests (Vitest)
-      - name: Run unit tests
-        run: npm run test:unit --coverage
+      # Run integration tests (Vitest)
+      - name: Run integration tests
+        run: npm run test:integration --coverage
 
       # (Optional) Upload coverage report as artifact
       - name: Upload coverage report
-        if: always() # even if tests fail
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report
+          name: integration-coverage-report
           path: coverage/
