@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { Wallet } from '../src/services/paymail/index.js';
+import { Paymail } from '../src/services/paymail/index.js';
 import { Authentication } from '../src/services/authentication/index.js';
 import { NeucronError } from '../src/utils/errors/sdk-error.js';
 import type {
@@ -51,7 +51,7 @@ vi.mock('../src/utils/errors/helper.js', () => ({
 }));
 
 describe('Paymail Service', () => {
-    let paymail: Wallet;
+    let paymail: Paymail;
     let mockAuth: Authentication;
 
     beforeEach(() => {
@@ -77,10 +77,10 @@ describe('Paymail Service', () => {
 
         mockAuth = new Authentication();
         mockAuth.setToken('test-auth-token-123');
-        vi.spyOn(mockAuth, 'validate').mockImplementation(() => { });
+        vi.spyOn(mockAuth, 'validate').mockImplementation(() => {});
         vi.spyOn(mockAuth, 'getToken').mockReturnValue('test-auth-token-123');
 
-        paymail = new Wallet(mockAuth);
+        paymail = new Paymail(mockAuth);
         (paymail as any).httpClient = mockHttpClient;
         (paymail as any).validator = mockValidator;
     });
@@ -137,7 +137,6 @@ describe('Paymail Service', () => {
             { alias: 'test1', wallet_id: 'wallet-123', is_wallet_default: true },
             { alias: 'test2', wallet_id: 'wallet-456', is_wallet_default: false },
         ];
-
 
         it('should successfully fetch paymail list', async () => {
             mockValidator.paymailList.mockReturnValue(true);
