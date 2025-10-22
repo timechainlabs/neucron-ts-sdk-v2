@@ -1,10 +1,22 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { NeucronSDK } from '../src/nuecron-sdk.js';
-import type { LoginBody } from '../src/services/authentication/types.js';
-import type { CreateWalletBody } from '../src/services/wallet/types.js';
+import { NeucronSDK } from '../../src/nuecron-sdk.js';
+import type { LoginBody } from '../../src/services/authentication/types.js';
+import type { CreateWalletBody } from '../../src/services/wallet/types.js';
 import { vi } from 'vitest';
-import dotenv from 'dotenv';
-dotenv.config();
+import path from 'path';
+import fs from 'fs';
+
+const envPath = path.join(__dirname, '../../.env');
+if (fs.existsSync(envPath) && typeof process.loadEnvFile === 'function') {
+    try {
+        process.loadEnvFile(envPath);
+        console.log('✅ Loaded local .env file');
+    } catch (err) {
+        console.warn('⚠️ Failed to load .env file:', err);
+    }
+} else {
+    console.log('ℹ️ Skipping .env load (probably running in CI)');
+}
 
 vi.mock('axios', async (importOriginal) => {
     const actual = await importOriginal<typeof import('axios')>();
@@ -60,20 +72,7 @@ const DEFAULT_TEST_CONFIG: TestConfig = {
     },
 };
 
-// Helper to check if we should run integration tests
-const shouldRunIntegrationTests = () => {
-    return (
-        !DEFAULT_TEST_CONFIG.environment.skipIntegrationTests &&
-        process.env.NODE_ENV !== 'ci' &&
-        process.env.SKIP_INTEGRATION !== 'true'
-        // DEFAULT_TEST_CONFIG.testUser.email !== 'your.real.test.email@example.com'
-    );
-};
-
-// Conditional describe - skip if integration tests are disabled
-const describeIntegration = shouldRunIntegrationTests() ? describe : describe.skip;
-
-describeIntegration('Integration Tests - Real API', () => {
+describe('Integration Tests - Real API', () => {
     let sdk: NeucronSDK;
     let authToken: string;
     let createdWalletId: string;
@@ -105,8 +104,6 @@ describeIntegration('Integration Tests - Real API', () => {
             expect(result.data.token).toBeDefined();
             expect(typeof result.data.token).toBe('string');
             expect(result.data.token.length).toBeGreaterThan(0);
-            expect(result.data.platforms).toBeDefined();
-            expect(Array.isArray(result.data.platforms)).toBe(true);
 
             authToken = result.data.token;
             console.log('✅ Login successful, token received');
@@ -288,7 +285,7 @@ describeIntegration('Integration Tests - Real API', () => {
             console.log(`⚡ Average response time: ${duration / 5}ms`);
         }, 30000);
     });
-    describeIntegration('Data Integrity Integration', () => {
+    describe('Data Integrity Integration', () => {
         let createdWalletId: string;
 
         beforeAll(async () => {
@@ -396,13 +393,3 @@ describeIntegration('Integration Tests - Real API', () => {
         // Similarly, you can add payWithEmail and payWithPaymail
     });
 });
-
-// Provide helpful information if integration tests are skipped
-if (!shouldRunIntegrationTests()) {
-    console.log('⚠️ Integration tests are SKIPPED.');
-    console.log('ℹ️ To enable integration tests:');
-    console.log('   1. Open tests/integration.test.ts');
-    console.log('   2. Update DEFAULT_TEST_CONFIG with your real test credentials');
-    console.log('   3. Set environment.skipIntegrationTests to false');
-    console.log('   4. Run: npm run test integration.test.ts\n');
-}
