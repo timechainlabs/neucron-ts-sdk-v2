@@ -431,7 +431,5 @@ describe('Integration Tests - Real API', () => {
             ).rejects.toThrow();
             console.log('✅ Unsupported asset correctly rejected');
         }, 15000);
-
-        // Similarly, you can add payWithEmail and payWithPaymail
     });
 });

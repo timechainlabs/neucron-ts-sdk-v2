@@ -39,13 +39,18 @@ jobs:
       - name: Run unit tests
         run: npm run test:unit --coverage
       # Run integration tests
-      - name: Run unit tests
+      - name: Run integration tests
         run: npm run test:integration --coverage
         env:
           TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
           TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
           TEST_TEAM_ID: ${{ secrets.TEST_TEAM_ID }}
           TEST_INVITE_EMAIL: ${{ secrets.TEST_INVITE_EMAIL }}
+          TEST_PAY_WALLET_ID: ${{ secrets.TEST_PAY_WALLET_ID }}
+          TEST_PAY_AMOUNT: ${{ secrets.TEST_PAY_AMOUNT }}
+          TEST_PAY_WITH_ADDRESS: ${{ secrets.TEST_PAY_WITH_ADDRESS }}
+          TEST_PAY_WITH_EMAIL: ${{ secrets.TEST_PAY_WITH_EMAIL }}
+          TEST_PAY_WITH_PAYMAIL: ${{ secrets.TEST_PAY_WITH_PAYMAIL }}
 
       # (Optional) Upload coverage report as artifact
       - name: Upload coverage report
