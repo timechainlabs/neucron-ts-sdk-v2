@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { Pay } from '../src/services/pay/index.js';
-import { Authentication } from '../src/services/authentication/index.js';
-import { NeucronError } from '../src/utils/errors/sdk-error.js';
-import type { PayRequestInputTest, PayRequestInput, PayResponse } from '../src/services/pay/types.js';
-import { ASSET_IDS } from '../src/utils/constants/asset.js';
+import { Pay } from '../../src/services/pay/index.js';
+import { Authentication } from '../../src/services/authentication/index.js';
+import { NeucronError } from '../../src/utils/errors/sdk-error.js';
+import type { PayRequestInputTest, PayRequestInput, PayResponse } from '../../src/services/pay/types.js';
+import { ASSET_IDS } from '../../src/utils/constants/asset.js';
 
 // Store mock instances
 let mockHttpClient: any;
@@ -14,7 +14,7 @@ function asPayRequestInput(input: PayRequestInputTest): PayRequestInput {
 }
 
 // Mock HttpClient
-vi.mock('../src/utils/http/http-client.js', () => {
+vi.mock('../../src/utils/http/http-client.js', () => {
     const mockImplementation = () => ({
         post: vi.fn(),
     });
@@ -25,7 +25,7 @@ vi.mock('../src/utils/http/http-client.js', () => {
 });
 
 // Mock Validator
-vi.mock('../src/services/pay/validator.js', () => {
+vi.mock('../../src/services/pay/validator.js', () => {
     const mockImplementation = () => ({
         payWithAddress: vi.fn(),
         payWithEmail: vi.fn(),
@@ -39,7 +39,7 @@ vi.mock('../src/services/pay/validator.js', () => {
 });
 
 // Mock error handler
-vi.mock('../src/utils/errors/helper.js', () => ({
+vi.mock('../../src/utils/errors/helper.js', () => ({
     handleError: vi.fn((err) => {
         throw err;
     }),
@@ -66,7 +66,7 @@ describe('Pay Service', () => {
         mockAuth = new Authentication();
         mockAuth.setToken('test-auth-token-123');
 
-        vi.spyOn(mockAuth, 'validate').mockImplementation(() => { });
+        vi.spyOn(mockAuth, 'validate').mockImplementation(() => {});
         vi.spyOn(mockAuth, 'getToken').mockReturnValue('test-auth-token-123');
 
         pay = new Pay(mockAuth);
@@ -82,14 +82,10 @@ describe('Pay Service', () => {
         const mockData: PayRequestInputTest = {
             walletID: 'wallet-123',
             assetName: 'BSV',
-            transfer_destinations: [
-                { amount: 100, address: '1BitcoinAddressTest' },
-            ],
+            transfer_destinations: [{ amount: 100, address: '1BitcoinAddressTest' }],
         };
 
-        const mockResponse: PayResponse = [
-            'tx-123',
-        ];
+        const mockResponse: PayResponse = ['tx-123'];
 
         it('should successfully execute payWithAddress', async () => {
             mockValidator.payWithAddress.mockReturnValue(true);
@@ -125,23 +121,15 @@ describe('Pay Service', () => {
             const badData: PayRequestInputTest = {
                 walletID: 'wallet-123',
                 assetName: 'FAKE_ASSET',
-                transfer_destinations: [
-                    { amount: 50, address: 'fake-address' },
-                ],
+                transfer_destinations: [{ amount: 50, address: 'fake-address' }],
             };
 
-            await expect(pay.payWithAddress(asPayRequestInput(badData))).rejects.toThrow(
-                /Unsupported asset/
-            );
+            await expect(pay.payWithAddress(asPayRequestInput(badData))).rejects.toThrow(/Unsupported asset/);
             expect(mockHttpClient.post).not.toHaveBeenCalled();
         });
 
         it('should throw error when not authenticated', async () => {
-            const authError = new NeucronError(
-                'Unauthorized',
-                new Error('No token'),
-                { type: 'internal' }
-            );
+            const authError = new NeucronError('Unauthorized', new Error('No token'), { type: 'internal' });
             vi.spyOn(mockAuth, 'validate').mockImplementation(() => {
                 throw authError;
             });
@@ -155,14 +143,10 @@ describe('Pay Service', () => {
         const mockData: PayRequestInputTest = {
             walletID: 'wallet-123',
             assetName: 'BSV',
-            transfer_destinations: [
-                { amount: 50, email: 'test@example.com' },
-            ],
+            transfer_destinations: [{ amount: 50, email: 'test@example.com' }],
         };
 
-        const mockResponse: PayResponse = [
-            'tx-456',
-        ];
+        const mockResponse: PayResponse = ['tx-456'];
 
         it('should successfully execute payWithEmail', async () => {
             mockValidator.payWithEmail.mockReturnValue(true);
@@ -185,14 +169,10 @@ describe('Pay Service', () => {
         const mockData: PayRequestInputTest = {
             walletID: 'wallet-123',
             assetName: 'BSV',
-            transfer_destinations: [
-                { amount: 75, paymail: 'user@paymail.com' },
-            ],
+            transfer_destinations: [{ amount: 75, paymail: 'user@paymail.com' }],
         };
 
-        const mockResponse: PayResponse = [
-            'tx-789',
-        ];
+        const mockResponse: PayResponse = ['tx-789'];
 
         it('should successfully execute payWithPaymail', async () => {
             mockValidator.payWithPaymail.mockReturnValue(true);

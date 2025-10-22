@@ -35,9 +35,17 @@ jobs:
       - name: Run TypeScript typecheck
         run: npm run typecheck
 
-      # Run tests (Vitest)
-      - name: Run tests
-        run: npm run test:run
+      # Run unit tests
+      - name: Run unit tests
+        run: npm run test:unit --coverage
+      # Run integration tests
+      - name: Run unit tests
+        run: npm run test:integration --coverage
+        env:
+          TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+          TEST_TEAM_ID: ${{ secrets.TEST_TEAM_ID }}
+          TEST_INVITE_EMAIL: ${{ secrets.TEST_INVITE_EMAIL }}
 
       # (Optional) Upload coverage report as artifact
       - name: Upload coverage report

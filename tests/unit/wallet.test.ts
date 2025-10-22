@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { Wallet } from '../src/services/wallet/index.js';
-import { Authentication } from '../src/services/authentication/index.js';
-import { NeucronError } from '../src/utils/errors/sdk-error.js';
+import { Wallet } from '../../src/services/wallet/index.js';
+import { Authentication } from '../../src/services/authentication/index.js';
+import { NeucronError } from '../../src/utils/errors/sdk-error.js';
 import type {
     CreateWalletBody,
     CreateWalletReponse,
@@ -11,28 +11,28 @@ import type {
     WalletAddressBody,
     CreateAddressResponse,
     WalletAddressListResponse,
-} from '../src/services/wallet/types.js';
+} from '../../src/services/wallet/types.js';
 
 // Store mock instances to access them in tests
 let mockHttpClient: any;
 let mockValidator: any;
 
 // Mock the HTTP client
-vi.mock('../src/utils/http/http-client.js', () => {
+vi.mock('../../src/utils/http/http-client.js', () => {
     const mockImplementation = () => ({
         post: vi.fn(),
         get: vi.fn(),
         put: vi.fn(),
         delete: vi.fn(),
     });
-    
+
     return {
         HttpClient: vi.fn().mockImplementation(mockImplementation),
     };
 });
 
 // Mock the validator
-vi.mock('../src/services/wallet/validator.js', () => {
+vi.mock('../../src/services/wallet/validator.js', () => {
     const mockImplementation = () => ({
         createWallet: vi.fn(),
         createWalletResponse: vi.fn(),
@@ -43,14 +43,14 @@ vi.mock('../src/services/wallet/validator.js', () => {
         createAddressResponse: vi.fn(),
         walletAddressListResponse: vi.fn(),
     });
-    
+
     return {
         default: vi.fn().mockImplementation(mockImplementation),
     };
 });
 
 // Mock error handler
-vi.mock('../src/utils/errors/helper.js', () => ({
+vi.mock('../../src/utils/errors/helper.js', () => ({
     handleError: vi.fn((err) => {
         throw err;
     }),
@@ -71,7 +71,7 @@ describe('Wallet Service', () => {
             put: vi.fn(),
             delete: vi.fn(),
         };
-        
+
         mockValidator = {
             createWallet: vi.fn(),
             createWalletResponse: vi.fn(),
@@ -120,7 +120,7 @@ describe('Wallet Service', () => {
             // Mock validation to pass
             mockValidator.createWallet.mockReturnValue(true);
             mockValidator.createWalletResponse.mockReturnValue(mockCreateWalletResponse);
-            
+
             mockHttpClient.post.mockResolvedValue({
                 data: mockCreateWalletResponse,
                 status: 201,
@@ -168,7 +168,7 @@ describe('Wallet Service', () => {
         it('should handle HTTP errors', async () => {
             // Mock validation to pass
             mockValidator.createWallet.mockReturnValue(true);
-            
+
             const httpError = new Error('Network error');
             mockHttpClient.post.mockRejectedValue(httpError);
 
@@ -179,20 +179,20 @@ describe('Wallet Service', () => {
     });
 
     describe('Wallet List', () => {
-        const mockWalletListResponse: WalletListResponse = [{
-            wallet_id: 'wallet-1',
-            app_id: null,
-            paymail_alias: null,
-            is_default: true,
-            team_id: null,
-            user_id: 'user-123',
-            wallet_name: 'Test Wallet',
-        }];
+        const mockWalletListResponse: WalletListResponse = [
+            {
+                wallet_id: 'wallet-1',
+                paymail_alias: null,
+                is_default: true,
+                user_id: 'user-123',
+                wallet_name: 'Test Wallet',
+            },
+        ];
 
         it('should successfully get wallet list', async () => {
             // Mock validation to pass
             mockValidator.walletListResponse.mockReturnValue(mockWalletListResponse);
-            
+
             mockHttpClient.get.mockResolvedValue({
                 data: mockWalletListResponse,
                 status: 200,
@@ -231,7 +231,7 @@ describe('Wallet Service', () => {
             // Mock validation to pass
             mockValidator.updateDefaultWallet.mockReturnValue(true);
             mockValidator.updateDefaultWalletResponse.mockReturnValue(mockUpdateDefaultWalletResponse);
-            
+
             mockHttpClient.put.mockResolvedValue({
                 data: mockUpdateDefaultWalletResponse,
                 status: 200,
@@ -277,7 +277,7 @@ describe('Wallet Service', () => {
             // Mock validation to pass
             mockValidator.walletAddress.mockReturnValue(true);
             mockValidator.createAddressResponse.mockReturnValue(mockCreateAddressResponse);
-            
+
             mockHttpClient.post.mockResolvedValue({
                 data: mockCreateAddressResponse,
                 status: 201,
@@ -319,7 +319,7 @@ describe('Wallet Service', () => {
         it('should successfully get wallet address list', async () => {
             // Mock validation to pass
             mockValidator.walletAddressListResponse.mockReturnValue(mockWalletAddressListResponse);
-            
+
             mockHttpClient.get.mockResolvedValue({
                 data: mockWalletAddressListResponse,
                 status: 200,
@@ -350,15 +350,15 @@ describe('Wallet Service', () => {
     describe('Integration Tests', () => {
         it('should maintain authentication state across multiple wallet operations', async () => {
             // Mock responses for multiple operations
-            const walletListResponse: WalletListResponse = [{
-            wallet_id: 'wallet-789',
-            app_id: null,
-            paymail_alias: null,
-            is_default: true,
-            team_id: null,
-            user_id: 'user-123',
-            wallet_name: 'Test Wallet',
-        }];
+            const walletListResponse: WalletListResponse = [
+                {
+                    wallet_id: 'wallet-789',
+                    paymail_alias: null,
+                    is_default: true,
+                    user_id: 'user-123',
+                    wallet_name: 'Test Wallet',
+                },
+            ];
 
             const createAddressResponse: CreateAddressResponse = {
                 message: 'Address created successfully',
