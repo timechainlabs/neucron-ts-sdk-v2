@@ -1,5 +1,5 @@
 {
-  "name": "neucron",
+  "name": "@neucron/ts-sdk",
   "version": "1.0.0",
   "description": "",
   "type": "module",
