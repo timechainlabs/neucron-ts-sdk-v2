@@ -1,7 +1,7 @@
 {
   "name": "@neucron/ts-sdk",
   "version": "1.0.0",
-  "description": "",
+  "description": "TypeScript SDK providing type-safe access to Neucron APIs for seamless integration",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
