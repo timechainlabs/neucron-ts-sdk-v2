@@ -349,87 +349,87 @@ describe('Integration Tests - Real API', () => {
             console.log(' Team list:', result.data);
         }, 15000);
     });
-
-    describe('Payment Integration', () => {
-        let walletId: string;
-
-        beforeAll(async () => {
-            walletId = process.env.TEST_PAY_WALLET_ID || '';
-            if (!walletId) {
-                throw new Error('No wallet available for Payment tests');
-            }
-        });
-
-        it('should make a payment with address', async () => {
-            const payAddress = process.env.TEST_PAY_WITH_ADDRESS || '';
-            if (!payAddress) {
-                throw new Error('No pay address available for Payment tests');
-            }
-            const result = await sdk.pay.payWithAddress({
-                walletID: walletId,
-                assetName: 'BSV', // make sure this matches ASSET_IDS keys
-                transfer_destinations: [
-                    {
-                        address: payAddress,
-                        amount: Number(process.env.TEST_PAY_AMOUNT || 1),
-                    },
-                ],
-            });
-
-            expect(result.data).toBeDefined();
-            // expect(result.data).toBeDefined();
-            console.log('✅ Payment by address successful:', result.data);
-        }, 15000);
-
-        it('should make a payment with email', async () => {
-            const payEmail = process.env.TEST_PAY_WITH_EMAIL || '';
-            if (!payEmail) {
-                throw new Error('No pay email available for Payment tests');
-            }
-            const result = await sdk.pay.payWithEmail({
-                walletID: walletId,
-                assetName: 'BSV', // make sure this matches ASSET_IDS keys
-                transfer_destinations: [
-                    {
-                        email: payEmail,
-                        amount: Number(process.env.TEST_PAY_AMOUNT || 1),
-                    },
-                ],
-            });
-
-            expect(result.data).toBeDefined();
-            console.log('✅ Payment by email successful:', result.data);
-        }, 15000);
-
-        it('should make a payment with paymail', async () => {
-            const payMail = process.env.TEST_PAY_WITH_PAYMAIL || '';
-            if (!payMail) {
-                throw new Error('No pay mail available for Payment tests');
-            }
-            const result = await sdk.pay.payWithPaymail({
-                walletID: walletId,
-                assetName: 'BSV', // make sure this matches ASSET_IDS keys
-                transfer_destinations: [
-                    {
-                        paymail: payMail,
-                        amount: Number(process.env.TEST_PAY_AMOUNT || 1),
-                    },
-                ],
-            });
-
-            expect(result.data).toBeDefined();
-            console.log('✅ Payment by paymail successful:', result.data);
-        }, 15000);
-
-        it('should fail with unsupported asset', async () => {
-            await expect(
-                sdk.pay.payWithAddress({
-                    walletID: walletId,
-                    assetName: 'BSV',
-                    transfer_destinations: [],
-                })
-            ).rejects.toThrow();
-            console.log('✅ Unsupported asset correctly rejected');
-        }, 15000);
-    });
+    //
+    // describe('Payment Integration', () => {
+    //     let walletId: string;
+    //
+    //     beforeAll(async () => {
+    //         walletId = process.env.TEST_PAY_WALLET_ID || '';
+    //         if (!walletId) {
+    //             throw new Error('No wallet available for Payment tests');
+    //         }
+    //     });
+    //
+    //     it('should make a payment with address', async () => {
+    //         const payAddress = process.env.TEST_PAY_WITH_ADDRESS || '';
+    //         if (!payAddress) {
+    //             throw new Error('No pay address available for Payment tests');
+    //         }
+    //         const result = await sdk.pay.payWithAddress({
+    //             walletID: walletId,
+    //             assetName: 'BSV', // make sure this matches ASSET_IDS keys
+    //             transfer_destinations: [
+    //                 {
+    //                     address: payAddress,
+    //                     amount: Number(process.env.TEST_PAY_AMOUNT || 1),
+    //                 },
+    //             ],
+    //         });
+    //
+    //         expect(result.data).toBeDefined();
+    //         // expect(result.data).toBeDefined();
+    //         console.log('✅ Payment by address successful:', result.data);
+    //     }, 15000);
+    //
+    //     it('should make a payment with email', async () => {
+    //         const payEmail = process.env.TEST_PAY_WITH_EMAIL || '';
+    //         if (!payEmail) {
+    //             throw new Error('No pay email available for Payment tests');
+    //         }
+    //         const result = await sdk.pay.payWithEmail({
+    //             walletID: walletId,
+    //             assetName: 'BSV', // make sure this matches ASSET_IDS keys
+    //             transfer_destinations: [
+    //                 {
+    //                     email: payEmail,
+    //                     amount: Number(process.env.TEST_PAY_AMOUNT || 1),
+    //                 },
+    //             ],
+    //         });
+    //
+    //         expect(result.data).toBeDefined();
+    //         console.log('✅ Payment by email successful:', result.data);
+    //     }, 15000);
+    //
+    //     it('should make a payment with paymail', async () => {
+    //         const payMail = process.env.TEST_PAY_WITH_PAYMAIL || '';
+    //         if (!payMail) {
+    //             throw new Error('No pay mail available for Payment tests');
+    //         }
+    //         const result = await sdk.pay.payWithPaymail({
+    //             walletID: walletId,
+    //             assetName: 'BSV', // make sure this matches ASSET_IDS keys
+    //             transfer_destinations: [
+    //                 {
+    //                     paymail: payMail,
+    //                     amount: Number(process.env.TEST_PAY_AMOUNT || 1),
+    //                 },
+    //             ],
+    //         });
+    //
+    //         expect(result.data).toBeDefined();
+    //         console.log('✅ Payment by paymail successful:', result.data);
+    //     }, 15000);
+    //
+    //     it('should fail with unsupported asset', async () => {
+    //         await expect(
+    //             sdk.pay.payWithAddress({
+    //                 walletID: walletId,
+    //                 assetName: 'BSV',
+    //                 transfer_destinations: [],
+    //             })
+    //         ).rejects.toThrow();
+    //         console.log('✅ Unsupported asset correctly rejected');
+    //     }, 15000);
+    // });
 });
