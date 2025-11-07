@@ -432,4 +432,299 @@ describe('Integration Tests - Real API', () => {
     //         console.log('✅ Unsupported asset correctly rejected');
     //     }, 15000);
     // });
+
+    describe('Asset21 Integration', () => {
+        let walletId: string;
+        let assetID: string;
+        let teamID: string;
+        let walletAddress: string;
+        let requestId: string;
+
+        beforeAll(async () => {
+            const walletList = await sdk.wallet.walletList();
+            if (walletList.data && walletList.data.length > 0) {
+                walletId = walletList.data[0].wallet_id;
+                console.log(`📝 Using wallet ID: ${walletId}`);
+            } else {
+                throw new Error('No wallet available for Asset21 tests');
+            }
+
+            const addressList = await sdk.wallet.walletAddressList();
+            if (addressList.data && addressList.data.length > 0) {
+                walletAddress = addressList.data[0];
+                console.log(`📍 Using wallet address: ${walletAddress}`);
+            } else {
+                throw new Error('No wallet address available for Asset21 tests');
+            }
+
+            teamID = process.env.TEST_TEAM_ID || '';
+            if (!teamID) {
+                const teamList = await sdk.team.getTeamList();
+                if (teamList.data && teamList.data.length > 0) {
+                    teamID = teamList.data[0].team_id;
+                    console.log(`👥 Using team ID: ${teamID}`);
+                }
+            }
+        });
+
+        it('should register a new Asset21 asset', async () => {
+            const registerPayload = {
+                'X-Neucron-Team-ID': teamID,
+                registerPayloadBody: {
+                    asset_name: `Test Asset ${Date.now()}`,
+                    image_url: 'https://loremflickr.com/400/400',
+                    legal_term: 'Test legal terms and conditions',
+                    symbol: `TST${Date.now().toString().slice(-4)}`,
+                    token_detail: {
+                        decimal: 2,
+                        feeStructure: [],
+                        icon: 'https://avatars.githubusercontent.com/u/87238574',
+                        request_config: {
+                            min_approval: 0,
+                            min_rejection: 0,
+                        },
+                    },
+                    total_supply: 1000000,
+                    wallet_id: walletId,
+                },
+            };
+
+            console.log('🎨 Registering new Asset21...');
+
+            const result = await sdk.asset21.register(registerPayload);
+
+            expect(result.data).toBeDefined();
+            expect(result.data.assetID).toBeDefined();
+            expect(result.status).toBe(200);
+
+            assetID = result.data.assetID;
+            console.log(`✅ Asset registered successfully with ID: ${assetID}`);
+        }, 20000);
+
+        it('should deploy the Asset21 asset', async () => {
+            if (!assetID) {
+                throw new Error('Asset ID not available from registration');
+            }
+
+            console.log(`🚀 Deploying Asset21: ${assetID}`);
+
+            const result = await sdk.asset21.deploy({
+                assetID: assetID,
+                'X-Neucron-Team-ID': teamID,
+            });
+
+            expect(result.data).toBeDefined();
+            expect(result.data.txid).toBeDefined();
+            expect(result.status).toBe(200);
+
+            console.log(`✅ Asset deployed successfully. TXID: ${result.data.txid}`);
+        }, 20000);
+
+        it('should get system config for the asset', async () => {
+            console.log(`⚙️ Fetching system config for asset: ${assetID}`);
+
+            const result = await sdk.asset21.getSystemConfig({
+                assetID: assetID,
+            });
+
+            expect(result.data).toBeDefined();
+            expect(result.data.assetId).toBe(assetID);
+            expect(result.data.decimals).toBeDefined();
+            expect(result.data.symbol).toBeDefined();
+            expect(result.status).toBe(200);
+
+            console.log(`✅ System config retrieved successfully`);
+            console.log(`📊 Symbol: ${result.data.symbol}, Decimals: ${result.data.decimals}`);
+        }, 15000);
+
+        it('should create a customer request', async () => {
+            console.log(`👤 Creating customer request for asset: ${assetID}`);
+
+            const result = await sdk.asset21.createRequest({
+                approvalsRequired: 0,
+                assetId: assetID,
+                rejectionsRequired: 0,
+                requestDetails: {
+                    address: walletAddress,
+                    email: DEFAULT_TEST_CONFIG.testUser.email,
+                    name: `${DEFAULT_TEST_CONFIG.testUser.firstName} ${DEFAULT_TEST_CONFIG.testUser.lastName}`,
+                    UtxoId: '',
+                    amount: 0,
+                },
+                state: 'CUSTOMER',
+            });
+
+            expect(result.data).toBeDefined();
+            expect(result.data.message).toBeDefined();
+            expect(result.status).toBe(200);
+
+            console.log(`✅ Customer request created successfully`);
+        }, 15000);
+
+        it('should create a mint request', async () => {
+            console.log(`💰 Creating mint request for asset: ${assetID}`);
+
+            const result = await sdk.asset21.createRequest({
+                approvalsRequired: 0,
+                assetId: assetID,
+                rejectionsRequired: 0,
+                requestDetails: {
+                    address: walletAddress,
+                    amount: 100,
+                },
+                state: 'MINT',
+            });
+
+            expect(result.data).toBeDefined();
+            expect(result.data.message).toBeDefined();
+            expect(result.status).toBe(200);
+
+            console.log(`✅ Mint request created successfully`);
+        }, 15000);
+
+        it('should get all Asset21 requests', async () => {
+            console.log(`📋 Fetching all requests for asset: ${assetID}`);
+
+            const result = await sdk.asset21.getRequest({
+                assetID: assetID,
+                state: 'MINT',
+                status: 'PENDING',
+                page: '1',
+                size: '10',
+            });
+
+            expect(result.data).toBeDefined();
+            expect(Array.isArray(result.data)).toBe(true);
+            expect(result.status).toBe(200);
+
+            if (result.data.length > 0) {
+                requestId = result.data[0].requestId;
+                console.log(`✅ Found ${result.data.length} requests`);
+                console.log(`📝 First request ID: ${requestId}`);
+            }
+        }, 15000);
+
+        it('should get all customers for the asset', async () => {
+            console.log(`👥 Fetching customers for asset: ${assetID}`);
+
+            const result = await sdk.asset21.getCustomers({
+                assetID: assetID,
+            });
+
+            expect(result.data).toBeDefined();
+            expect(result.status).toBe(200);
+
+            console.log(`✅ Customers list retrieved successfully`);
+        }, 15000);
+
+        it('should get address state', async () => {
+            console.log(`📍 Fetching address state for asset: ${assetID}`);
+
+            const result = await sdk.asset21.getAddressState({
+                assetID: assetID,
+            });
+
+            expect(result.data).toBeDefined();
+            expect(Array.isArray(result.data)).toBe(true);
+            expect(result.status).toBe(200);
+
+            console.log(`✅ Address state retrieved: ${result.data.length} addresses`);
+        }, 15000);
+
+        it('should fetch balances for given addresses', async () => {
+            console.log(`💵 Fetching balances for addresses`);
+
+            const result = await sdk.asset21.fetchBalance({
+                assetID: assetID,
+                addresses: [walletAddress],
+            });
+
+            expect(result.data).toBeDefined();
+            expect(Array.isArray(result.data)).toBe(true);
+            expect(result.status).toBe(200);
+
+            if (result.data.length > 0) {
+                console.log(`✅ Balance: ${result.data[0].amt} (${result.data[0].precised} precise)`);
+            }
+        }, 15000);
+
+        it('should sync all transactions', async () => {
+            console.log(`🔄 Syncing transactions for asset: ${assetID}`);
+
+            const result = await sdk.asset21.syncTransaction({
+                assetID: assetID,
+                from: 0,
+                limit: 10,
+            });
+
+            expect(result.data).toBeDefined();
+            expect(Array.isArray(result.data)).toBe(true);
+            expect(result.status).toBe(200);
+
+            console.log(`✅ Synced ${result.data.length} transactions`);
+        }, 15000);
+
+        it('should get transactions for specific addresses', async () => {
+            console.log(`🔍 Fetching transactions for specific addresses`);
+
+            const result = await sdk.asset21.triggerSyncForAddresses({
+                assetID: assetID,
+                from: 0,
+                limit: 10,
+                order: 'desc',
+                request: [walletAddress],
+            });
+
+            expect(result.data).toBeDefined();
+            expect(Array.isArray(result.data)).toBe(true);
+            expect(result.status).toBe(200);
+
+            console.log(`✅ Found ${result.data.length} transactions for address`);
+        }, 15000);
+
+        it('should get all UTXOs by addresses', async () => {
+            console.log(`📦 Fetching UTXOs for addresses`);
+
+            const result = await sdk.asset21.getUnspentUTXOs({
+                assetID: assetID,
+                addresses: [walletAddress],
+            });
+
+            expect(result.data).toBeDefined();
+            expect(Array.isArray(result.data)).toBe(true);
+            expect(result.status).toBe(200);
+
+            console.log(`✅ Found ${result.data.length} UTXOs`);
+
+            if (result.data.length > 0) {
+                const firstUtxo = result.data[0];
+                console.log(`📍 Sample UTXO outpoint: ${firstUtxo.outpoint}`);
+            }
+        }, 15000);
+
+        it('should get a particular output info', async () => {
+            // First get UTXOs to have a valid outpoint
+            const utxos = await sdk.asset21.getUnspentUTXOs({
+                assetID: assetID,
+                addresses: [walletAddress],
+            });
+
+            if (utxos.data && utxos.data.length > 0) {
+                const outpoint = utxos.data[0].outpoint;
+                console.log(`🔍 Fetching output info for: ${outpoint}`);
+
+                const result = await sdk.asset21.getOutputInfo({
+                    outpoint: outpoint,
+                });
+
+                expect(result.data).toBeDefined();
+                expect(Array.isArray(result.data)).toBe(true);
+                expect(result.status).toBe(200);
+
+                console.log(`✅ Output info retrieved successfully`);
+            } else {
+                console.log('⏭️ Skipping: No UTXOs available to test output info');
+            }
+        }, 15000);
+    });
 });

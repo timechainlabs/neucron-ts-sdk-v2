@@ -103,10 +103,11 @@ export const createRequestSchema = z.object({
     assetId: z.string().min(1, 'Asset ID cannot be empty'),
     rejectionsRequired: z.number(),
     requestDetails: z.object({
-        UtxoId: z.string().min(1, 'UtxoId cannot be empty'),
-        address: z.string().min(1, 'Address cannot be empty'),
-        amount: z.number(),
-        email: z.string().email('Invalid email format'),
+        UtxoId: z.string().optional(),
+        address: z.string().optional(),
+        amount: z.number().optional(),
+        email: z.string().email('Invalid email format').optional(),
+        name: z.string().optional(),
     }),
     state: stateEnum,
 });
