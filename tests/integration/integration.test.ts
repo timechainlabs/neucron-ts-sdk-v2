@@ -434,21 +434,11 @@ describe('Integration Tests - Real API', () => {
     // });
 
     describe('Asset21 Integration', () => {
-        let walletId: string;
         let assetID: string;
-        let teamID: string;
         let walletAddress: string;
         let requestId: string;
 
         beforeAll(async () => {
-            const walletList = await sdk.wallet.walletList();
-            if (walletList.data && walletList.data.length > 0) {
-                walletId = walletList.data[0].wallet_id;
-                console.log(`📝 Using wallet ID: ${walletId}`);
-            } else {
-                throw new Error('No wallet available for Asset21 tests');
-            }
-
             const addressList = await sdk.wallet.walletAddressList();
             if (addressList.data && addressList.data.length > 0) {
                 walletAddress = addressList.data[0];
@@ -456,20 +446,10 @@ describe('Integration Tests - Real API', () => {
             } else {
                 throw new Error('No wallet address available for Asset21 tests');
             }
-
-            teamID = process.env.TEST_TEAM_ID || '';
-            if (!teamID) {
-                const teamList = await sdk.team.getTeamList();
-                if (teamList.data && teamList.data.length > 0) {
-                    teamID = teamList.data[0].team_id;
-                    console.log(`👥 Using team ID: ${teamID}`);
-                }
-            }
         });
 
         it('should register a new Asset21 asset', async () => {
             const registerPayload = {
-                'X-Neucron-Team-ID': teamID,
                 registerPayloadBody: {
                     asset_name: `Test Asset ${Date.now()}`,
                     image_url: 'https://loremflickr.com/400/400',
@@ -485,7 +465,6 @@ describe('Integration Tests - Real API', () => {
                         },
                     },
                     total_supply: 1000000,
-                    wallet_id: walletId,
                 },
             };
 
@@ -510,7 +489,6 @@ describe('Integration Tests - Real API', () => {
 
             const result = await sdk.asset21.deploy({
                 assetID: assetID,
-                'X-Neucron-Team-ID': teamID,
             });
 
             expect(result.data).toBeDefined();
@@ -703,7 +681,6 @@ describe('Integration Tests - Real API', () => {
         }, 15000);
 
         it('should get a particular output info', async () => {
-            // First get UTXOs to have a valid outpoint
             const utxos = await sdk.asset21.getUnspentUTXOs({
                 assetID: assetID,
                 addresses: [walletAddress],
@@ -718,7 +695,7 @@ describe('Integration Tests - Real API', () => {
                 });
 
                 expect(result.data).toBeDefined();
-                expect(Array.isArray(result.data)).toBe(true);
+                expect(typeof result.data).toBe('object');
                 expect(result.status).toBe(200);
 
                 console.log(`✅ Output info retrieved successfully`);

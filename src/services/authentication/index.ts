@@ -62,20 +62,20 @@ export class Authentication {
         }
     }
 
-public async login(option: LoginBody): Promise<HttpResponse<LoginResponse>> {
-    try {
-        //throws error if this not passes
-        this.validator.login(option);
-        const reqPath = Routes.AUTH.LOGIN;
-        const resp = await this.httpClient.post<LoginResponse>(reqPath, option);
-        const data = this.validator.loginResponse(resp.data);
-        this.setToken(data.token);
-        // Return validated response
-        return { ...resp, data };
-    } catch (err) {
-        handleError(err);
+    public async login(option: LoginBody): Promise<HttpResponse<LoginResponse>> {
+        try {
+            //throws error if this not passes
+            this.validator.login(option);
+            const reqPath = Routes.AUTH.LOGIN;
+            const resp = await this.httpClient.post<LoginResponse>(reqPath, option);
+            const data = this.validator.loginResponse(resp.data);
+            this.setToken(data.token);
+            // Return validated response
+            return { ...resp, data };
+        } catch (err) {
+            handleError(err);
+        }
     }
-}
 
     async logout() {
         try {

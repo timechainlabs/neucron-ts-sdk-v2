@@ -209,7 +209,9 @@ export const balancesSchema = z.object({
     walletID: z.string(),
 });
 
-export const balancesResponseSchema = z.array(z.object({
-    asset_id: z.string().min(1),
-    sum: z.number().int().nonnegative(),
-}));
+export const balancesResponseSchema = z.array(
+    z.object({
+        asset_id: z.string().min(1),
+        sum: z.number().int().nonnegative(),
+    })
+);
