@@ -7,6 +7,7 @@ export const messageResponseSchema = z.object({
 const stateEnum = z.enum(['CUSTOMER', 'MINT', 'REDEEM', 'FREEZE', 'BLACKLIST', 'UNFREEZE', 'UNBLACKLIST']);
 
 export const getAddressStateSchema = z.object({
+    'X-Neucron-Team-ID': z.string().optional(),
     assetID: z.string().min(1, 'Asset ID is required'),
 });
 
@@ -29,7 +30,9 @@ export const fetchBalanceResponseSchema = z.array(
     })
 );
 
-export const systemConfigSchema = getAddressStateSchema;
+export const systemConfigSchema = z.object({
+    assetID: z.string().min(1, 'Asset ID is required'),
+});
 
 const FeeSchema = z.object({
     fee: z.number(),
@@ -43,7 +46,7 @@ export const systemConfigResponseSchema = z.object({
     burnAddress: z.string(),
     decimals: z.number(),
     feeAddress: z.string(),
-    fees: z.array(FeeSchema),
+    fees: z.array(FeeSchema.optional()).optional(),
     mintAddress: z.string(),
     minterHex: z.string(),
     paused: z.boolean(),
@@ -53,15 +56,15 @@ export const systemConfigResponseSchema = z.object({
 
 export const getCustomersSchema = getAddressStateSchema;
 
-export const getCustomerResponseSchema = z.object({
-    address: z.string().min(1, 'Address is required'),
-    asset_id: z.string().min(1, 'Address is required'),
-    email: z.string().min(1, 'Email is required'),
-});
+export const getCustomerResponseSchema = z.array(
+    z.object({
+        address: z.string().min(1, 'Address is required'),
+        asset_id: z.string().min(1, 'Address is required'),
+        email: z.string().min(1, 'Email is required'),
+    })
+);
 
-export const deploySchema = getAddressStateSchema.extend({
-    'X-Neucron-Team-ID': z.string().min(1, 'Team ID is required'),
-});
+export const deploySchema = getAddressStateSchema;
 
 export const deployResponseSchema = z.object({
     txid: z.string().min(1, 'txid is required for successful deployment'),
@@ -75,11 +78,13 @@ const registerPayloadBody = z.object({
     token_detail: z.object({
         decimal: z.number(),
         feeStructure: z.array(
-            z.object({
-                fee: z.number(),
-                max: z.number(),
-                min: z.number(),
-            })
+            z
+                .object({
+                    fee: z.number(),
+                    max: z.number(),
+                    min: z.number(),
+                })
+                .optional()
         ),
         icon: z.string().min(1, 'Icon cannot be empty'),
         request_config: z.object({
@@ -88,11 +93,11 @@ const registerPayloadBody = z.object({
         }),
     }),
     total_supply: z.number().nonnegative(),
-    wallet_id: z.string().min(1, 'Wallet ID cannot be empty'),
+    wallet_id: z.string().optional(),
 });
 
 export const registerPayloadSchema = z.object({
-    'X-Neucron-Team-ID': z.string().min(1, 'Team ID is required'),
+    'X-Neucron-Team-ID': z.string().optional(),
     registerPayloadBody,
 });
 
@@ -173,11 +178,11 @@ export const syncTransactionResponse = z.array(
         height: z.number(),
         idx: z.number(),
         outs: z.array(z.number()),
-        rawtx: z.string().min(1, 'Raw transaction cannot be empty'),
-        receivers: z.array(z.string().min(1, 'Receiver address cannot be empty')),
+        rawtx: z.string(),
+        receivers: z.array(z.string()).optional(),
         score: z.number(),
-        senders: z.array(z.string().min(1, 'Sender address cannot be empty')),
-        txid: z.string().min(1, 'Transaction ID cannot be empty'),
+        senders: z.array(z.string()).optional(),
+        txid: z.string(),
     })
 );
 
@@ -195,48 +200,48 @@ export const transferSchema = z.object({
 
 export const transferResponseSchema = z.array(z.string().min(1, 'Transfer cannot be empty'));
 
-export const getUnspentUTXOs = z.object({
+export const getUnspentUTXOsSchema = z.object({
     assetID: z.string().min(1, 'Asset ID cannot be empty'),
     addresses: z.array(z.string().min(1, 'Address cannot be empty')),
 });
 
 const Asset21Schema = z.object({
-    amt: z.number(),
-    dec: z.number(),
-    icon: z.string().min(1, 'Icon cannot be empty'),
-    id: z.string().min(1, 'Asset ID cannot be empty'),
-    op: z.string().min(1, 'Operation cannot be empty'),
-    sym: z.string().min(1, 'Symbol cannot be empty'),
+    amt: z.number().optional(),
+    dec: z.number().optional(),
+    icon: z.string().optional(),
+    id: z.string().optional(),
+    op: z.string().optional(),
+    sym: z.string().optional(),
 });
 
 const CosignSchema = z.object({
-    address: z.string().min(1, 'Cosign address cannot be empty'),
-    cosigner: z.string().min(1, 'Cosigner cannot be empty'),
+    address: z.string(),
+    cosigner: z.string(),
 });
 
 const DataSchema = z.object({
-    asset21: Asset21Schema,
-    cosign: CosignSchema,
+    asset21: Asset21Schema.optional(),
+    cosign: CosignSchema.optional(),
 });
 
-export const getUnspentUTXOResponse = z.array(
-    z.object({
-        data: DataSchema,
-        height: z.number().int().nonnegative(),
-        idx: z.number().int().nonnegative(),
-        outpoint: z.string().min(1, 'Outpoint cannot be empty'),
-        owners: z.array(z.string().min(1, 'Owner address cannot be empty')),
-        satoshis: z.number().int().nonnegative(),
-        score: z.number(),
-        script: z.string().min(1, 'Script cannot be empty'),
-        senders: z.array(z.string().min(1, 'Sender address cannot be empty')),
-        txid: z.string().min(1, 'Transaction ID cannot be empty'),
-        vout: z.number().int().nonnegative(),
-    })
-);
+const UTXOInfoSchema = z.object({
+    data: DataSchema.optional(),
+    height: z.number(),
+    idx: z.number(),
+    outpoint: z.string(),
+    owners: z.array(z.string()).optional(),
+    satoshis: z.number().int().nonnegative(),
+    score: z.number(),
+    script: z.string(),
+    senders: z.array(z.string()).optional(),
+    txid: z.string(),
+    vout: z.number().int().nonnegative(),
+});
+
+export const getUnspentUTXOsResponseSchema = z.array(UTXOInfoSchema);
 
 export const getOutputInfoSchema = z.object({
     outpoint: z.string().min(1, 'Outpoint cannot be empty'),
 });
 
-export const getOutputInfoResponse = getUnspentUTXOResponse;
+export const getOutputInfoResponseSchema = UTXOInfoSchema;
