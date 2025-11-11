@@ -92,10 +92,7 @@ export class Assets21 {
             this.auth.validate();
             this.validator.systemConfig(options);
             const reqPath = Routes.ASSET21.CONFIG;
-            const headers: Headers = {
-                Authorization: this.auth.getToken(),
-            };
-            const response = await this.httpClient.get<SystemConfigResponse>(reqPath, headers, options);
+            const response = await this.httpClient.get<SystemConfigResponse>(reqPath, {}, options);
             this.validator.systemConfigResponse(response.data);
             return response;
         } catch (error) {
@@ -110,6 +107,7 @@ export class Assets21 {
             const reqPath = Routes.ASSET21.CUSTOMERS;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
+                'X-Neucron-Team-ID': options['X-Neucron-Team-ID'] ?? '',
             };
             const params: QueryParams = {
                 assetID: options.assetID,
@@ -129,12 +127,12 @@ export class Assets21 {
             const reqPath = Routes.ASSET21.DEPLOY;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
-                'X-Neucron-Team-ID': options['X-Neucron-Team-ID'],
+                'X-Neucron-Team-ID': options['X-Neucron-Team-ID'] ?? '',
             };
             const params: QueryParams = {
                 assetID: options.assetID,
             };
-            const response = await this.httpClient.post<DeployResponse>(reqPath, params, headers);
+            const response = await this.httpClient.post<DeployResponse>(reqPath, null, headers, params);
             this.validator.deployResponse(response.data);
             return response;
         } catch (error) {
@@ -149,7 +147,7 @@ export class Assets21 {
             const reqPath = Routes.ASSET21.REGISTER;
             const headers: Headers = {
                 Authorization: this.auth.getToken(),
-                'X-Neucron-Team-ID': options['X-Neucron-Team-ID'],
+                'X-Neucron-Team-ID': options['X-Neucron-Team-ID'] ?? '',
             };
             const response = await this.httpClient.post<RegisterResponse>(
                 reqPath,
@@ -298,7 +296,12 @@ export class Assets21 {
             const params: QueryParams = {
                 assetID: options.assetID,
             };
-            const response = await this.httpClient.get<GetUnspentUTXOResponse>(reqPath, headers, params);
+            const response = await this.httpClient.post<GetUnspentUTXOResponse>(
+                reqPath,
+                options.addresses,
+                headers,
+                params
+            );
             this.validator.getUnspentUTXOResponse(response.data);
             return response;
         } catch (error) {

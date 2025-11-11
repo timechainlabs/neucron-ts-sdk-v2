@@ -23,10 +23,10 @@ import {
     triggerSyncForAddressesResponseSchema,
     transferSchema,
     transferResponseSchema,
-    getUnspentUTXOs,
-    getUnspentUTXOResponse,
+    getUnspentUTXOsSchema,
+    getUnspentUTXOsResponseSchema,
     getOutputInfoSchema,
-    getOutputInfoResponse,
+    getOutputInfoResponseSchema,
 } from './schema.js';
 import type {
     GetAddressState,
@@ -157,11 +157,11 @@ export default class Validator {
     }
 
     getUnspentUTXOs(params: GetUnspentUTXOs) {
-        return getUnspentUTXOs.parse(params);
+        return getUnspentUTXOsSchema.parse(params);
     }
 
     getUnspentUTXOResponse(response: GetUnspentUTXOResponse) {
-        return getUnspentUTXOResponse.parse(response);
+        return getUnspentUTXOsResponseSchema.parse(response);
     }
 
     getOutputInfo(params: GetOutputInfo) {
@@ -169,6 +169,6 @@ export default class Validator {
     }
 
     getOutputInfoResponse(response: GetOutputInfoResponse) {
-        return getOutputInfoResponse.parse(response);
+        return getOutputInfoResponseSchema.parse(response);
     }
 }
