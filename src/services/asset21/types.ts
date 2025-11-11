@@ -24,10 +24,10 @@ import {
     triggerSyncForAddressesResponseSchema,
     transferSchema,
     transferResponseSchema,
-    getUnspentUTXOs,
-    getUnspentUTXOResponse,
+    getUnspentUTXOsSchema,
+    getUnspentUTXOsResponseSchema,
     getOutputInfoSchema,
-    getOutputInfoResponse,
+    getOutputInfoResponseSchema,
 } from './schema.js';
 
 export type GetAddressState = z.infer<typeof getAddressStateSchema>;
@@ -54,7 +54,7 @@ export type TriggerSyncForAddresses = z.infer<typeof triggerSyncForAddressesSche
 export type TriggerSyncForAddressesResponse = z.infer<typeof triggerSyncForAddressesResponseSchema>;
 export type Transfer = z.infer<typeof transferSchema>;
 export type TransferResponse = z.infer<typeof transferResponseSchema>;
-export type GetUnspentUTXOs = z.infer<typeof getUnspentUTXOs>;
-export type GetUnspentUTXOResponse = z.infer<typeof getUnspentUTXOResponse>;
+export type GetUnspentUTXOs = z.infer<typeof getUnspentUTXOsSchema>;
+export type GetUnspentUTXOResponse = z.infer<typeof getUnspentUTXOsResponseSchema>;
 export type GetOutputInfo = z.infer<typeof getOutputInfoSchema>;
-export type GetOutputInfoResponse = z.infer<typeof getOutputInfoResponse>;
+export type GetOutputInfoResponse = z.infer<typeof getOutputInfoResponseSchema>;
