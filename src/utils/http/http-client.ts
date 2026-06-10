@@ -57,6 +57,22 @@ export class HttpClient implements IHttpClient {
         };
     }
 
+    async patch<T>(reqPath: string, data: unknown, headers: Headers, params?: QueryParams): Promise<HttpResponse<T>> {
+        const url = BASE_URL + `${reqPath}`;
+        const response = await axios.patch(url, data, {
+            headers: {
+                ...headers,
+                ...(data instanceof FormData ? {} : this.globalHeader),
+            },
+            params,
+        });
+        return {
+            data: response.data,
+            headers: response.headers as Headers,
+            status: response.status,
+        };
+    }
+
     async delete<T>(reqPath: string, headers: Headers, params: QueryParams): Promise<HttpResponse<T>> {
         const url = BASE_URL + `${reqPath}`;
         const response = await axios.delete(url, {

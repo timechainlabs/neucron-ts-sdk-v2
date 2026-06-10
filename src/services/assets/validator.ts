@@ -22,6 +22,12 @@ import {
     transferAssetResponseSchema,
     balancesSchema,
     balancesResponseSchema,
+    publicAssetListSchema,
+    publicAssetListResponseSchema,
+    ownedAssetDetailsSchema,
+    ownedAssetDetailsResponseSchema,
+    eventDetailsSchema,
+    eventDetailsResponseSchema,
 } from './schema.js';
 import type {
     TransferAsset,
@@ -47,6 +53,12 @@ import type {
     AssetDetails,
     BalancesResponse,
     Balances,
+    PublicAssetList,
+    PublicAssetListResponse,
+    OwnedAssetDetails,
+    OwnedAssetDetailsResponse,
+    EventDetails,
+    EventDetailsResponse,
 } from './types.js';
 
 export default class Validator {
@@ -92,8 +104,10 @@ export default class Validator {
     redeemAssetResponse(asset: RedeemAssetResponse) {
         return redeemAssetResponseSchema.parse(asset);
     }
-    ledgerList(options: LedgerList) {
-        return ledgerListSchema.parse(options);
+    ledgerList(options?: LedgerList) {
+        if (options) {
+            return ledgerListSchema.parse(options);
+        }
     }
     ledgerListResponse(asset: LedgerListResponse) {
         return ledgerListResponseSchema.parse(asset);
@@ -120,5 +134,29 @@ export default class Validator {
     }
     balancesResponse(asset: BalancesResponse) {
         return balancesResponseSchema.parse(asset);
+    }
+
+    publicAssetList(options?: PublicAssetList) {
+        if (options) publicAssetListSchema.parse(options);
+    }
+
+    publicAssetListResponse(asset: PublicAssetListResponse) {
+        return publicAssetListResponseSchema.parse(asset);
+    }
+
+    ownedAssetDetails(asset: OwnedAssetDetails) {
+        return ownedAssetDetailsSchema.parse(asset);
+    }
+
+    ownedAssetDetailsResponse(asset: OwnedAssetDetailsResponse) {
+        return ownedAssetDetailsResponseSchema.parse(asset);
+    }
+
+    eventDetails(asset: EventDetails) {
+        return eventDetailsSchema.parse(asset);
+    }
+
+    eventDetailsResponse(asset: EventDetailsResponse) {
+        return eventDetailsResponseSchema.parse(asset);
     }
 }

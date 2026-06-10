@@ -173,10 +173,11 @@ export const redeemAssetSchema = z.object({
 export const redeemAssetResponseSchema = z.any();
 
 export const ledgerListSchema = z.object({
-    status: z.array(z.string()),
+    status: z.array(z.string()).optional(),
     walletID: z.string().optional(),
     pageNumber: z.number().int().min(1).optional(),
     pageSize: z.number().int().min(1).optional(),
+    businessId: z.string().optional(),
 });
 
 export const ledgerListResponseSchema = z.any();
@@ -207,11 +208,39 @@ export const assetStatsResponseSchema = z.object({
 
 export const balancesSchema = z.object({
     walletID: z.string(),
+    network: z.enum(['MAIN', 'TEST']).optional(),
+    currency: z.string().optional(),
+    businessId: z.string().optional(),
 });
 
-export const balancesResponseSchema = z.array(
-    z.object({
-        asset_id: z.string().min(1),
-        sum: z.number().int().nonnegative(),
-    })
-);
+export const balancesResponseSchema = z.object({
+    total_balance: z.record(z.number().optional()),
+    asset_balance: z.array(z.record(z.unknown())),
+});
+
+export const publicAssetListSchema = z.object({
+    pageSize: z.number().optional(),
+    searchQuery: z.string().optional(),
+    type: z.string().optional(),
+    pageNumber: z.number().optional(),
+    network: z.string().optional(),
+    chain: z.string().optional(),
+    businessId: z.string().optional(),
+});
+
+export const publicAssetListResponseSchema = z.record(z.unknown());
+
+export const ownedAssetDetailsSchema = z.object({
+    assetID: z.string().min(1),
+    walletID: z.string().min(1),
+    businessId: z.string().optional(),
+});
+
+export const ownedAssetDetailsResponseSchema = z.record(z.unknown());
+
+export const eventDetailsSchema = z.object({
+    eventId: z.string().min(1),
+    businessId: z.string().optional(),
+});
+
+export const eventDetailsResponseSchema = z.record(z.unknown());
