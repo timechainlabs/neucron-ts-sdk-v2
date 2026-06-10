@@ -13,6 +13,9 @@ import type {
     WalletAddressListResponse,
 } from '../../src/services/wallet/types.js';
 
+const authHeaders = { Authorization: 'test-auth-token-123', 'X-Identifier': 'NEUCRON' };
+const businessHeaders = { ...authHeaders, 'X-Neucron-Business-ID': 'biz-123' };
+
 // Store mock instances to access them in tests
 let mockHttpClient: any;
 let mockValidator: any;
@@ -42,6 +45,19 @@ vi.mock('../../src/services/wallet/validator.js', () => {
         walletAddress: vi.fn(),
         createAddressResponse: vi.fn(),
         walletAddressListResponse: vi.fn(),
+        createBSVWallet: vi.fn(),
+        syncAsset: vi.fn(),
+        syncAssetResponse: vi.fn(),
+        availableAssets: vi.fn(),
+        availableAssetsResponse: vi.fn(),
+        walletAssetAction: vi.fn(),
+        recoverWallet: vi.fn(),
+        transactions: vi.fn(),
+        transactionsResponse: vi.fn(),
+        transactionDetails: vi.fn(),
+        transactionDetailsResponse: vi.fn(),
+        importAsset: vi.fn(),
+        importAssetResponse: vi.fn(),
     });
 
     return {
@@ -81,6 +97,19 @@ describe('Wallet Service', () => {
             walletAddress: vi.fn(),
             createAddressResponse: vi.fn(),
             walletAddressListResponse: vi.fn(),
+            createBSVWallet: vi.fn(),
+            syncAsset: vi.fn(),
+            syncAssetResponse: vi.fn(),
+            availableAssets: vi.fn(),
+            availableAssetsResponse: vi.fn(),
+            walletAssetAction: vi.fn(),
+            recoverWallet: vi.fn(),
+            transactions: vi.fn(),
+            transactionsResponse: vi.fn(),
+            transactionDetails: vi.fn(),
+            transactionDetailsResponse: vi.fn(),
+            importAsset: vi.fn(),
+            importAssetResponse: vi.fn(),
         };
 
         // Create mock authentication instance
@@ -131,15 +160,14 @@ describe('Wallet Service', () => {
 
             expect(mockAuth.validate).toHaveBeenCalled();
             expect(mockValidator.createWallet).toHaveBeenCalledWith(mockCreateWalletData);
-            expect(mockHttpClient.post).toHaveBeenCalledWith(
-                '/wallet/create',
-                null,
-                { Authorization: 'test-auth-token-123' },
-                {
-                    walletName: 'Test Wallet',
-                    paymailName: 'testuser',
-                }
-            );
+            expect(mockHttpClient.post).toHaveBeenCalledWith('/wallet/create', {}, authHeaders, {
+                walletName: 'Test Wallet',
+                paymailName: 'testuser',
+                walletType: undefined,
+                custodianProvider: undefined,
+                customCustodianEndpoint: undefined,
+                provider: undefined,
+            });
             expect(mockValidator.createWalletResponse).toHaveBeenCalledWith(mockCreateWalletResponse);
             expect(result.data).toEqual(mockCreateWalletResponse);
         });
@@ -202,7 +230,7 @@ describe('Wallet Service', () => {
             const result = await wallet.walletList();
 
             expect(mockAuth.validate).toHaveBeenCalled();
-            expect(mockHttpClient.get).toHaveBeenCalledWith('/wallet/list', { Authorization: 'test-auth-token-123' });
+            expect(mockHttpClient.get).toHaveBeenCalledWith('/wallet/list', authHeaders);
             expect(mockValidator.walletListResponse).toHaveBeenCalledWith(mockWalletListResponse);
             expect(result.data).toEqual(mockWalletListResponse);
         });
@@ -242,12 +270,9 @@ describe('Wallet Service', () => {
 
             expect(mockAuth.validate).toHaveBeenCalled();
             expect(mockValidator.updateDefaultWallet).toHaveBeenCalledWith(mockUpdateDefaultWalletData);
-            expect(mockHttpClient.put).toHaveBeenCalledWith(
-                '/wallet/default',
-                null,
-                { Authorization: 'test-auth-token-123' },
-                { walletID: 'wallet-123' }
-            );
+            expect(mockHttpClient.put).toHaveBeenCalledWith('/wallet/default', null, authHeaders, {
+                walletID: 'wallet-123',
+            });
             expect(mockValidator.updateDefaultWalletResponse).toHaveBeenCalledWith(mockUpdateDefaultWalletResponse);
             expect(result.data).toEqual(mockUpdateDefaultWalletResponse);
         });
@@ -288,12 +313,9 @@ describe('Wallet Service', () => {
 
             expect(mockAuth.validate).toHaveBeenCalled();
             expect(mockValidator.walletAddress).toHaveBeenCalledWith(mockCreateAddressData);
-            expect(mockHttpClient.post).toHaveBeenCalledWith(
-                '/wallet/address/create',
-                null,
-                { Authorization: 'test-auth-token-123' },
-                { walletID: 'wallet-123' }
-            );
+            expect(mockHttpClient.post).toHaveBeenCalledWith('/wallet/address/create', null, authHeaders, {
+                walletID: 'wallet-123',
+            });
             expect(mockValidator.createAddressResponse).toHaveBeenCalledWith(mockCreateAddressResponse);
             expect(result.data).toEqual(mockCreateAddressResponse);
         });
@@ -312,8 +334,8 @@ describe('Wallet Service', () => {
 
     describe('Wallet Address List', () => {
         const mockWalletAddressListResponse: WalletAddressListResponse = [
-            '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-            '1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2',
+            { wallet_id: 'wallet-123', address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa', chain: 'BSV' },
+            { wallet_id: 'wallet-123', address: '1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2', chain: 'BSV' },
         ];
 
         it('should successfully get wallet address list', async () => {
@@ -329,8 +351,9 @@ describe('Wallet Service', () => {
             const result = await wallet.walletAddressList();
 
             expect(mockAuth.validate).toHaveBeenCalled();
-            expect(mockHttpClient.get).toHaveBeenCalledWith('/wallet/addresses', {
-                Authorization: 'test-auth-token-123',
+            expect(mockHttpClient.get).toHaveBeenCalledWith('/wallet/addresses', authHeaders, {
+                walletID: undefined,
+                network: undefined,
             });
             expect(mockValidator.walletAddressListResponse).toHaveBeenCalledWith(mockWalletAddressListResponse);
             expect(result.data).toEqual(mockWalletAddressListResponse);
@@ -344,6 +367,192 @@ describe('Wallet Service', () => {
 
             await expect(wallet.walletAddressList()).rejects.toThrow(authError);
             expect(mockHttpClient.get).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('Extended Wallet APIs', () => {
+        it('should create a BSV wallet', async () => {
+            const response = { message: 'Wallet created' };
+            mockValidator.createBSVWallet.mockReturnValue(true);
+            mockValidator.createWalletResponse.mockReturnValue(response);
+            mockHttpClient.post.mockResolvedValue({ data: response, status: 201, statusText: 'Created' });
+
+            const result = await wallet.createBSVWallet({ businessId: 'biz-123', walletName: 'BSV Wallet' });
+
+            expect(mockHttpClient.post).toHaveBeenCalledWith('/wallet/create', {}, businessHeaders, {
+                walletName: 'BSV Wallet',
+                paymailName: 'BSV Wallet',
+            });
+            expect(result.data).toEqual(response);
+        });
+
+        it('should sync wallet assets', async () => {
+            const response = { synced: true };
+            mockValidator.syncAssetResponse.mockReturnValue(response);
+            mockHttpClient.post.mockResolvedValue({ data: response, status: 200, statusText: 'OK' });
+
+            const result = await wallet.syncAsset({ businessId: 'biz-123', walletID: 'wallet-1', network: 'MAIN' });
+
+            expect(mockHttpClient.post).toHaveBeenCalledWith('/wallet/sync', {}, businessHeaders, {
+                walletID: 'wallet-1',
+                network: 'MAIN',
+            });
+            expect(result.data).toEqual(response);
+        });
+
+        it('should get available assets', async () => {
+            const response = { list: [] };
+            mockValidator.availableAssetsResponse.mockReturnValue(response);
+            mockHttpClient.get.mockResolvedValue({ data: response, status: 200, statusText: 'OK' });
+
+            const result = await wallet.getAvailableAssets({
+                businessId: 'biz-123',
+                walletID: 'wallet-1',
+                offset: 0,
+                limit: 5,
+            });
+
+            expect(mockHttpClient.get).toHaveBeenCalledWith('/wallet/assets', businessHeaders, {
+                offset: 0,
+                limit: 5,
+                walletID: 'wallet-1',
+                search: undefined,
+                chain: undefined,
+                network: undefined,
+            });
+            expect(result.data).toEqual(response);
+        });
+
+        it('should add asset to wallet', async () => {
+            const response = { message: 'Asset added' };
+            mockValidator.updateDefaultWalletResponse.mockReturnValue(response);
+            mockHttpClient.post.mockResolvedValue({ data: response, status: 200, statusText: 'OK' });
+
+            const result = await wallet.addAssetToWallet({
+                businessId: 'biz-123',
+                walletID: 'wallet-1',
+                assetID: 'asset-1',
+            });
+
+            expect(mockHttpClient.post).toHaveBeenCalledWith('/wallet/asset/add', null, businessHeaders, {
+                walletID: 'wallet-1',
+                assetID: 'asset-1',
+            });
+            expect(result.data).toEqual(response);
+        });
+
+        it('should remove asset from wallet', async () => {
+            const response = { message: 'Asset removed' };
+            mockValidator.updateDefaultWalletResponse.mockReturnValue(response);
+            mockHttpClient.delete.mockResolvedValue({ data: response, status: 200, statusText: 'OK' });
+
+            const result = await wallet.removeAssetFromWallet({
+                businessId: 'biz-123',
+                walletID: 'wallet-1',
+                assetID: 'asset-1',
+            });
+
+            expect(mockHttpClient.delete).toHaveBeenCalledWith('/wallet/asset/remove', businessHeaders, {
+                walletID: 'wallet-1',
+                assetID: 'asset-1',
+            });
+            expect(result.data).toEqual(response);
+        });
+
+        it('should recover wallet', async () => {
+            const response = { message: 'Recovered' };
+            mockValidator.updateDefaultWalletResponse.mockReturnValue(response);
+            mockHttpClient.post.mockResolvedValue({ data: response, status: 200, statusText: 'OK' });
+
+            const result = await wallet.recoverWallet({
+                businessId: 'biz-123',
+                walletID: 'wallet-1',
+                keyshard: 'shard-1',
+            });
+
+            expect(mockHttpClient.post).toHaveBeenCalledWith(
+                '/wallet/recover',
+                { keyshard: 'shard-1' },
+                businessHeaders,
+                { walletID: 'wallet-1' }
+            );
+            expect(result.data).toEqual(response);
+        });
+
+        it('should get transactions', async () => {
+            const response = { list: [], page_meta: { page: 1, limit: 10, total: 0, total_pages: 0 } };
+            mockValidator.transactionsResponse.mockReturnValue(response);
+            mockHttpClient.get.mockResolvedValue({ data: response, status: 200, statusText: 'OK' });
+
+            const result = await wallet.getTransactions({
+                businessId: 'biz-123',
+                walletID: 'wallet-1',
+                page: 1,
+                limit: 10,
+            });
+
+            expect(mockHttpClient.get).toHaveBeenCalledWith('/wallet/history', businessHeaders, {
+                walletID: 'wallet-1',
+                page: 1,
+                limit: 10,
+                chain: undefined,
+                network: undefined,
+            });
+            expect(result.data).toEqual(response);
+        });
+
+        it('should get transaction details', async () => {
+            const response = { txid: 'tx-1' };
+            mockValidator.transactionDetailsResponse.mockReturnValue(response);
+            mockHttpClient.get.mockResolvedValue({ data: response, status: 200, statusText: 'OK' });
+
+            const result = await wallet.getTransactionDetails({
+                businessId: 'biz-123',
+                txid: 'tx-1',
+                chain: 'BSV',
+                network: 'MAIN',
+                walletID: 'wallet-1',
+            });
+
+            expect(mockHttpClient.get).toHaveBeenCalledWith('/wallet/transaction', businessHeaders, {
+                txid: 'tx-1',
+                chain: 'BSV',
+                network: 'MAIN',
+                walletID: 'wallet-1',
+            });
+            expect(result.data).toEqual(response);
+        });
+
+        it('should import asset', async () => {
+            const response = { asset_id: 'asset-1' };
+            mockValidator.importAssetResponse.mockReturnValue(response);
+            mockHttpClient.post.mockResolvedValue({ data: response, status: 201, statusText: 'Created' });
+
+            const result = await wallet.importAsset({
+                businessId: 'biz-123',
+                asset_name: 'Token',
+                chain: 'ETH',
+                contract_address: '0xabc',
+                network: 'MAIN',
+                symbol: 'TKN',
+                wallet_id: 'wallet-1',
+                decimals: 18,
+            });
+
+            expect(mockHttpClient.post).toHaveBeenCalledWith(
+                '/wallet/asset/import',
+                {
+                    asset_name: 'Token',
+                    chain: 'ETH',
+                    contract_address: '0xabc',
+                    network: 'MAIN',
+                    symbol: 'TKN',
+                    wallet_id: 'wallet-1',
+                    decimals: 18,
+                },
+                businessHeaders
+            );
+            expect(result.data).toEqual(response);
         });
     });
 

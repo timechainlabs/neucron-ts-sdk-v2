@@ -124,6 +124,18 @@ describe('NeucronSDK Integration', () => {
             expect(newSdk.wallet).toBeDefined();
             expect(newSdk.team).toBeDefined();
             expect(newSdk.assets).toBeDefined();
+            expect(newSdk.business).toBeDefined();
+            expect(newSdk.members).toBeDefined();
+            expect(newSdk.rbac).toBeDefined();
+            expect(newSdk.apps).toBeDefined();
+            expect(newSdk.assetSwap).toBeDefined();
+            expect(newSdk.blob).toBeDefined();
+            expect(newSdk.invoice).toBeDefined();
+            expect(newSdk.customer).toBeDefined();
+            expect(newSdk.vendor).toBeDefined();
+            expect(newSdk.bill).toBeDefined();
+            expect(newSdk.payout).toBeDefined();
+            expect(newSdk.billing).toBeDefined();
             expect(newSdk.auth.getToken()).toBe('');
         });
 
@@ -250,11 +262,15 @@ describe('NeucronSDK Integration', () => {
             // Verify the authorization header was sent
             expect(mockWalletHttpClient.post).toHaveBeenCalledWith(
                 '/wallet/create',
-                null,
-                { Authorization: 'wallet-auth-token-789' },
+                {},
+                { Authorization: 'wallet-auth-token-789', 'X-Identifier': 'NEUCRON' },
                 {
                     walletName: 'Integration Test Wallet',
                     paymailName: 'integrationtest',
+                    walletType: undefined,
+                    custodianProvider: undefined,
+                    customCustodianEndpoint: undefined,
+                    provider: undefined,
                 }
             );
         });
@@ -442,6 +458,7 @@ describe('NeucronSDK Integration', () => {
             // Verify the new token was used
             expect(mockWalletHttpClient.get).toHaveBeenLastCalledWith('/wallet/list', {
                 Authorization: 'refreshed-token-456',
+                'X-Identifier': 'NEUCRON',
             });
         });
     });

@@ -23,6 +23,12 @@ import {
     ledgerDetailsResponseSchema,
     balancesSchema,
     balancesResponseSchema,
+    publicAssetListSchema,
+    publicAssetListResponseSchema,
+    ownedAssetDetailsSchema,
+    ownedAssetDetailsResponseSchema,
+    eventDetailsSchema,
+    eventDetailsResponseSchema,
 } from './schema.js';
 
 export type CreateAsset = z.infer<typeof createAssetSchema>;
@@ -59,3 +65,10 @@ export type AssetStatsResponse = z.infer<typeof assetStatsResponseSchema>;
 
 export type Balances = z.infer<typeof balancesSchema>;
 export type BalancesResponse = z.infer<typeof balancesResponseSchema>;
+
+export type PublicAssetList = z.infer<typeof publicAssetListSchema>;
+export type PublicAssetListResponse = z.infer<typeof publicAssetListResponseSchema>;
+export type OwnedAssetDetails = z.infer<typeof ownedAssetDetailsSchema>;
+export type OwnedAssetDetailsResponse = z.infer<typeof ownedAssetDetailsResponseSchema>;
+export type EventDetails = z.infer<typeof eventDetailsSchema>;
+export type EventDetailsResponse = z.infer<typeof eventDetailsResponseSchema>;

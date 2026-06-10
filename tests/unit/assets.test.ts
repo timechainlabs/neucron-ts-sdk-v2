@@ -4,6 +4,9 @@ import { Authentication } from '../../src/services/authentication/index.js';
 import { NeucronError } from '../../src/utils/errors/sdk-error.js';
 import { Balances, BalancesResponse } from '../../src/services/assets/types.js';
 
+const authHeaders = { Authorization: 'test-auth-token-123', 'X-Identifier': 'NEUCRON' };
+const businessHeaders = { ...authHeaders, 'X-Neucron-Business-ID': 'biz-123' };
+
 let mockHttpClient: any;
 let mockValidator: any;
 
@@ -36,6 +39,12 @@ vi.mock('../../src/services/assets/validator.js', () => {
         assetStatsResponse: vi.fn(),
         balances: vi.fn(),
         balancesResponse: vi.fn(),
+        publicAssetList: vi.fn(),
+        publicAssetListResponse: vi.fn(),
+        ownedAssetDetails: vi.fn(),
+        ownedAssetDetailsResponse: vi.fn(),
+        eventDetails: vi.fn(),
+        eventDetailsResponse: vi.fn(),
     });
     return {
         default: vi.fn().mockImplementation(mockImplementation),
@@ -78,6 +87,12 @@ describe('Assets Service', () => {
             assetStatsResponse: vi.fn(),
             balances: vi.fn(),
             balancesResponse: vi.fn(),
+            publicAssetList: vi.fn(),
+            publicAssetListResponse: vi.fn(),
+            ownedAssetDetails: vi.fn(),
+            ownedAssetDetailsResponse: vi.fn(),
+            eventDetails: vi.fn(),
+            eventDetailsResponse: vi.fn(),
         };
 
         mockAuth = new Authentication();
@@ -106,11 +121,9 @@ describe('Assets Service', () => {
             const result = await assets.getAssetDetails(mockData as any);
 
             expect(mockValidator.assetDetails).toHaveBeenCalledWith(mockData);
-            expect(mockHttpClient.get).toHaveBeenCalledWith(
-                '/asset/details',
-                { Authorization: 'test-auth-token-123' },
-                { assetID: 'asset-123' }
-            );
+            expect(mockHttpClient.get).toHaveBeenCalledWith('/asset/details', authHeaders, {
+                assetID: 'asset-123',
+            });
             expect(result.data).toEqual(mockResponse);
         });
 
@@ -136,11 +149,9 @@ describe('Assets Service', () => {
             const result = await assets.deleteAsset(mockData as any);
 
             expect(mockValidator.deleteAsset).toHaveBeenCalledWith(mockData);
-            expect(mockHttpClient.delete).toHaveBeenCalledWith(
-                '/asset/delete',
-                { Authorization: 'test-auth-token-123' },
-                { assetID: 'asset-123' }
-            );
+            expect(mockHttpClient.delete).toHaveBeenCalledWith('/asset/delete', authHeaders, {
+                assetID: 'asset-123',
+            });
             expect(result.data).toEqual(mockResponse);
         });
     });
@@ -157,9 +168,7 @@ describe('Assets Service', () => {
             const result = await assets.transfer(mockData as any);
 
             expect(mockValidator.transferAsset).toHaveBeenCalledWith(mockData);
-            expect(mockHttpClient.post).toHaveBeenCalledWith('/asset/transfer', mockData, {
-                Authorization: 'test-auth-token-123',
-            });
+            expect(mockHttpClient.post).toHaveBeenCalledWith('/asset/transfer', mockData, authHeaders);
             expect(result.data).toEqual(mockResponse);
         });
     });
@@ -176,12 +185,11 @@ describe('Assets Service', () => {
             const result = await assets.getLedgerList(mockData as any);
 
             expect(mockValidator.ledgerList).toHaveBeenCalledWith(mockData);
-            expect(mockHttpClient.post).toHaveBeenCalledWith(
-                '/asset/ledgerlist',
-                { status: 'active' },
-                { Authorization: 'test-auth-token-123' },
-                { walletID: 'wallet-123', pageNumber: 1, pageSize: 10 }
-            );
+            expect(mockHttpClient.post).toHaveBeenCalledWith('/asset/ledgerlist', { status: 'active' }, authHeaders, {
+                walletID: 'wallet-123',
+                pageNumber: 1,
+                pageSize: 10,
+            });
             expect(result.data).toEqual(mockResponse);
         });
     });
@@ -198,18 +206,14 @@ describe('Assets Service', () => {
             const result = await assets.getAssetList(mockData as any);
 
             expect(mockValidator.assetList).toHaveBeenCalledWith(mockData);
-            expect(mockHttpClient.get).toHaveBeenCalledWith(
-                '/asset/assetlist',
-                { Authorization: 'test-auth-token-123' },
-                {
-                    searchQuery: undefined,
-                    status: undefined,
-                    type: undefined,
-                    walletID: 'wallet-123',
-                    pageNumber: 1,
-                    pageSize: 5,
-                }
-            );
+            expect(mockHttpClient.get).toHaveBeenCalledWith('/asset/assetlist', authHeaders, {
+                searchQuery: undefined,
+                status: undefined,
+                type: undefined,
+                walletID: 'wallet-123',
+                pageNumber: 1,
+                pageSize: 5,
+            });
             expect(result.data).toEqual(mockResponse);
         });
     });
@@ -226,11 +230,9 @@ describe('Assets Service', () => {
             const result = await assets.getLedgerDetails(mockData as any);
 
             expect(mockValidator.ledgerDetails).toHaveBeenCalledWith(mockData);
-            expect(mockHttpClient.get).toHaveBeenCalledWith(
-                '/asset/ledger/details',
-                { Authorization: 'test-auth-token-123' },
-                { assetID: 'asset-123' }
-            );
+            expect(mockHttpClient.get).toHaveBeenCalledWith('/asset/ledger/details', authHeaders, {
+                assetID: 'asset-123',
+            });
             expect(result.data).toEqual(mockResponse);
         });
     });
@@ -244,16 +246,17 @@ describe('Assets Service', () => {
 
             const result = await assets.getAssetStats();
 
-            expect(mockHttpClient.get).toHaveBeenCalledWith('/asset/assetlist', {
-                Authorization: 'test-auth-token-123',
-            });
+            expect(mockHttpClient.get).toHaveBeenCalledWith('/asset/stats', authHeaders);
             expect(result.data).toEqual(mockResponse);
         });
     });
 
     describe('getBalances', () => {
         const mockData: Balances = { walletID: 'wallet-123' };
-        const mockResponse: BalancesResponse = [{ asset_id: 'ledger-123', sum: 1 }];
+        const mockResponse: BalancesResponse = {
+            total_balance: { usd: 100 },
+            asset_balance: [{ asset_id: 'ledger-123', amount: 1 }],
+        };
 
         it('should fetch balances', async () => {
             mockValidator.balances.mockReturnValue(true);
@@ -263,11 +266,11 @@ describe('Assets Service', () => {
             const result = await assets.getBalances(mockData as any);
 
             expect(mockValidator.balances).toHaveBeenCalledWith(mockData);
-            expect(mockHttpClient.get).toHaveBeenCalledWith(
-                '/asset/balances',
-                { Authorization: 'test-auth-token-123' },
-                mockData
-            );
+            expect(mockHttpClient.get).toHaveBeenCalledWith('/asset/balances', authHeaders, {
+                walletID: 'wallet-123',
+                network: undefined,
+                currency: undefined,
+            });
             expect(result.data).toEqual(mockResponse);
         });
 
@@ -295,6 +298,63 @@ describe('Assets Service', () => {
 
             // No HTTP request should be made
             expect(mockHttpClient.get).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('getPublicAssetList', () => {
+        it('should fetch public asset list', async () => {
+            const response = { list: [] };
+            mockValidator.publicAssetListResponse.mockReturnValue(response);
+            mockHttpClient.get.mockResolvedValue({ data: response });
+
+            const result = await assets.getPublicAssetList({
+                businessId: 'biz-123',
+                pageSize: 50,
+                searchQuery: 'BTC',
+            });
+
+            expect(mockHttpClient.get).toHaveBeenCalledWith('/asset/public/assetlist', businessHeaders, {
+                pageSize: 50,
+                searchQuery: 'BTC',
+                type: undefined,
+                pageNumber: undefined,
+                network: undefined,
+                chain: undefined,
+            });
+            expect(result.data).toEqual(response);
+        });
+    });
+
+    describe('getOwnedAssetDetails', () => {
+        it('should fetch owned asset details', async () => {
+            const mockData = { assetID: 'asset-1', walletID: 'wallet-1', businessId: 'biz-123' };
+            const response = { asset_id: 'asset-1' };
+            mockValidator.ownedAssetDetailsResponse.mockReturnValue(response);
+            mockHttpClient.get.mockResolvedValue({ data: response });
+
+            const result = await assets.getOwnedAssetDetails(mockData);
+
+            expect(mockHttpClient.get).toHaveBeenCalledWith('/asset/owned/details', businessHeaders, {
+                assetID: 'asset-1',
+                walletID: 'wallet-1',
+            });
+            expect(result.data).toEqual(response);
+        });
+    });
+
+    describe('getEventDetails', () => {
+        it('should fetch event details', async () => {
+            const mockData = { eventId: 'event-1', businessId: 'biz-123' };
+            const response = { event: { event_id: 'event-1' } };
+            mockValidator.eventDetailsResponse.mockReturnValue(response);
+            mockHttpClient.get.mockResolvedValue({ data: response });
+
+            const result = await assets.getEventDetails(mockData);
+
+            expect(mockHttpClient.get).toHaveBeenCalledWith('/event/details', businessHeaders, {
+                eventID: 'event-1',
+            });
+            expect(result.data).toEqual(response);
         });
     });
 });
