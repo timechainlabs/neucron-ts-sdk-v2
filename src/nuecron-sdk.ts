@@ -8,6 +8,18 @@ import { DataIntegrity } from './services/data-integrity/index.js';
 import { Pay } from './services/pay/index.js';
 import { Paymail } from './services/paymail/index.js';
 import { Assets21 } from './services/asset21/index.js';
+import { Business } from './services/business/index.js';
+import { Members } from './services/members/index.js';
+import { Rbac } from './services/rbac/index.js';
+import { Apps } from './services/apps/index.js';
+import { AssetSwap } from './services/asset-swap/index.js';
+import { Blob } from './services/blob/index.js';
+import { Invoice } from './services/invoice/index.js';
+import { Customer } from './services/customer/index.js';
+import { Vendor } from './services/vendor/index.js';
+import { Bill } from './services/bill/index.js';
+import { Payout } from './services/payout/index.js';
+import { Billing } from './services/billing/index.js';
 
 export class NeucronSDK {
     readonly auth: Authentication;
@@ -19,6 +31,18 @@ export class NeucronSDK {
     readonly utility: Utility;
     readonly pay: Pay;
     readonly paymail: Paymail;
+    readonly business: Business;
+    readonly members: Members;
+    readonly rbac: Rbac;
+    readonly apps: Apps;
+    readonly assetSwap: AssetSwap;
+    readonly blob: Blob;
+    readonly invoice: Invoice;
+    readonly customer: Customer;
+    readonly vendor: Vendor;
+    readonly bill: Bill;
+    readonly payout: Payout;
+    readonly billing: Billing;
 
     constructor(config?: Config) {
         this.auth = new Authentication(config);
@@ -30,5 +54,17 @@ export class NeucronSDK {
         this.utility = new Utility(this.auth);
         this.pay = new Pay(this.auth);
         this.paymail = new Paymail(this.auth);
+        this.business = new Business(this.auth);
+        this.members = new Members(this.auth);
+        this.rbac = new Rbac(this.auth);
+        this.apps = new Apps(this.auth);
+        this.assetSwap = new AssetSwap(this.auth);
+        this.blob = new Blob(this.auth);
+        this.invoice = new Invoice(this.auth);
+        this.customer = new Customer(this.auth);
+        this.vendor = new Vendor(this.auth);
+        this.bill = new Bill(this.auth);
+        this.payout = new Payout(this.auth);
+        this.billing = new Billing(this.auth);
     }
 }

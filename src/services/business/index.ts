@@ -1,0 +1,69 @@
+import type { HttpResponse, QueryParams } from '../../utils/http/types.js';
+import { HttpClient } from '../../utils/http/http-client.js';
+import { Authentication } from '../authentication/index.js';
+import { buildAuthHeaders } from '../../utils/http/headers.js';
+import Validator from './validator.js';
+import { handleError } from '../../utils/errors/helper.js';
+import { Routes } from '../../utils/routes/index.js';
+import type {
+    GetBusinessDetails,
+    BusinessDetailsResponse,
+    BusinessListResponse,
+    UpdateBusinessDetails,
+    UpdateBusinessDetailsResponse,
+} from './types.js';
+
+export class Business {
+    private readonly validator: Validator;
+    private readonly httpClient: HttpClient;
+
+    constructor(private readonly auth: Authentication) {
+        this.validator = new Validator();
+        this.httpClient = new HttpClient();
+    }
+
+    async getBusinessDetails(options: GetBusinessDetails): Promise<HttpResponse<BusinessDetailsResponse>> {
+        try {
+            this.auth.validate();
+            this.validator.getBusinessDetails(options);
+            const headers = buildAuthHeaders(this.auth, { businessId: options.businessId });
+            const params: QueryParams = { businessId: options.businessId };
+            const resp = await this.httpClient.get<BusinessDetailsResponse>(Routes.BUSINESS.DETAILS, headers, params);
+            this.validator.businessDetailsResponse(resp.data);
+            return resp;
+        } catch (err) {
+            handleError(err);
+        }
+    }
+
+    async getBusinessList(): Promise<HttpResponse<BusinessListResponse>> {
+        try {
+            this.auth.validate();
+            const headers = buildAuthHeaders(this.auth);
+            const resp = await this.httpClient.get<BusinessListResponse>(Routes.BUSINESS.LIST, headers);
+            this.validator.businessListResponse(resp.data);
+            return resp;
+        } catch (err) {
+            handleError(err);
+        }
+    }
+
+    async updateBusinessDetails(options: UpdateBusinessDetails): Promise<HttpResponse<UpdateBusinessDetailsResponse>> {
+        try {
+            this.auth.validate();
+            this.validator.updateBusinessDetails(options);
+            const headers = buildAuthHeaders(this.auth, { businessId: options.businessId });
+            const params: QueryParams = { businessID: options.businessId };
+            const resp = await this.httpClient.patch<UpdateBusinessDetailsResponse>(
+                Routes.BUSINESS.UPDATE,
+                options.data,
+                headers,
+                params
+            );
+            this.validator.updateBusinessDetailsResponse(resp.data);
+            return resp;
+        } catch (err) {
+            handleError(err);
+        }
+    }
+}
