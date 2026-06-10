@@ -10,6 +10,12 @@ export interface IHttpClient {
         params?: QueryParams
     ): Promise<HttpResponse<T>>;
     put<T = unknown>(reqPath: string, data: unknown, headers?: Headers, params?: QueryParams): Promise<HttpResponse<T>>;
+    patch<T = unknown>(
+        reqPath: string,
+        data: unknown,
+        headers?: Headers,
+        params?: QueryParams
+    ): Promise<HttpResponse<T>>;
     delete<T = unknown>(reqPath: string, headers: Headers, params?: QueryParams): Promise<HttpResponse<T>>;
 }
 
