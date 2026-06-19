@@ -66,6 +66,27 @@ export const confirmPayoutSchema = payoutIdSchema.extend({
     }),
 });
 
+export const createPayoutRequestPayloadSchema = z.object({
+    amount: z.string().optional(),
+    amount_in_fiat: z.number().optional(),
+    asset_id: z.string().optional(),
+    currency: z.string().optional(),
+    meta: payoutMetaSchema.optional(),
+    receiver_address: z.string().optional(),
+    receiver_email: z.string().optional(),
+    receiver_paymail: z.string().optional(),
+    sender_address: z.string().optional(),
+    sender_email: z.string().optional(),
+    sender_paymail: z.string().optional(),
+});
+
+export const createPayoutRequestSchema = z.object({
+    businessId: nonEmptyString,
+    teamId: z.string().optional(),
+    appSecret: nonEmptyString,
+    payload: createPayoutRequestPayloadSchema,
+});
+
 export const createPayoutResponseSchema = z.object({ payout_id: z.string() });
 export const triggerPayoutResponseSchema = z.object({ tx_link: z.string().optional(), txid: z.string().optional() });
 export const confirmPayoutResponseSchema = messageResponseSchema;

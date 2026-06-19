@@ -7,6 +7,7 @@ import { handleError } from '../../utils/errors/helper.js';
 import { Routes } from '../../utils/routes/index.js';
 import type {
     CreatePayout,
+    CreatePayoutRequest,
     PayoutId,
     UpdatePayout,
     ListPayouts,
@@ -34,6 +35,27 @@ export class Payout {
             const headers = buildAuthHeaders(this.auth, { businessId: options.businessId });
             const resp = await this.httpClient.post<CreatePayoutResponse>(
                 Routes.PAYOUT.CREATE,
+                options.payload,
+                headers
+            );
+            this.validator.createPayoutResponse(resp.data);
+            return resp;
+        } catch (err) {
+            handleError(err);
+        }
+    }
+
+    async createPayoutRequest(options: CreatePayoutRequest): Promise<HttpResponse<CreatePayoutResponse>> {
+        try {
+            this.auth.validate();
+            this.validator.createPayoutRequest(options);
+            const headers = buildAuthHeaders(this.auth, {
+                businessId: options.businessId,
+                teamId: options.teamId,
+                appSecret: options.appSecret,
+            });
+            const resp = await this.httpClient.post<CreatePayoutResponse>(
+                Routes.PAYOUT.REQUEST,
                 options.payload,
                 headers
             );

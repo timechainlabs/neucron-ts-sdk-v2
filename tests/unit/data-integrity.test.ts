@@ -115,6 +115,29 @@ describe('DataIntegrity Service', () => {
             expect(result.data).toEqual(mockResponse);
         });
 
+        it('should accept React Native file objects', async () => {
+            const reactNativeFile = {
+                uri: 'file:///data/user/0/cache/document.pdf',
+                name: 'document.pdf',
+                type: 'application/pdf',
+            };
+            const rnUpload: FileUpload = {
+                file: reactNativeFile,
+                walletID: 'wallet-123',
+            };
+
+            mockValidator.fileUpload.mockReturnValue(true);
+            mockValidator.fileUploadResponse.mockReturnValue(mockResponse);
+            mockHttpClient.post.mockResolvedValue({
+                data: mockResponse,
+                status: 201,
+            });
+
+            const result = await dataIntegrity.fileUpload(rnUpload);
+            expect(mockValidator.fileUpload).toHaveBeenCalledWith(rnUpload);
+            expect(result.data).toEqual(mockResponse);
+        });
+
         it('should throw error when not authenticated', async () => {
             const authError = new NeucronError('Unauthorized', new Error('No token'), { type: 'internal' });
             vi.spyOn(mockAuth, 'validate').mockImplementation(() => {

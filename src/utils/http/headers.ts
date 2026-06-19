@@ -5,6 +5,7 @@ export interface BusinessHeadersOptions {
     businessId?: string;
     teamId?: string;
     identifier?: string;
+    appSecret?: string;
 }
 
 export function buildAuthHeaders(auth: Authentication, options?: BusinessHeadersOptions): Headers {
@@ -19,6 +20,10 @@ export function buildAuthHeaders(auth: Authentication, options?: BusinessHeaders
 
     if (options?.teamId) {
         headers['X-Neucron-Team-ID'] = options.teamId;
+    }
+
+    if (options?.appSecret) {
+        headers['X-App-Secret'] = options.appSecret;
     }
 
     return headers;

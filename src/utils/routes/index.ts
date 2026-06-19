@@ -153,6 +153,7 @@ export const Routes = {
     },
     PAYOUT: {
         CREATE: '/payout',
+        REQUEST: '/payout/request',
         LIST: '/payout/list',
         TRIGGER: '/payout/trigger',
         DETAILS: '/payout',
