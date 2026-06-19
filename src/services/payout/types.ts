@@ -4,6 +4,8 @@ import {
     payoutApiModelSchema,
     payoutListResponseSchema,
     createPayoutSchema,
+    createPayoutRequestSchema,
+    createPayoutRequestPayloadSchema,
     payoutIdSchema,
     updatePayoutSchema,
     listPayoutsSchema,
@@ -19,6 +21,8 @@ export type PayoutUpsertPayload = z.infer<typeof payoutUpsertPayloadSchema>;
 export type PayoutApiModel = z.infer<typeof payoutApiModelSchema>;
 export type PayoutListResponse = z.infer<typeof payoutListResponseSchema>;
 export type CreatePayout = z.infer<typeof createPayoutSchema>;
+export type CreatePayoutRequestPayload = z.infer<typeof createPayoutRequestPayloadSchema>;
+export type CreatePayoutRequest = z.infer<typeof createPayoutRequestSchema>;
 export type PayoutId = z.infer<typeof payoutIdSchema>;
 export type UpdatePayout = z.infer<typeof updatePayoutSchema>;
 export type ListPayouts = z.infer<typeof listPayoutsSchema>;
