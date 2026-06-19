@@ -43,7 +43,7 @@ import NeucronSDK, {
 | `customer/types` | `CreateCustomer`, `CustomerResponse` |
 | `vendor/types` | `CreateVendor`, `PayVendor` |
 | `bill/types` | `CreateBill`, `PayBill` |
-| `payout/types` | `CreatePayout`, `ConfirmPayout` |
+| `payout/types` | `CreatePayout`, `CreatePayoutRequest`, `ConfirmPayout` |
 | `billing/types` | `RequestPlan`, `SubscriptionInfo`, `CreditBalanceResponse` |
 
 ## HttpResponse Generic
