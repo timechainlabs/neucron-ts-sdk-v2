@@ -19,6 +19,7 @@ vi.mock('../../src/utils/http/http-client.js', () => ({
 vi.mock('../../src/services/payout/validator.js', () => ({
     default: vi.fn().mockImplementation(() => ({
         createPayout: vi.fn(),
+        createPayoutRequest: vi.fn(),
         payoutId: vi.fn(),
         updatePayout: vi.fn(),
         listPayouts: vi.fn(),
@@ -46,6 +47,7 @@ describe('Payout Service', () => {
         mockHttpClient = createMockHttpClient();
         mockValidator = {
             createPayout: vi.fn(),
+            createPayoutRequest: vi.fn(),
             payoutId: vi.fn(),
             updatePayout: vi.fn(),
             listPayouts: vi.fn(),
@@ -73,6 +75,38 @@ describe('Payout Service', () => {
         mockHttpClient.post.mockResolvedValue(mockHttpResponse(response));
         const result = await payout.createPayout({ businessId: BUSINESS_ID, payload });
         expect(mockHttpClient.post).toHaveBeenCalledWith('/payout', payload, BUSINESS_HEADERS);
+        expect(result.data).toEqual(response);
+    });
+
+    it('should create a payout request', async () => {
+        const payload = {
+            amount: '100',
+            amount_in_fiat: 100,
+            asset_id: 'asset-1',
+            currency: 'CLP',
+            meta: { email: 'user@example.com', name: 'Jane Doe', note: 'Payment' },
+            receiver_address: '1ReceiverAddress',
+            receiver_email: 'receiver@example.com',
+            receiver_paymail: 'receiver@paymail.com',
+            sender_address: '1SenderAddress',
+            sender_email: 'sender@example.com',
+            sender_paymail: 'sender@paymail.com',
+        };
+        const response = { payout_id: 'payout-request-1' };
+        const headers = {
+            ...BUSINESS_HEADERS,
+            'X-Neucron-Team-ID': 'team-123',
+            'X-App-Secret': 'app-secret-123',
+        };
+        mockValidator.createPayoutResponse.mockReturnValue(response);
+        mockHttpClient.post.mockResolvedValue(mockHttpResponse(response));
+        const result = await payout.createPayoutRequest({
+            businessId: BUSINESS_ID,
+            teamId: 'team-123',
+            appSecret: 'app-secret-123',
+            payload,
+        });
+        expect(mockHttpClient.post).toHaveBeenCalledWith('/payout/request', payload, headers);
         expect(result.data).toEqual(response);
     });
 

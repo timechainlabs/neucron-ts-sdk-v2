@@ -1,5 +1,6 @@
 import {
     createPayoutSchema,
+    createPayoutRequestSchema,
     payoutIdSchema,
     updatePayoutSchema,
     listPayoutsSchema,
@@ -12,6 +13,7 @@ import {
 } from './schema.js';
 import type {
     CreatePayout,
+    CreatePayoutRequest,
     PayoutId,
     UpdatePayout,
     ListPayouts,
@@ -26,6 +28,10 @@ import type {
 export default class Validator {
     createPayout(options: CreatePayout): void {
         createPayoutSchema.parse(options);
+    }
+
+    createPayoutRequest(options: CreatePayoutRequest): void {
+        createPayoutRequestSchema.parse(options);
     }
 
     payoutId(options: PayoutId): void {

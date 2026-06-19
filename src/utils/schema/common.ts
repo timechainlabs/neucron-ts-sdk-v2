@@ -19,3 +19,38 @@ export const businessIdSchema = z.object({
 });
 
 export const networkEnum = z.enum(['MAIN', 'TEST']);
+
+/** React Native file object from DocumentPicker / ImagePicker */
+export interface ReactNativeUploadFile {
+    uri: string;
+    name: string;
+    type: string;
+}
+
+export const uploadableFileSchema = z.custom<Blob | File | ReactNativeUploadFile>(
+    (value) => {
+        if (value instanceof Blob) {
+            return true;
+        }
+
+        if (typeof File !== 'undefined' && value instanceof File) {
+            return true;
+        }
+
+        if (
+            typeof value === 'object' &&
+            value !== null &&
+            'uri' in value &&
+            typeof (value as ReactNativeUploadFile).uri === 'string' &&
+            'name' in value &&
+            typeof (value as ReactNativeUploadFile).name === 'string' &&
+            'type' in value &&
+            typeof (value as ReactNativeUploadFile).type === 'string'
+        ) {
+            return true;
+        }
+
+        return false;
+    },
+    { message: 'Expected a File, Blob, or React Native file object { uri, name, type }' }
+);
