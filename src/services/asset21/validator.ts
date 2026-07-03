@@ -5,11 +5,13 @@ import {
     fetchBalanceResponseSchema,
     systemConfigSchema,
     systemConfigResponseSchema,
+    updateSystemConfigSchema,
+    updateSystemConfigResponseSchema,
     getCustomersSchema,
     getCustomerResponseSchema,
     deploySchema,
     deployResponseSchema,
-    registerPayloadSchema,
+    registerSchema,
     registerResponseSchema,
     createRequestSchema,
     createRequestResponseSchema,
@@ -18,7 +20,9 @@ import {
     getRequestSchema,
     getRequestResponseSchema,
     syncTransactionSchema,
-    syncTransactionResponse,
+    syncTransactionResponseSchema,
+    listSyncedTransactionsSchema,
+    listSyncedTransactionsResponseSchema,
     triggerSyncForAddressesSchema,
     triggerSyncForAddressesResponseSchema,
     transferSchema,
@@ -27,6 +31,10 @@ import {
     getUnspentUTXOsResponseSchema,
     getOutputInfoSchema,
     getOutputInfoResponseSchema,
+    getAnalyticsSchema,
+    getAnalyticsResponseSchema,
+    listDeployedAssetsSchema,
+    listDeployedAssetsResponseSchema,
 } from './schema.js';
 import type {
     GetAddressState,
@@ -35,11 +43,13 @@ import type {
     FetchBalanceResponse,
     SystemConfig,
     SystemConfigResponse,
+    UpdateSystemConfig,
+    UpdateSystemConfigResponse,
     GetCustomers,
     GetCustomersResponse,
     Deploy,
     DeployResponse,
-    RegisterPayload,
+    Register,
     RegisterResponse,
     CreateRequest,
     CreateRequestResponse,
@@ -49,6 +59,8 @@ import type {
     GetRequestResponse,
     SyncTransaction,
     SyncTransactionResponse,
+    ListSyncedTransactions,
+    ListSyncedTransactionsResponse,
     TriggerSyncForAddresses,
     TriggerSyncForAddressesResponse,
     Transfer,
@@ -57,6 +69,10 @@ import type {
     GetUnspentUTXOResponse,
     GetOutputInfo,
     GetOutputInfoResponse,
+    GetAnalytics,
+    GetAnalyticsResponse,
+    ListDeployedAssets,
+    ListDeployedAssetsResponse,
 } from './types.js';
 
 export default class Validator {
@@ -84,6 +100,14 @@ export default class Validator {
         return systemConfigResponseSchema.parse(response);
     }
 
+    updateSystemConfig(params: UpdateSystemConfig) {
+        return updateSystemConfigSchema.parse(params);
+    }
+
+    updateSystemConfigResponse(response: UpdateSystemConfigResponse) {
+        return updateSystemConfigResponseSchema.parse(response);
+    }
+
     getCustomers(params: GetCustomers) {
         return getCustomersSchema.parse(params);
     }
@@ -100,8 +124,8 @@ export default class Validator {
         return deployResponseSchema.parse(response);
     }
 
-    registerPayload(payload: RegisterPayload) {
-        return registerPayloadSchema.parse(payload);
+    register(params: Register) {
+        return registerSchema.parse(params);
     }
 
     registerResponse(response: RegisterResponse) {
@@ -137,7 +161,15 @@ export default class Validator {
     }
 
     syncTransactionResponse(response: SyncTransactionResponse) {
-        return syncTransactionResponse.parse(response);
+        return syncTransactionResponseSchema.parse(response);
+    }
+
+    listSyncedTransactions(params: ListSyncedTransactions) {
+        return listSyncedTransactionsSchema.parse(params);
+    }
+
+    listSyncedTransactionsResponse(response: ListSyncedTransactionsResponse) {
+        return listSyncedTransactionsResponseSchema.parse(response);
     }
 
     triggerSyncForAddresses(params: TriggerSyncForAddresses) {
@@ -170,5 +202,21 @@ export default class Validator {
 
     getOutputInfoResponse(response: GetOutputInfoResponse) {
         return getOutputInfoResponseSchema.parse(response);
+    }
+
+    getAnalytics(params: GetAnalytics) {
+        return getAnalyticsSchema.parse(params);
+    }
+
+    getAnalyticsResponse(response: GetAnalyticsResponse) {
+        return getAnalyticsResponseSchema.parse(response);
+    }
+
+    listDeployedAssets(params: ListDeployedAssets) {
+        return listDeployedAssetsSchema.parse(params);
+    }
+
+    listDeployedAssetsResponse(response: ListDeployedAssetsResponse) {
+        return listDeployedAssetsResponseSchema.parse(response);
     }
 }

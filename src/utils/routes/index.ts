@@ -40,6 +40,7 @@ export const Routes = {
         TRANSFER: '/asset21/transfer',
         UTXOS: '/asset21/utxos',
         OUTPOINT: '/asset21',
+        ANALYTICS: '/asset21/analytics',
     },
     UTILITY: {
         REGISTER: '/utility/register',
