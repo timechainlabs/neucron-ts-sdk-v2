@@ -25,3 +25,4 @@ export * from './services/vendor/types.js';
 export * from './services/bill/types.js';
 export * from './services/payout/types.js';
 export * from './services/billing/types.js';
+export * from './services/asset21/types.js';

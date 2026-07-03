@@ -1,209 +1,323 @@
 import { z } from 'zod';
+import { networkEnum, nonEmptyString, pageMetaSchema } from '../../utils/schema/common.js';
 
 export const messageResponseSchema = z.object({
     message: z.string(),
 });
 
-const stateEnum = z.enum(['CUSTOMER', 'MINT', 'REDEEM', 'FREEZE', 'BLACKLIST', 'UNFREEZE', 'UNBLACKLIST']);
+export const requestStateEnum = z.enum([
+    'CUSTOMER',
+    'MINT',
+    'REDEEM',
+    'PAUSE',
+    'RESUME',
+    'FREEZE',
+    'BLACKLIST',
+    'UNFREEZE',
+    'UNBLACKLIST',
+]);
 
-export const getAddressStateSchema = z.object({
-    'X-Neucron-Team-ID': z.string().optional(),
-    assetID: z.string().min(1, 'Asset ID is required'),
+export const requestStatusEnum = z.enum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED']);
+
+export const requestActionEnum = z.enum(['APPROVE', 'REJECT']);
+
+const asset21ContextSchema = z.object({
+    businessId: z.string().optional(),
+    teamId: z.string().optional(),
 });
 
-export const getAddressStateResponseSchema = z.array(
-    z.object({
+const feeStructureSchema = z.object({
+    fee: z.union([z.string(), z.number()]),
+    min: z.union([z.string(), z.number()]),
+    max: z.union([z.string(), z.number()]),
+});
+
+export const registerBodySchema = z.object({
+    asset_name: nonEmptyString,
+    symbol: nonEmptyString,
+    decimals: z.number(),
+    image_url: nonEmptyString,
+    legal_term: nonEmptyString,
+    wallet_id: nonEmptyString,
+    network: networkEnum,
+    token_detail: z
+        .object({
+            icon: z.string().optional(),
+            decimal: z.number().optional(),
+            feeStructure: z.array(feeStructureSchema).optional(),
+            holder_identity_config: z.record(z.unknown()).optional(),
+            request_config: z
+                .object({
+                    min_approval: z.number(),
+                    min_rejection: z.number(),
+                })
+                .optional(),
+        })
+        .passthrough(),
+    asset_type: z.string().optional(),
+    currency: z.string().optional(),
+    price: z.number().optional(),
+    total_supply: z.number().optional(),
+});
+
+export const registerSchema = asset21ContextSchema.merge(registerBodySchema);
+
+export const registerResponseSchema = z.object({
+    assetID: nonEmptyString,
+});
+
+export const getAddressStateSchema = asset21ContextSchema.extend({
+    address: nonEmptyString,
+    assetID: nonEmptyString,
+});
+
+export const getAddressStateResponseSchema = z
+    .object({
         address: z.string(),
-        state: z.string(),
+        assetId: z.string().optional(),
+        balance: z.union([z.string(), z.number()]).optional(),
+        frozen: z.boolean().optional(),
+        blacklisted: z.boolean().optional(),
     })
-);
+    .passthrough();
 
-export const fetchBalanceSchema = getAddressStateSchema.extend({
-    addresses: z.array(z.string().min(1, 'Address is required')),
-});
-
-export const fetchBalanceResponseSchema = z.array(
-    z.object({
-        address: z.string().min(1, 'Address is required'),
-        amt: z.number().min(0, 'Amount is required'),
-        precised: z.number().min(0, 'Precised is required'),
+export const fetchBalanceSchema = asset21ContextSchema
+    .extend({
+        assetID: z.string().optional(),
+        address: z.string().optional(),
+        addresses: z.array(nonEmptyString).optional(),
     })
-);
+    .refine((data) => Boolean(data.address) || Boolean(data.addresses?.length), {
+        message: 'Either address or addresses is required',
+    });
 
-export const systemConfigSchema = z.object({
-    assetID: z.string().min(1, 'Asset ID is required'),
+export const fetchBalanceResponseSchema = z
+    .object({
+        success: z.boolean().optional(),
+        data: z
+            .object({
+                balances: z
+                    .array(
+                        z
+                            .object({
+                                address: z.string(),
+                                balance: z.union([z.string(), z.number()]),
+                                confirmed: z.union([z.string(), z.number()]).optional(),
+                                unconfirmed: z.union([z.string(), z.number()]).optional(),
+                            })
+                            .passthrough()
+                    )
+                    .optional(),
+            })
+            .passthrough()
+            .optional(),
+    })
+    .passthrough();
+
+export const systemConfigSchema = asset21ContextSchema.extend({
+    assetID: nonEmptyString,
 });
 
 const FeeSchema = z.object({
-    fee: z.number(),
-    max: z.number(),
-    min: z.number(),
+    fee: z.union([z.string(), z.number()]),
+    max: z.union([z.string(), z.number()]),
+    min: z.union([z.string(), z.number()]),
 });
 
-export const systemConfigResponseSchema = z.object({
-    approver: z.string(),
-    assetId: z.string(),
-    burnAddress: z.string(),
-    decimals: z.number(),
-    feeAddress: z.string(),
-    fees: z.array(FeeSchema.optional()).optional(),
-    mintAddress: z.string(),
-    minterHex: z.string(),
-    paused: z.boolean(),
-    symbol: z.string(),
-    tokenId: z.string(),
-});
-
-export const getCustomersSchema = getAddressStateSchema;
-
-export const getCustomerResponseSchema = z.array(
-    z.object({
-        address: z.string().min(1, 'Address is required'),
-        asset_id: z.string().min(1, 'Address is required'),
-        email: z.string().min(1, 'Email is required'),
+export const systemConfigResponseSchema = z
+    .object({
+        approver: z.string().optional(),
+        assetId: z.string().optional(),
+        burnAddress: z.string().optional(),
+        decimals: z.number().optional(),
+        feeAddress: z.string().optional(),
+        fees: z.array(FeeSchema).optional(),
+        mintAddress: z.string().optional(),
+        minterHex: z.string().optional(),
+        paused: z.boolean().optional(),
+        symbol: z.string().optional(),
+        tokenId: z.string().optional(),
     })
-);
+    .passthrough();
 
-export const deploySchema = getAddressStateSchema;
-
-export const deployResponseSchema = z.object({
-    txid: z.string().min(1, 'txid is required for successful deployment'),
-});
-
-const registerPayloadBody = z.object({
-    asset_name: z.string().min(1, 'Asset name cannot be empty'),
-    image_url: z.string().url('Must be a valid URL'),
-    legal_term: z.string().min(1, 'Legal term cannot be empty'),
-    symbol: z.string().min(1, 'Symbol cannot be empty'),
-    token_detail: z.object({
-        decimal: z.number(),
-        feeStructure: z.array(
-            z
-                .object({
-                    fee: z.number(),
-                    max: z.number(),
-                    min: z.number(),
-                })
-                .optional()
-        ),
-        icon: z.string().min(1, 'Icon cannot be empty'),
-        request_config: z.object({
+export const updateSystemConfigSchema = asset21ContextSchema.extend({
+    assetID: nonEmptyString,
+    fees: z.array(FeeSchema).optional(),
+    request_config: z
+        .object({
             min_approval: z.number(),
             min_rejection: z.number(),
-        }),
-    }),
-    total_supply: z.number().nonnegative(),
-    wallet_id: z.string().optional(),
+        })
+        .optional(),
 });
 
-export const registerPayloadSchema = z.object({
-    'X-Neucron-Team-ID': z.string().optional(),
-    registerPayloadBody,
+export const updateSystemConfigResponseSchema = messageResponseSchema;
+
+export const getCustomersSchema = asset21ContextSchema.extend({
+    assetID: nonEmptyString,
 });
 
-export const registerResponseSchema = getAddressStateSchema;
+export const getCustomerResponseSchema = z.array(
+    z
+        .object({
+            address: z.string(),
+            asset_id: z.string().optional(),
+            email: z.string().optional(),
+            name: z.string().optional(),
+            paymail: z.string().optional(),
+        })
+        .passthrough()
+);
 
-export const createRequestSchema = z.object({
-    approvalsRequired: z.number(),
-    assetId: z.string().min(1, 'Asset ID cannot be empty'),
-    rejectionsRequired: z.number(),
-    requestDetails: z.object({
+export const deploySchema = asset21ContextSchema.extend({
+    assetID: nonEmptyString,
+});
+
+export const deployResponseSchema = z.object({
+    txid: nonEmptyString,
+});
+
+export const requestDetailsSchema = z
+    .object({
         UtxoId: z.string().optional(),
         address: z.string().optional(),
-        amount: z.number().optional(),
-        email: z.string().email('Invalid email format').optional(),
+        amount: z.union([z.string(), z.number()]).optional(),
+        email: z.string().optional(),
         name: z.string().optional(),
-    }),
-    state: stateEnum,
+        paymail: z.string().optional(),
+    })
+    .passthrough();
+
+export const createRequestSchema = asset21ContextSchema.extend({
+    assetId: nonEmptyString,
+    state: requestStateEnum,
+    requestDetails: requestDetailsSchema,
+    approvalsRequired: z.number().optional(),
+    rejectionsRequired: z.number().optional(),
 });
 
 export const createRequestResponseSchema = messageResponseSchema;
 
-export const updateRequestSchema = z.object({
-    action: z.string().min(1, 'Action cannot be empty'),
-    assetId: z.string().min(1, 'Asset ID cannot be empty'),
-    requestId: z.string().min(1, 'Request ID cannot be empty'),
+export const updateRequestSchema = asset21ContextSchema.extend({
+    action: requestActionEnum,
+    assetId: nonEmptyString,
+    requestId: nonEmptyString,
 });
 
 export const updateRequestResponseSchema = messageResponseSchema;
 
-export const getRequestSchema = z.object({
-    assetID: z.string().min(1, 'Asset ID cannot be empty'),
-    state: stateEnum,
-    status: z.string().min(1, 'Status cannot be empty'),
-    page: z.string().min(1, 'Page cannot be empty'),
-    size: z.string().min(1, 'Page size cannot be empty'),
+export const getRequestSchema = asset21ContextSchema.extend({
+    assetID: nonEmptyString,
+    page: z.number().min(1),
+    size: z.number().min(1),
+    state: requestStateEnum.optional(),
+    status: requestStatusEnum.optional(),
 });
 
 const UserSchema = z.object({
-    email: z.string().email('Invalid email format'),
-    name: z.string().min(1, 'Name cannot be empty'),
-    userID: z.string().min(1, 'User ID cannot be empty'),
-});
-
-const RequestDetailsSchema = z.object({
-    UtxoId: z.string().min(1, 'UtxoId cannot be empty'),
-    address: z.string().min(1, 'Address cannot be empty'),
-    amount: z.number(),
-    email: z.string().email('Invalid email format'),
+    email: z.string().optional(),
+    name: z.string().optional(),
+    userID: z.string().optional(),
 });
 
 export const getRequestResponseSchema = z.array(
-    z.object({
-        approvalsRequired: z.number(),
-        approvers: z.array(UserSchema),
-        assetId: z.string().min(1, 'Asset ID cannot be empty'),
-        createdAt: z.string().min(1, 'CreatedAt cannot be empty'),
-        created_by: z.string().min(1, 'Created_by cannot be empty'),
-        currentApprovals: z.number(),
-        currentRejections: z.number(),
-        rejectionsRequired: z.number(),
-        rejectors: z.array(UserSchema),
-        requestDetails: RequestDetailsSchema,
-        requestId: z.string().min(1, 'Request ID cannot be empty'),
-        state: stateEnum,
-        status: z.string().min(1, 'Status cannot be empty'),
-        updatedAt: z.string().min(1, 'UpdatedAt cannot be empty'),
-    })
+    z
+        .object({
+            approvalsRequired: z.number().optional(),
+            approvers: z.array(UserSchema).nullable().optional(),
+            assetId: z.string(),
+            createdAt: z.string().optional(),
+            created_by: z.string().optional(),
+            currentApprovals: z.number().optional(),
+            currentRejections: z.number().optional(),
+            rejectionsRequired: z.number().optional(),
+            rejectors: z.array(UserSchema).nullable().optional(),
+            requestDetails: requestDetailsSchema.optional(),
+            requestId: z.string(),
+            state: requestStateEnum.optional(),
+            status: z.string().optional(),
+            updatedAt: z.string().optional(),
+        })
+        .passthrough()
 );
 
-export const syncTransactionSchema = z.object({
-    assetID: z.string().min(1, 'Asset ID cannot be empty'),
-    from: z.number().default(0),
-    limit: z.number().default(1000),
+export const syncTransactionSchema = asset21ContextSchema.extend({
+    assetID: nonEmptyString,
+    txid: nonEmptyString,
 });
 
-export const syncTransactionResponse = z.array(
-    z.object({
-        height: z.number(),
-        idx: z.number(),
-        outs: z.array(z.number()),
-        rawtx: z.string(),
-        receivers: z.array(z.string()).optional(),
-        score: z.number(),
-        senders: z.array(z.string()).optional(),
-        txid: z.string(),
-    })
+export const syncTransactionResponseSchema = z.array(
+    z
+        .object({
+            height: z.number().optional(),
+            idx: z.number().optional(),
+            outs: z.array(z.number()).optional(),
+            rawtx: z.string().optional(),
+            receivers: z.array(z.string()).optional(),
+            score: z.number().optional(),
+            senders: z.array(z.string()).optional(),
+            txid: z.string(),
+        })
+        .passthrough()
 );
 
-export const triggerSyncForAddressesSchema = syncTransactionSchema.extend({
-    order: z.string().min(1, 'Order cannot be empty'),
-    request: z.array(z.string().min(1, 'Request cannot be empty')),
+export const listSyncedTransactionsSchema = asset21ContextSchema.extend({
+    assetID: nonEmptyString,
+    from: z.union([z.string(), z.number()]).optional(),
+    limit: z.union([z.string(), z.number()]).optional(),
+    action: z.string().optional(),
 });
 
-export const triggerSyncForAddressesResponseSchema = syncTransactionResponse;
+export const listSyncedTransactionsResponseSchema = syncTransactionResponseSchema;
 
-export const transferSchema = z.object({
-    assetID: z.string().min(1, 'Asset ID cannot be empty'),
-    transfer: z.string().min(1, 'Transfer cannot be empty'),
+export const triggerSyncForAddressesSchema = asset21ContextSchema.extend({
+    assetID: nonEmptyString,
+    addresses: z.array(nonEmptyString).min(1),
 });
 
-export const transferResponseSchema = z.array(z.string().min(1, 'Transfer cannot be empty'));
+export const triggerSyncForAddressesResponseSchema = syncTransactionResponseSchema;
 
-export const getUnspentUTXOsSchema = z.object({
-    assetID: z.string().min(1, 'Asset ID cannot be empty'),
-    addresses: z.array(z.string().min(1, 'Address cannot be empty')),
+export const transferBodySchema = z.object({
+    walletID: nonEmptyString,
+    fromAddress: nonEmptyString,
+    toAddress: nonEmptyString,
+    amount: nonEmptyString,
+    tokenAddress: z.string().optional(),
+    metadata: z.record(z.unknown()).optional(),
 });
+
+export const transferSchema = asset21ContextSchema.extend({
+    assetID: z.string().optional(),
+    ...transferBodySchema.shape,
+});
+
+export const transferResponseSchema = z
+    .object({
+        success: z.boolean().optional(),
+        data: z
+            .object({
+                transactionHash: z.string().optional(),
+                transferId: z.string().optional(),
+                status: z.string().optional(),
+                amount: z.string().optional(),
+                fromAddress: z.string().optional(),
+                toAddress: z.string().optional(),
+            })
+            .passthrough()
+            .optional(),
+    })
+    .passthrough();
+
+export const getUnspentUTXOsSchema = asset21ContextSchema
+    .extend({
+        assetID: z.string().optional(),
+        address: z.string().optional(),
+        addresses: z.array(nonEmptyString).optional(),
+        includeMempool: z.boolean().optional(),
+    })
+    .refine((data) => Boolean(data.address) || Boolean(data.addresses?.length), {
+        message: 'Either address or addresses is required',
+    });
 
 const Asset21Schema = z.object({
     amt: z.number().optional(),
@@ -224,24 +338,69 @@ const DataSchema = z.object({
     cosign: CosignSchema.optional(),
 });
 
-const UTXOInfoSchema = z.object({
-    data: DataSchema.optional(),
-    height: z.number(),
-    idx: z.number(),
-    outpoint: z.string(),
-    owners: z.array(z.string()).optional(),
-    satoshis: z.number().int().nonnegative(),
-    score: z.number(),
-    script: z.string(),
-    senders: z.array(z.string()).optional(),
-    txid: z.string(),
-    vout: z.number().int().nonnegative(),
+const UTXOInfoSchema = z
+    .object({
+        data: DataSchema.optional(),
+        height: z.number().optional(),
+        idx: z.number().optional(),
+        outpoint: z.string().optional(),
+        owners: z.array(z.string()).optional(),
+        satoshis: z.number().optional(),
+        score: z.number().optional(),
+        script: z.string().optional(),
+        senders: z.array(z.string()).optional(),
+        txid: z.string().optional(),
+        vout: z.number().optional(),
+    })
+    .passthrough();
+
+export const getUnspentUTXOsResponseSchema = z.union([z.array(UTXOInfoSchema), z.record(z.unknown())]);
+
+export const getOutputInfoSchema = asset21ContextSchema.extend({
+    outpoint: nonEmptyString,
 });
 
-export const getUnspentUTXOsResponseSchema = z.array(UTXOInfoSchema);
+export const getOutputInfoResponseSchema = z
+    .object({
+        outpoint: z.string().optional(),
+        output: z.record(z.unknown()).optional(),
+    })
+    .passthrough();
 
-export const getOutputInfoSchema = z.object({
-    outpoint: z.string().min(1, 'Outpoint cannot be empty'),
+export const getAnalyticsSchema = asset21ContextSchema.extend({
+    assetID: nonEmptyString,
+    limit: z.union([z.string(), z.number()]).optional(),
+    graphRange: z.string().optional(),
 });
 
-export const getOutputInfoResponseSchema = UTXOInfoSchema;
+export const analyticsGraphPointSchema = z
+    .object({
+        mint_count: z.number().optional(),
+        mint_volume: z.number().optional(),
+        redeem_count: z.number().optional(),
+        redeem_volume: z.number().optional(),
+        timestamp: z.string().optional(),
+        transfer_count: z.number().optional(),
+        transfer_volume: z.number().optional(),
+    })
+    .passthrough();
+
+export const getAnalyticsResponseSchema = z
+    .object({
+        graph_data: z.array(analyticsGraphPointSchema).optional(),
+        pending_operations: z.number().optional(),
+        total_customers: z.number().optional(),
+        total_supply: z.union([z.string(), z.number()]).optional(),
+    })
+    .passthrough();
+
+export const listDeployedAssetsSchema = asset21ContextSchema.extend({
+    status: nonEmptyString,
+    pageNumber: z.number().min(1).optional(),
+    pageSize: z.number().min(1).optional(),
+});
+
+export const listDeployedAssetsResponseSchema = z.object({
+    list: z.array(z.record(z.unknown())),
+    page_meta: pageMetaSchema.optional(),
+});

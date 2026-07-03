@@ -29,6 +29,7 @@ import NeucronSDK, {
 | `assets/types` | `TransferAsset`, `LedgerList`, `Balances` |
 | `asset21/types` | `Deploy`, `Transfer`, `GetUnspentUTXOs` |
 | `asset-swap/types` | `SwapAssets`, `SwapRate` |
+| `asset21/types` | `Register`, `Transfer`, `CreateRequest`, `GetAnalytics` |
 | `pay/types` | `PayRequestInput`, `PayResponse` |
 | `paymail/types` | `CreatePaymailBody`, `PaymailListResponse` |
 | `utility/types` | `CreateUtility`, `MintUtility`, `RedeemUtility` |

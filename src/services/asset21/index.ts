@@ -1,7 +1,7 @@
 import { HttpClient } from '../../utils/http/http-client.js';
 import type { Headers, HttpResponse, QueryParams } from '../../utils/http/types.js';
 import { Authentication } from '../authentication/index.js';
-
+import { buildAuthHeaders } from '../../utils/http/headers.js';
 import Validator from './validator.js';
 import { handleError } from '../../utils/errors/helper.js';
 import type {
@@ -11,11 +11,13 @@ import type {
     FetchBalanceResponse,
     SystemConfig,
     SystemConfigResponse,
+    UpdateSystemConfig,
+    UpdateSystemConfigResponse,
     GetCustomers,
     GetCustomersResponse,
     Deploy,
     DeployResponse,
-    RegisterPayload,
+    Register,
     RegisterResponse,
     CreateRequest,
     CreateRequestResponse,
@@ -25,20 +27,44 @@ import type {
     UpdateRequestResponse,
     SyncTransaction,
     SyncTransactionResponse,
+    ListSyncedTransactions,
+    ListSyncedTransactionsResponse,
     TriggerSyncForAddresses,
     TriggerSyncForAddressesResponse,
     Transfer,
     TransferResponse,
     GetUnspentUTXOs,
     GetUnspentUTXOResponse,
-    GetOutputInfoResponse,
     GetOutputInfo,
+    GetOutputInfoResponse,
+    GetAnalytics,
+    GetAnalyticsResponse,
+    ListDeployedAssets,
+    ListDeployedAssetsResponse,
 } from './types.js';
 import { Routes } from '../../utils/routes/index.js';
+
+interface Asset21Context {
+    businessId?: string;
+    teamId?: string;
+}
+
+function splitAsset21Context<T extends Asset21Context>(options: T) {
+    const { businessId, teamId, ...rest } = options;
+    return { businessId, teamId, rest };
+}
+
+function buildAsset21Headers(auth: Authentication, context: Asset21Context): Headers {
+    return buildAuthHeaders(auth, {
+        businessId: context.businessId,
+        teamId: context.teamId,
+    });
+}
 
 export class Assets21 {
     private readonly validator: Validator;
     private readonly httpClient: HttpClient;
+
     constructor(private readonly auth: Authentication) {
         this.validator = new Validator();
         this.httpClient = new HttpClient();
@@ -48,14 +74,17 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.getAddressState(options);
-            const reqPath = Routes.ASSET21.ADDRESS;
-            const headers: Headers = {
-                Authorization: this.auth.getToken(),
-            };
+            const { businessId, teamId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
             const params: QueryParams = {
-                assetID: options.assetID,
+                address: rest.address,
+                assetID: rest.assetID,
             };
-            const response = await this.httpClient.get<GetAddressStateResponse>(reqPath, headers, params);
+            const response = await this.httpClient.get<GetAddressStateResponse>(
+                Routes.ASSET21.ADDRESS,
+                headers,
+                params
+            );
             this.validator.getAddressStateResponse(response.data);
             return response;
         } catch (error) {
@@ -67,19 +96,25 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.fetchBalance(options);
-            const reqPath = Routes.ASSET21.BALANCE;
-            const headers: Headers = {
-                Authorization: this.auth.getToken(),
-            };
-            const params: QueryParams = {
-                assetID: options.assetID,
-            };
-            const response = await this.httpClient.post<FetchBalanceResponse>(
-                reqPath,
-                options.addresses,
-                headers,
-                params
-            );
+            const { businessId, teamId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const params: QueryParams = { assetID: rest.assetID };
+
+            if (rest.addresses?.length) {
+                const response = await this.httpClient.post<FetchBalanceResponse>(
+                    Routes.ASSET21.BALANCE,
+                    { addresses: rest.addresses },
+                    headers,
+                    params
+                );
+                this.validator.fetchBalanceResponse(response.data);
+                return response;
+            }
+
+            const response = await this.httpClient.get<FetchBalanceResponse>(Routes.ASSET21.BALANCE, headers, {
+                ...params,
+                address: rest.address,
+            });
             this.validator.fetchBalanceResponse(response.data);
             return response;
         } catch (error) {
@@ -91,9 +126,35 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.systemConfig(options);
-            const reqPath = Routes.ASSET21.CONFIG;
-            const response = await this.httpClient.get<SystemConfigResponse>(reqPath, {}, options);
+            const { businessId, teamId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const params: QueryParams = { assetID: rest.assetID };
+            const response = await this.httpClient.get<SystemConfigResponse>(Routes.ASSET21.CONFIG, headers, params);
             this.validator.systemConfigResponse(response.data);
+            return response;
+        } catch (error) {
+            handleError(error);
+        }
+    }
+
+    async updateSystemConfig(options: UpdateSystemConfig): Promise<HttpResponse<UpdateSystemConfigResponse>> {
+        try {
+            this.auth.validate();
+            this.validator.updateSystemConfig(options);
+            const { businessId, teamId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const params: QueryParams = { assetID: rest.assetID };
+            const body = {
+                fees: rest.fees,
+                request_config: rest.request_config,
+            };
+            const response = await this.httpClient.put<UpdateSystemConfigResponse>(
+                Routes.ASSET21.CONFIG,
+                body,
+                headers,
+                params
+            );
+            this.validator.updateSystemConfigResponse(response.data);
             return response;
         } catch (error) {
             handleError(error);
@@ -104,16 +165,25 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.getCustomers(options);
-            const reqPath = Routes.ASSET21.CUSTOMERS;
-            const headers: Headers = {
-                Authorization: this.auth.getToken(),
-                'X-Neucron-Team-ID': options['X-Neucron-Team-ID'] ?? '',
-            };
-            const params: QueryParams = {
-                assetID: options.assetID,
-            };
-            const response = await this.httpClient.get<GetCustomersResponse>(reqPath, headers, params);
+            const { businessId, teamId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const params: QueryParams = { assetID: rest.assetID };
+            const response = await this.httpClient.get<GetCustomersResponse>(Routes.ASSET21.CUSTOMERS, headers, params);
             this.validator.getCustomersResponse(response.data);
+            return response;
+        } catch (error) {
+            handleError(error);
+        }
+    }
+
+    async register(options: Register): Promise<HttpResponse<RegisterResponse>> {
+        try {
+            this.auth.validate();
+            this.validator.register(options);
+            const { businessId, teamId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const response = await this.httpClient.post<RegisterResponse>(Routes.ASSET21.REGISTER, rest, headers);
+            this.validator.registerResponse(response.data);
             return response;
         } catch (error) {
             handleError(error);
@@ -124,15 +194,10 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.deploy(options);
-            const reqPath = Routes.ASSET21.DEPLOY;
-            const headers: Headers = {
-                Authorization: this.auth.getToken(),
-                'X-Neucron-Team-ID': options['X-Neucron-Team-ID'] ?? '',
-            };
-            const params: QueryParams = {
-                assetID: options.assetID,
-            };
-            const response = await this.httpClient.post<DeployResponse>(reqPath, null, headers, params);
+            const { businessId, teamId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const params: QueryParams = { assetID: rest.assetID };
+            const response = await this.httpClient.post<DeployResponse>(Routes.ASSET21.DEPLOY, null, headers, params);
             this.validator.deployResponse(response.data);
             return response;
         } catch (error) {
@@ -140,21 +205,23 @@ export class Assets21 {
         }
     }
 
-    async register(options: RegisterPayload): Promise<HttpResponse<RegisterResponse>> {
+    async listDeployedAssets(options: ListDeployedAssets): Promise<HttpResponse<ListDeployedAssetsResponse>> {
         try {
             this.auth.validate();
-            this.validator.registerPayload(options);
-            const reqPath = Routes.ASSET21.REGISTER;
-            const headers: Headers = {
-                Authorization: this.auth.getToken(),
-                'X-Neucron-Team-ID': options['X-Neucron-Team-ID'] ?? '',
+            this.validator.listDeployedAssets(options);
+            const { businessId, teamId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const params: QueryParams = {
+                status: rest.status,
+                pageNumber: rest.pageNumber,
+                pageSize: rest.pageSize,
             };
-            const response = await this.httpClient.post<RegisterResponse>(
-                reqPath,
-                options.registerPayloadBody,
-                headers
+            const response = await this.httpClient.get<ListDeployedAssetsResponse>(
+                Routes.ASSET.ASSETLIST,
+                headers,
+                params
             );
-            this.validator.registerResponse(response.data);
+            this.validator.listDeployedAssetsResponse(response.data);
             return response;
         } catch (error) {
             handleError(error);
@@ -165,28 +232,17 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.createRequest(options);
-            const reqPath = Routes.ASSET21.REQUEST;
-            const headers: Headers = {
-                Authorization: this.auth.getToken(),
+            const { businessId, teamId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const body = {
+                assetId: rest.assetId,
+                state: rest.state,
+                requestDetails: rest.requestDetails,
+                approvalsRequired: rest.approvalsRequired,
+                rejectionsRequired: rest.rejectionsRequired,
             };
-            const response = await this.httpClient.post<CreateRequestResponse>(reqPath, options, headers);
+            const response = await this.httpClient.post<CreateRequestResponse>(Routes.ASSET21.REQUEST, body, headers);
             this.validator.createRequestResponse(response.data);
-            return response;
-        } catch (error) {
-            handleError(error);
-        }
-    }
-
-    async updateRequest(options: UpdateRequest): Promise<HttpResponse<UpdateRequestResponse>> {
-        try {
-            this.auth.validate();
-            this.validator.updateRequest(options);
-            const reqPath = Routes.ASSET21.REQUEST;
-            const headers: Headers = {
-                Authorization: this.auth.getToken(),
-            };
-            const response = await this.httpClient.put<UpdateRequestResponse>(reqPath, options, headers);
-            this.validator.updateRequestResponse(response.data);
             return response;
         } catch (error) {
             handleError(error);
@@ -197,19 +253,36 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.getRequest(options);
-            const reqPath = Routes.ASSET21.REQUEST;
-            const headers: Headers = {
-                Authorization: this.auth.getToken(),
-            };
+            const { businessId, teamId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
             const params: QueryParams = {
-                assetID: options.assetID,
-                state: options.state,
-                status: options.status,
-                page: options.page,
-                size: options.size,
+                assetID: rest.assetID,
+                state: rest.state,
+                status: rest.status,
+                page: rest.page,
+                size: rest.size,
             };
-            const response = await this.httpClient.get<GetRequestResponse>(reqPath, headers, params);
+            const response = await this.httpClient.get<GetRequestResponse>(Routes.ASSET21.REQUEST, headers, params);
             this.validator.getRequestResponse(response.data);
+            return response;
+        } catch (error) {
+            handleError(error);
+        }
+    }
+
+    async updateRequest(options: UpdateRequest): Promise<HttpResponse<UpdateRequestResponse>> {
+        try {
+            this.auth.validate();
+            this.validator.updateRequest(options);
+            const { businessId, teamId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const body = {
+                action: rest.action,
+                assetId: rest.assetId,
+                requestId: rest.requestId,
+            };
+            const response = await this.httpClient.put<UpdateRequestResponse>(Routes.ASSET21.REQUEST, body, headers);
+            this.validator.updateRequestResponse(response.data);
             return response;
         } catch (error) {
             handleError(error);
@@ -220,17 +293,40 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.syncTransaction(options);
-            const reqPath = Routes.ASSET21.SYNC;
-            const headers: Headers = {
-                Authorization: this.auth.getToken(),
+            const { businessId, teamId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const body = {
+                assetID: rest.assetID,
+                txid: rest.txid,
             };
-            const params: QueryParams = {
-                assetID: options.assetID,
-                from: options.from,
-                limit: options.limit,
-            };
-            const response = await this.httpClient.get<SyncTransactionResponse>(reqPath, headers, params);
+            const response = await this.httpClient.post<SyncTransactionResponse>(Routes.ASSET21.SYNC, body, headers);
             this.validator.syncTransactionResponse(response.data);
+            return response;
+        } catch (error) {
+            handleError(error);
+        }
+    }
+
+    async listSyncedTransactions(
+        options: ListSyncedTransactions
+    ): Promise<HttpResponse<ListSyncedTransactionsResponse>> {
+        try {
+            this.auth.validate();
+            this.validator.listSyncedTransactions(options);
+            const { businessId, teamId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const params: QueryParams = {
+                assetID: rest.assetID,
+                from: rest.from,
+                limit: rest.limit,
+                action: rest.action,
+            };
+            const response = await this.httpClient.get<ListSyncedTransactionsResponse>(
+                Routes.ASSET21.SYNC,
+                headers,
+                params
+            );
+            this.validator.listSyncedTransactionsResponse(response.data);
             return response;
         } catch (error) {
             handleError(error);
@@ -243,21 +339,16 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.triggerSyncForAddresses(options);
-            const reqPath = Routes.ASSET21.SYNC;
-            const headers: Headers = {
-                Authorization: this.auth.getToken(),
-            };
-            const params: QueryParams = {
-                assetID: options.assetID,
-                from: options.from,
-                limit: options.limit,
-                order: options.order,
+            const { businessId, teamId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const body = {
+                assetID: rest.assetID,
+                addresses: rest.addresses,
             };
             const response = await this.httpClient.post<TriggerSyncForAddressesResponse>(
-                reqPath,
-                options.request,
-                headers,
-                params
+                Routes.ASSET21.SYNC,
+                body,
+                headers
             );
             this.validator.triggerSyncForAddressesResponse(response.data);
             return response;
@@ -270,14 +361,23 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.transfer(options);
-            const reqPath = Routes.ASSET21.TRANSFER;
-            const headers: Headers = {
-                Authorization: this.auth.getToken(),
+            const { businessId, teamId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const params: QueryParams = { assetID: rest.assetID };
+            const body = {
+                walletID: rest.walletID,
+                fromAddress: rest.fromAddress,
+                toAddress: rest.toAddress,
+                amount: rest.amount,
+                tokenAddress: rest.tokenAddress,
+                metadata: rest.metadata,
             };
-            const params: QueryParams = {
-                assetID: options.assetID,
-            };
-            const response = await this.httpClient.post<TransferResponse>(reqPath, options.transfer, headers, params);
+            const response = await this.httpClient.post<TransferResponse>(
+                Routes.ASSET21.TRANSFER,
+                body,
+                headers,
+                params
+            );
             this.validator.transferResponse(response.data);
             return response;
         } catch (error) {
@@ -289,19 +389,28 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.getUnspentUTXOs(options);
-            const reqPath = Routes.ASSET21.UTXOS;
-            const headers: Headers = {
-                Authorization: this.auth.getToken(),
-            };
-            const params: QueryParams = {
-                assetID: options.assetID,
-            };
-            const response = await this.httpClient.post<GetUnspentUTXOResponse>(
-                reqPath,
-                options.addresses,
-                headers,
-                params
-            );
+            const { businessId, teamId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const params: QueryParams = { assetID: rest.assetID };
+
+            if (rest.addresses?.length) {
+                const response = await this.httpClient.post<GetUnspentUTXOResponse>(
+                    Routes.ASSET21.UTXOS,
+                    {
+                        addresses: rest.addresses,
+                        includeMempool: rest.includeMempool,
+                    },
+                    headers,
+                    params
+                );
+                this.validator.getUnspentUTXOResponse(response.data);
+                return response;
+            }
+
+            const response = await this.httpClient.get<GetUnspentUTXOResponse>(Routes.ASSET21.UTXOS, headers, {
+                ...params,
+                address: rest.address,
+            });
             this.validator.getUnspentUTXOResponse(response.data);
             return response;
         } catch (error) {
@@ -313,12 +422,32 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.getOutputInfo(options);
-            const reqPath = Routes.ASSET21.OUTPOINT + '/' + options.outpoint;
-            const headers: Headers = {
-                Authorization: this.auth.getToken(),
-            };
-            const response = await this.httpClient.get<GetOutputInfoResponse>(reqPath, headers);
+            const { businessId, teamId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const response = await this.httpClient.get<GetOutputInfoResponse>(
+                `${Routes.ASSET21.OUTPOINT}/${rest.outpoint}`,
+                headers
+            );
             this.validator.getOutputInfoResponse(response.data);
+            return response;
+        } catch (error) {
+            handleError(error);
+        }
+    }
+
+    async getAnalytics(options: GetAnalytics): Promise<HttpResponse<GetAnalyticsResponse>> {
+        try {
+            this.auth.validate();
+            this.validator.getAnalytics(options);
+            const { businessId, teamId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const params: QueryParams = {
+                assetID: rest.assetID,
+                limit: rest.limit,
+                graphRange: rest.graphRange,
+            };
+            const response = await this.httpClient.get<GetAnalyticsResponse>(Routes.ASSET21.ANALYTICS, headers, params);
+            this.validator.getAnalyticsResponse(response.data);
             return response;
         } catch (error) {
             handleError(error);
