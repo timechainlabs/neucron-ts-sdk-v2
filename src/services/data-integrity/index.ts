@@ -26,7 +26,7 @@ export class DataIntegrity {
                 walletID: options.walletID,
             };
             const formData = new FormData();
-            formData.append('file', options.file);
+            formData.append('file', options.file as never);
             const res = await this.httpClient.post<FileUploadResponse>(reqPath, formData, headers, params);
             this.validator.fileUploadResponse(res.data);
             return res;
