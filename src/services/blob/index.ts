@@ -22,7 +22,7 @@ export class Blob {
             this.validator.uploadDocument(options);
             const headers = buildAuthHeaders(this.auth, { businessId: options.businessId });
             const formData = new FormData();
-            formData.append('document', options.file);
+            formData.append('document', options.file as never);
             const resp = await this.httpClient.post<UploadDocumentResponse>(
                 Routes.BLOB.DOCUMENT_UPLOAD,
                 formData,
