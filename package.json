@@ -14,6 +14,12 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs",
       "default": "./dist/index.js"
+    },
+    "./schemas": {
+      "types": "./dist/schemas.d.ts",
+      "import": "./dist/schemas.js",
+      "require": "./dist/schemas.cjs",
+      "default": "./dist/schemas.js"
     }
   },
   "files": [
@@ -30,7 +36,7 @@
     "url": "https://github.com/rustybuddha/neucron-ts-sdk-v2.git/issues"
   },
   "scripts": {
-    "build": "tsdown build src/index.ts --format cjs,esm --dts --clean",
+    "build": "tsdown build src/index.ts src/schemas.ts --format cjs,esm --dts --clean",
     "typecheck": "tsc --noEmit",
     "dev": "ts-node src/index.ts",
     "test": "vitest",
