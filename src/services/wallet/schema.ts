@@ -130,7 +130,7 @@ export const availableAssetsResponseSchema = z.object({
 });
 
 export const transactionsResponseSchema = z.object({
-    list: z.array(z.record(z.unknown())),
+    list: z.array(z.record(z.unknown())).default([]),
     page_meta: pageMetaSchema,
 });
 

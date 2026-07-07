@@ -46,6 +46,7 @@ export const vendorBillPayloadSchema = z.object({
     }),
     tax_rate: z.number(),
     vendor_id: z.string(),
+    status: z.enum(['DRAFTED', 'UNPROCESSED', 'PENDING_APPROVAL']).optional(),
 });
 
 export const billIdSchema = businessIdSchema.extend({

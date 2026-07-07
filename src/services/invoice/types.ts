@@ -10,6 +10,7 @@ import {
     shareInvoiceSchema,
     mapCollectionSchema,
     submitCollectionSchema,
+    createPublicPaymentCollectionSchema,
     paymentCollectionSchema,
     paymentSessionSchema,
     sessionIdSchema,
@@ -37,6 +38,7 @@ export type MarkInvoiceAsPaid = z.infer<typeof markInvoiceAsPaidSchema>;
 export type ShareInvoice = z.infer<typeof shareInvoiceSchema>;
 export type MapCollection = z.infer<typeof mapCollectionSchema>;
 export type SubmitCollection = z.infer<typeof submitCollectionSchema>;
+export type CreatePublicPaymentCollection = z.infer<typeof createPublicPaymentCollectionSchema>;
 export type PaymentCollection = z.infer<typeof paymentCollectionSchema>;
 export type PaymentSession = z.infer<typeof paymentSessionSchema>;
 export type SessionId = z.infer<typeof sessionIdSchema>;

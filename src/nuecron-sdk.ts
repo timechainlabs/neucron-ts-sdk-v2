@@ -20,6 +20,7 @@ import { Vendor } from './services/vendor/index.js';
 import { Bill } from './services/bill/index.js';
 import { Payout } from './services/payout/index.js';
 import { Billing } from './services/billing/index.js';
+import { McpFlows } from './services/mcp-flows/index.js';
 
 export class NeucronSDK {
     readonly auth: Authentication;
@@ -43,6 +44,7 @@ export class NeucronSDK {
     readonly bill: Bill;
     readonly payout: Payout;
     readonly billing: Billing;
+    readonly flows: McpFlows;
 
     constructor(config?: Config) {
         this.auth = new Authentication(config);
@@ -66,5 +68,6 @@ export class NeucronSDK {
         this.bill = new Bill(this.auth);
         this.payout = new Payout(this.auth);
         this.billing = new Billing(this.auth);
+        this.flows = new McpFlows(this);
     }
 }

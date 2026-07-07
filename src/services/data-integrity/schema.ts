@@ -6,9 +6,11 @@ export const fileUploadSchema = z.object({
     file: uploadableFileSchema,
 });
 
-export const fileUploadResponseSchema = z.object({
-    txid: z.string().min(1),
-});
+export const fileUploadResponseSchema = z
+    .object({
+        txid: z.string().min(1),
+    })
+    .passthrough();
 
 export const textUploadSchema = z.object({
     hashed: z.string().min(1),
@@ -16,6 +18,8 @@ export const textUploadSchema = z.object({
     text: z.string().min(1),
 });
 
-export const textUploadResponseSchema = z.object({
-    txid: z.string().min(1),
-});
+export const textUploadResponseSchema = z
+    .object({
+        txid: z.string().min(1),
+    })
+    .passthrough();

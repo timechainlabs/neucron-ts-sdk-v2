@@ -21,6 +21,7 @@ import {
     syncAssetResponseSchema,
     importAssetResponseSchema,
 } from './schema.js';
+import { normalizeTransactionsResponse } from '../../utils/schema/normalize.js';
 import type {
     CreateWalletBody,
     CreateBSVWalletBody,
@@ -111,7 +112,7 @@ export default class Validator {
     }
 
     transactionsResponse(options: TransactionsResponse) {
-        return transactionsResponseSchema.parse(options);
+        return transactionsResponseSchema.parse(normalizeTransactionsResponse(options));
     }
 
     transactionDetails(options: TransactionDetails) {
