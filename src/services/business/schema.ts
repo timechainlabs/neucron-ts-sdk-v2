@@ -13,32 +13,34 @@ export const getBusinessDetailsSchema = businessIdSchema.extend({
     businessId: nonEmptyString,
 });
 
-export const businessDetailsResponseSchema = z.object({
-    pan_number: z.string(),
-    business_name: z.string(),
-    business_type: z.enum(['private', 'public']),
-    business_model: z.enum(['b2b', 'b2c', 'both']),
-    business_category: z.string(),
-    business_sub_category: z.string(),
-    business_id: z.string(),
-    business_description: z.string(),
-    business_purpose: z.string(),
-    cin_number: z.string(),
-    gst_number: z.string().optional(),
-    phoneNumber: z.string().optional(),
-    countryCode: z.string().optional(),
-    noGstin: z.boolean(),
-    business_address: addressSchema,
-    gst_address: addressSchema.optional(),
-    sameAsGst: z.boolean(),
-    business_url: z.string().optional(),
-    app_link: z.string().optional(),
-    kyb_status: z.string().optional(),
-    platform_requests: z.array(z.object({ platform: z.string(), status: z.string() })).optional(),
-    platform: z.array(z.string()).optional(),
-    business_logo: z.string().optional(),
-    is_owner: z.boolean().optional(),
-});
+export const businessDetailsResponseSchema = z
+    .object({
+        pan_number: z.string().optional(),
+        business_name: z.string().optional(),
+        business_type: z.string().optional(),
+        business_model: z.string().optional(),
+        business_category: z.string().optional(),
+        business_sub_category: z.string().optional(),
+        business_id: z.string().optional(),
+        business_description: z.string().optional(),
+        business_purpose: z.string().optional(),
+        cin_number: z.string().optional(),
+        gst_number: z.string().optional(),
+        phoneNumber: z.string().optional(),
+        countryCode: z.string().optional(),
+        noGstin: z.boolean().optional(),
+        business_address: addressSchema.optional(),
+        gst_address: addressSchema.optional(),
+        sameAsGst: z.boolean().optional(),
+        business_url: z.string().optional(),
+        app_link: z.string().optional(),
+        kyb_status: z.string().optional(),
+        platform_requests: z.array(z.object({ platform: z.string(), status: z.string() })).optional(),
+        platform: z.array(z.string()).optional(),
+        business_logo: z.string().optional(),
+        is_owner: z.boolean().optional(),
+    })
+    .passthrough();
 
 export const businessListResponseSchema = z.array(z.record(z.unknown()));
 

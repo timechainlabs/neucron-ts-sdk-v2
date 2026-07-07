@@ -26,7 +26,7 @@ export const vendorContactPersonSchema = z.object({
 export const vendorPaymentDetailsSchema = z.object({
     currency: z.string(),
     expense_wallet: z.string(),
-    opening_balance: z.number(),
+    opening_balance: z.union([z.number(), z.string()]),
     payment_address: z.string(),
     payment_terms: z.string(),
     place_of_supply: z.string(),
