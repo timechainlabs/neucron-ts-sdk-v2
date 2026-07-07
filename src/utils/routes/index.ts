@@ -125,6 +125,7 @@ export const Routes = {
         CUSTOMER: '/invoice/customer',
     },
     PAYMENT_COLLECTION: {
+        CREATE: '/payment-collection',
         SESSION: '/payment-collection/session',
         CHECK: '/payment-collection/check',
         SESSION_CHECK: '/payment-collection/session/check',

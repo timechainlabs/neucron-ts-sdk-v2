@@ -30,8 +30,11 @@ export const customerApiSchema = z.object({
     payment_details: z.record(z.unknown()).optional(),
     tax_payer_info: z.record(z.unknown()).optional(),
     team_id: z.string().optional(),
-    total_invoiced: z.number().optional(),
-    total_outstanding: z.number().optional(),
+    business_id: z.string().optional(),
+    status: z.string().optional(),
+    total_invoices: z.number().optional(),
+    total_invoiced: z.union([z.number(), z.record(z.number())]).optional(),
+    total_outstanding: z.union([z.number(), z.record(z.number())]).optional(),
 });
 
 export const listCustomersSchema = businessIdSchema.extend({
@@ -61,5 +64,5 @@ export const updateCustomerSchema = getCustomerSchema.extend({
 
 export const deleteCustomerSchema = getCustomerSchema;
 
-export const customerResponseSchema = customerApiSchema;
+export const customerResponseSchema = customerApiSchema.passthrough();
 export const deleteCustomerResponseSchema = z.record(z.unknown());

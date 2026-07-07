@@ -184,8 +184,8 @@ export const ledgerListResponseSchema = z.any();
 
 export const assetListSchema = z.object({
     searchQuery: z.string().optional(),
-    status: assetStatusEnum,
-    type: AssetTypeEnum,
+    status: assetStatusEnum.optional(),
+    type: AssetTypeEnum.optional(),
     walletID: z.string().optional(),
     pageNumber: z.number().int().min(1).optional(),
     pageSize: z.number().int().min(1).optional(),
