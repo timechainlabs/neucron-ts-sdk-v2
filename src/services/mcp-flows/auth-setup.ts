@@ -1,0 +1,115 @@
+import { NeucronError } from '../../utils/errors/sdk-error.js';
+import type {
+    McpFlowServices,
+    NeucronLoginOptions,
+    NeucronChooseEntityOptions,
+    NeucronChooseEntityResult,
+    NeucronCreateBusinessOptions,
+} from './types.js';
+
+/**
+ * Authenticate a user via email/password and refresh the user profile.
+ * MCP Tool: `neucron_login`
+ */
+export async function neucron_login(services: McpFlowServices, options: NeucronLoginOptions) {
+    if (options.method !== 'email') {
+        throw new NeucronError(
+            'Passkey and OAuth login paths require dedicated SDK methods not yet available',
+            new Error('Unsupported login method'),
+            { type: 'internal' }
+        );
+    }
+
+    const loginResponse = await services.auth.login(options.credentials);
+    const userInfo = await services.auth.userInfo();
+
+    return {
+        token: loginResponse.data.token,
+        login: loginResponse.data,
+        user: userInfo.data,
+    };
+}
+
+/**
+ * List personal and business entities and resolve the active operating context.
+ * MCP Tool: `neucron_choose_entity`
+ */
+export async function neucron_choose_entity(
+    services: McpFlowServices,
+    options: NeucronChooseEntityOptions = {}
+): Promise<NeucronChooseEntityResult> {
+    const userInfoResponse = await services.auth.userInfo();
+    const businessListResponse = await services.business.getBusinessList();
+
+    const user = userInfoResponse.data as Record<string, unknown>;
+    const personalLabel =
+        [user.first_name, user.last_name].filter(Boolean).join(' ') || (user.email as string | undefined) || 'Personal';
+
+    const entities: NeucronChooseEntityResult['entities'] = [{ type: 'personal', label: personalLabel }];
+
+    const businesses = businessListResponse.data;
+    if (Array.isArray(businesses)) {
+        for (const business of businesses) {
+            const record = business as Record<string, unknown>;
+            entities.push({
+                type: 'business',
+                business_id: String(record.business_id ?? record.businessId ?? ''),
+                label: String(record.business_name ?? record.display_name ?? record.business_id ?? 'Business'),
+            });
+        }
+    }
+
+    const active_entity: NeucronChooseEntityResult['active_entity'] = options.businessId
+        ? { type: 'business', business_id: options.businessId }
+        : { type: 'personal' };
+
+    let businessDetails: unknown;
+    if (options.businessId && options.loadBusinessDetails) {
+        const detailsResponse = await services.business.getBusinessDetails({ businessId: options.businessId });
+        businessDetails = detailsResponse.data;
+    }
+
+    return {
+        entities,
+        active_entity,
+        userInfo: userInfoResponse.data,
+        businessList: businessListResponse.data,
+        businessDetails,
+    };
+}
+
+/**
+ * Register a new business entity and refresh the business list.
+ * MCP Tool: `neucron_create_business`
+ *
+ * Note: Business creation requires `Business.createBusiness` in the SDK. Until that method
+ * exists, pass `businessId` with `updateAfterCreate` to run post-creation update steps only.
+ */
+export async function neucron_create_business(services: McpFlowServices, options: NeucronCreateBusinessOptions) {
+    if (!options.businessId) {
+        throw new NeucronError(
+            'Business creation (POST /business) is not yet exposed on the Business SDK service. Provide businessId to run post-creation steps.',
+            new Error('createBusiness not implemented'),
+            { type: 'internal' }
+        );
+    }
+
+    const businessId = options.businessId;
+    let updateResult: unknown;
+
+    if (options.updateAfterCreate) {
+        const updateResponse = await services.business.updateBusinessDetails({
+            businessId,
+            data: options.updateAfterCreate,
+        });
+        updateResult = updateResponse.data;
+    }
+
+    const businessList = await services.business.getBusinessList();
+
+    return {
+        business_id: businessId,
+        update: updateResult,
+        businessList: businessList.data,
+    };
+}

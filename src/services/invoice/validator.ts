@@ -8,6 +8,7 @@ import {
     emailPayloadSchema,
     mapCollectionSchema,
     submitCollectionSchema,
+    createPublicPaymentCollectionSchema,
     paymentCollectionSchema,
     paymentSessionSchema,
     sessionIdSchema,
@@ -31,6 +32,7 @@ import type {
     EmailPayload,
     MapCollection,
     SubmitCollection,
+    CreatePublicPaymentCollection,
     PaymentCollection,
     PaymentSession,
     SessionId,
@@ -80,6 +82,10 @@ export default class Validator {
 
     submitCollection(options: SubmitCollection): void {
         submitCollectionSchema.parse(options);
+    }
+
+    createPublicPaymentCollection(options: CreatePublicPaymentCollection): void {
+        createPublicPaymentCollectionSchema.parse(options);
     }
 
     paymentCollection(options: PaymentCollection): void {

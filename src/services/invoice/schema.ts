@@ -77,6 +77,15 @@ export const submitCollectionSchema = businessIdSchema.extend({
     data: z.object({ asset_id: z.string(), invoice_id: z.string() }),
 });
 
+export const createPublicPaymentCollectionSchema = businessIdSchema.extend({
+    data: z.object({
+        amount: z.number().optional(),
+        currency: z.string().optional(),
+        metadata: z.record(z.unknown()).optional(),
+        wallet_id: z.string(),
+    }),
+});
+
 export const paymentCollectionSchema = invoiceIdSchema.extend({
     supportedAssets: z.array(z.string()),
     walletID: z.string().optional(),

@@ -196,7 +196,9 @@ export const createRequestSchema = asset21ContextSchema.extend({
     rejectionsRequired: z.number().optional(),
 });
 
-export const createRequestResponseSchema = messageResponseSchema;
+export const createRequestResponseSchema = messageResponseSchema.extend({
+    requestId: z.string().optional(),
+});
 
 export const updateRequestSchema = asset21ContextSchema.extend({
     action: requestActionEnum,

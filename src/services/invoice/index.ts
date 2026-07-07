@@ -15,6 +15,7 @@ import type {
     EmailPayload,
     MapCollection,
     SubmitCollection,
+    CreatePublicPaymentCollection,
     PaymentCollection,
     PaymentSession,
     SessionId,
@@ -247,6 +248,23 @@ export class Invoice {
             );
             this.validator.messageResponse(resp.data);
             return resp;
+        } catch (err) {
+            handleError(err);
+        }
+    }
+
+    async createPublicPaymentCollection(
+        options: CreatePublicPaymentCollection
+    ): Promise<HttpResponse<PaymentCollectionResponse>> {
+        try {
+            this.auth.validate();
+            this.validator.createPublicPaymentCollection(options);
+            const headers = buildAuthHeaders(this.auth, { businessId: options.businessId });
+            return await this.httpClient.post<PaymentCollectionResponse>(
+                Routes.PAYMENT_COLLECTION.CREATE,
+                options.data,
+                headers
+            );
         } catch (err) {
             handleError(err);
         }
