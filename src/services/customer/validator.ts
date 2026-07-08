@@ -5,6 +5,8 @@ import {
     createCustomerSchema,
     updateCustomerSchema,
     deleteCustomerSchema,
+    inviteCustomerSchema,
+    inviteCustomerResponseSchema,
     customerResponseSchema,
     deleteCustomerResponseSchema,
 } from './schema.js';
@@ -15,8 +17,10 @@ import type {
     CreateCustomer,
     UpdateCustomer,
     DeleteCustomer,
+    InviteCustomer,
     CustomerResponse,
     DeleteCustomerResponse,
+    InviteCustomerResponse,
 } from './types.js';
 
 export default class Validator {
@@ -44,11 +48,19 @@ export default class Validator {
         deleteCustomerSchema.parse(options);
     }
 
+    inviteCustomer(options: InviteCustomer): void {
+        inviteCustomerSchema.parse(options);
+    }
+
     customerResponse(response: CustomerResponse): void {
         customerResponseSchema.parse(response);
     }
 
     deleteCustomerResponse(response: DeleteCustomerResponse): void {
         deleteCustomerResponseSchema.parse(response);
+    }
+
+    inviteCustomerResponse(response: InviteCustomerResponse): void {
+        inviteCustomerResponseSchema.parse(response);
     }
 }

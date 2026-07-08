@@ -12,8 +12,10 @@ import type {
     CreateCustomer,
     UpdateCustomer,
     DeleteCustomer,
+    InviteCustomer,
     CustomerResponse,
     DeleteCustomerResponse,
+    InviteCustomerResponse,
 } from './types.js';
 
 export class Customer {
@@ -97,6 +99,25 @@ export class Customer {
             const params: QueryParams = { customerID: options.customerId };
             const resp = await this.httpClient.delete<DeleteCustomerResponse>(Routes.INVOICE.CUSTOMER, headers, params);
             this.validator.deleteCustomerResponse(resp.data);
+            return resp;
+        } catch (err) {
+            handleError(err);
+        }
+    }
+
+    async inviteCustomer(options: InviteCustomer): Promise<HttpResponse<InviteCustomerResponse>> {
+        try {
+            this.auth.validate();
+            this.validator.inviteCustomer(options);
+            const headers = buildAuthHeaders(this.auth, { businessId: options.businessId });
+            const params: QueryParams = { customerID: options.customerId };
+            const resp = await this.httpClient.post<InviteCustomerResponse>(
+                Routes.INVOICE.CUSTOMER_INVITE,
+                null,
+                headers,
+                params
+            );
+            this.validator.inviteCustomerResponse(resp.data);
             return resp;
         } catch (err) {
             handleError(err);
