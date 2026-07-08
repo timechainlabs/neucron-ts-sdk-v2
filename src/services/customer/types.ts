@@ -7,6 +7,8 @@ import {
     createCustomerSchema,
     updateCustomerSchema,
     deleteCustomerSchema,
+    inviteCustomerSchema,
+    inviteCustomerResponseSchema,
     customerResponseSchema,
     deleteCustomerResponseSchema,
 } from './schema.js';
@@ -18,5 +20,7 @@ export type GetCustomer = z.infer<typeof getCustomerSchema>;
 export type CreateCustomer = z.infer<typeof createCustomerSchema>;
 export type UpdateCustomer = z.infer<typeof updateCustomerSchema>;
 export type DeleteCustomer = z.infer<typeof deleteCustomerSchema>;
+export type InviteCustomer = z.infer<typeof inviteCustomerSchema>;
+export type InviteCustomerResponse = z.infer<typeof inviteCustomerResponseSchema>;
 export type CustomerResponse = z.infer<typeof customerResponseSchema>;
 export type DeleteCustomerResponse = z.infer<typeof deleteCustomerResponseSchema>;

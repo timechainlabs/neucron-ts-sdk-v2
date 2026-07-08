@@ -107,7 +107,7 @@ export class Assets {
         try {
             this.auth.validate();
             this.validator.assetList(options);
-            const headers = buildAuthHeaders(this.auth);
+            const headers = buildAuthHeaders(this.auth, { businessId: options?.businessId });
             const params: QueryParams = {
                 searchQuery: options?.searchQuery,
                 status: options?.status,

@@ -6,6 +6,7 @@ import type {
     NeucronIssueSecurityTokenOptions,
 } from './types.js';
 import type { GetRequestResponse } from '../asset21/types.js';
+import { attachAsset21Redirect } from './asset21-redirect.js';
 
 async function resolveWalletId(services: McpFlowServices, businessId?: string, walletID?: string) {
     if (walletID) {
@@ -93,7 +94,7 @@ export async function neucron_create_security_token(
         steps.deploy = deployed.data;
     }
 
-    return { assetID, steps };
+    return attachAsset21Redirect({ assetID, steps });
 }
 
 /**
@@ -143,7 +144,7 @@ export async function neucron_create_asset21_customer(
         steps.customers = customers.data;
     }
 
-    return { assetId, requestId, steps };
+    return attachAsset21Redirect({ assetId, requestId, steps });
 }
 
 /**
@@ -203,7 +204,7 @@ export async function neucron_security_token_operations(
         steps.addressState = addressState.data;
     }
 
-    return { assetId, state, requestId, steps };
+    return attachAsset21Redirect({ assetId, state, requestId, steps });
 }
 
 /** @deprecated Use {@link neucron_create_security_token} and {@link neucron_security_token_operations}. */

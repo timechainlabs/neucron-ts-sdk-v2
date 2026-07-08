@@ -64,5 +64,9 @@ export const updateCustomerSchema = getCustomerSchema.extend({
 
 export const deleteCustomerSchema = getCustomerSchema;
 
+export const inviteCustomerSchema = getCustomerSchema;
+
+export const inviteCustomerResponseSchema = z.object({ message: z.string() }).passthrough();
+
 export const customerResponseSchema = customerApiSchema.passthrough();
 export const deleteCustomerResponseSchema = z.record(z.unknown());
