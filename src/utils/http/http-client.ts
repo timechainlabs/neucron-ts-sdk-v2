@@ -14,8 +14,8 @@ export class HttpClient implements IHttpClient {
         const url = BASE_URL + `${reqPath}`;
         const response = await axios.post(url, data, {
             headers: {
-                ...headers,
                 ...(data instanceof FormData ? {} : this.globalHeader),
+                ...headers,
             },
             params,
         });

@@ -74,10 +74,9 @@
 | `neucron_create_payout` | PAY | Send funds to email, address, username, paymail, or vendor via payout. |
 | `neucron_get_payout_history` | PAY | List and retrieve payout records with status filters. |
 | `neucron_get_expenses` | PAY | Retrieve expense summary and graph analytics for vendor spend. |
-| `neucron_inscribe_document` | DATA INTEGRITY | Inscribe a document on-chain for immutable proof of existence. |
-| `neucron_inscribe_text` | DATA INTEGRITY | Inscribe plain text on-chain for immutable proof of existence. |
-| `neucron_sign_data` | DATA INTEGRITY | Cryptographically sign data using the user's wallet keys. |
-| `neucron_encrypt_data` | DATA INTEGRITY | Encrypt data for secure storage or transmission. |
+| `neucron_inscribe_document` | DATA INTEGRITY | Inscribe a file on-chain for immutable proof of existence (`POST /data-integrity/file`). |
+| `neucron_inscribe_text` | DATA INTEGRITY | Inscribe plain text on-chain for immutable proof of existence (`POST /data-integrity/text`). |
+| `neucron_inscribe_text_array` | DATA INTEGRITY | Inscribe multiple text entries on-chain in one transaction (`POST /data-integrity/text-array`). |
 | `neucron_create_security_token` | ASSET ISSUANCE | Register and deploy an Asset21 security token (STAS). |
 | `neucron_create_asset21_customer` | ASSET ISSUANCE | Onboard an Asset21 customer (CUSTOMER request + approve). |
 | `neucron_security_token_operations` | ASSET ISSUANCE | Mint, burn, blacklist, freeze, pause, resume via Asset21 requests. |
@@ -750,24 +749,22 @@
 
 ## 8. DATA INTEGRITY
 
-> **Status:** SDK target flows. Data Integrity is an app permission scope (`DATAINTEGRITY`) in the Develop module. Console UI does not yet expose dedicated inscribe/sign/encrypt screens — these flows are defined here for SDK and MCP Server implementation.
+> **Status:** Implemented. Data Integrity is an app permission scope (`DATAINTEGRITY`) in the Develop module. All flows call the `/v1/data-integrity/*` endpoints directly (no blob upload step).
 
-### 8.1 Inscribe Document
+### 8.1 Inscribe Document (File)
 
 | Field | Value |
 |-------|-------|
 | **MCP Tool** | `neucron_inscribe_document` |
-| **SDK Module** | `blobApi` + Data Integrity SDK module *(planned)* |
-| **Description** | Upload a document and inscribe its hash on-chain to create an immutable proof-of-existence record. Requires `data_integrity_file` app permission. Billed per MB (`data_integrity.credits_per_mb`). |
+| **SDK Module** | `dataIntegrityApi.fileUpload()` |
+| **Description** | Upload a file and inscribe it on-chain for immutable proof of existence. Requires `data_integrity_file` app permission. |
 | **App Permission** | `data_integrity_file` (scope: `DATAINTEGRITY`) |
 
 #### APIs Used (in order)
 
 | # | Method | Endpoint | SDK Function | Purpose |
 |---|--------|----------|--------------|---------|
-| 1 | `POST` | `/blob/document/upload` | `blobApi.uploadDocument()` | Upload document to blob storage |
-| 2 | `POST` | `/integrity/inscribe/document` | *(planned)* `integrityApi.inscribeDocument()` | Inscribe document hash on-chain |
-| 3 | `GET` | `/integrity/inscribe/{inscriptionId}` | *(planned)* `integrityApi.getInscription()` | Retrieve inscription proof |
+| 1 | `POST` | `/data-integrity/file` | `dataIntegrityApi.fileUpload()` | Multipart file upload; query: `walletID?`, `network?` (MAIN/TEST); headers: `X-Neucron-Business-ID`, `X-App-Secret`; response: `{ txID }` |
 
 ---
 
@@ -776,7 +773,7 @@
 | Field | Value |
 |-------|-------|
 | **MCP Tool** | `neucron_inscribe_text` |
-| **SDK Module** | Data Integrity SDK module *(planned)* |
+| **SDK Module** | `dataIntegrityApi.textUpload()` |
 | **Description** | Inscribe plain text on-chain for immutable proof of existence. Requires `data_integrity_text` app permission. |
 | **App Permission** | `data_integrity_text` (scope: `DATAINTEGRITY`) |
 
@@ -784,44 +781,24 @@
 
 | # | Method | Endpoint | SDK Function | Purpose |
 |---|--------|----------|--------------|---------|
-| 1 | `POST` | `/integrity/inscribe/text` | *(planned)* `integrityApi.inscribeText()` | Inscribe text on-chain; body: `{ text, wallet_id?, metadata? }` |
-| 2 | `GET` | `/integrity/inscribe/{inscriptionId}` | *(planned)* `integrityApi.getInscription()` | Retrieve inscription proof |
+| 1 | `POST` | `/data-integrity/text` | `dataIntegrityApi.textUpload()` | Body: `text/plain` text; query: `hashed`, `walletID?`, `network?`; response: `{ txID }` |
 
 ---
 
-### 8.3 Sign
+### 8.3 Inscribe Text Array
 
 | Field | Value |
 |-------|-------|
-| **MCP Tool** | `neucron_sign_data` |
-| **SDK Module** | Data Integrity SDK module *(planned)* |
-| **Description** | Cryptographically sign arbitrary data using the user's wallet private key. Returns a signature that can be verified against the user's public key. |
-| **App Permission** | `data_integrity` (scope: `DATAINTEGRITY`) |
+| **MCP Tool** | `neucron_inscribe_text_array` |
+| **SDK Module** | `dataIntegrityApi.textArrayUpload()` |
+| **Description** | Inscribe multiple text entries on-chain in a single transaction. Requires `data_integrity_text` app permission. |
+| **App Permission** | `data_integrity_text` (scope: `DATAINTEGRITY`) |
 
 #### APIs Used (in order)
 
 | # | Method | Endpoint | SDK Function | Purpose |
 |---|--------|----------|--------------|---------|
-| 1 | `POST` | `/integrity/sign` | *(planned)* `integrityApi.signData()` | Sign data; body: `{ data, wallet_id, algorithm? }` |
-| 2 | `GET` | `/integrity/sign/{signatureId}` | *(planned)* `integrityApi.getSignature()` | Retrieve signature record |
-
----
-
-### 8.4 Encrypt
-
-| Field | Value |
-|-------|-------|
-| **MCP Tool** | `neucron_encrypt_data` |
-| **SDK Module** | Data Integrity SDK module *(planned)* |
-| **Description** | Encrypt data using wallet-derived keys for secure storage or transmission. Decryption requires the same wallet/authenticator. |
-| **App Permission** | `data_integrity` (scope: `DATAINTEGRITY`) |
-
-#### APIs Used (in order)
-
-| # | Method | Endpoint | SDK Function | Purpose |
-|---|--------|----------|--------------|---------|
-| 1 | `POST` | `/integrity/encrypt` | *(planned)* `integrityApi.encryptData()` | Encrypt data; body: `{ data, wallet_id, recipient_public_key? }` |
-| 2 | `POST` | `/integrity/decrypt` | *(planned)* `integrityApi.decryptData()` | Decrypt data; body: `{ encrypted_payload, wallet_id }` |
+| 1 | `POST` | `/data-integrity/text-array` | `dataIntegrityApi.textArrayUpload()` | Body: `string[]`; query: `walletID?`, `network?`; response: `{ txID }` |
 
 ---
 
@@ -999,10 +976,9 @@
 | Create payout | `neucron_create_payout` | 2–7 |
 | Payout history | `neucron_get_payout_history` | 2–3 |
 | Expenses | `neucron_get_expenses` | 2 |
-| Inscribe document | `neucron_inscribe_document` | 2–3 |
-| Inscribe text | `neucron_inscribe_text` | 2 |
-| Sign data | `neucron_sign_data` | 2 |
-| Encrypt data | `neucron_encrypt_data` | 2 |
+| Inscribe document | `neucron_inscribe_document` | 1 |
+| Inscribe text | `neucron_inscribe_text` | 1 |
+| Inscribe text array | `neucron_inscribe_text_array` | 1 |
 | Security token register + deploy | `neucron_create_security_token` | 2–3 |
 | Asset21 customer onboarding | `neucron_create_asset21_customer` | 2–3 |
 | Asset21 core operations | `neucron_security_token_operations` | 2–4 |
