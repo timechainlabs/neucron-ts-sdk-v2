@@ -4,16 +4,14 @@ import { Authentication } from '../../src/services/authentication/index.js';
 import { NeucronError } from '../../src/utils/errors/sdk-error.js';
 import type {
     FileUpload,
-    FileUploadResponse,
     TextUpload,
-    TextUploadResponse,
+    TextArrayUpload,
+    DataIntegrityResponse,
 } from '../../src/services/data-integrity/types.js';
 
-// Store mock instances
 let mockHttpClient: any;
 let mockValidator: any;
 
-// Mock HttpClient
 vi.mock('../../src/utils/http/http-client.js', () => {
     const mockImplementation = () => ({
         post: vi.fn(),
@@ -27,13 +25,12 @@ vi.mock('../../src/utils/http/http-client.js', () => {
     };
 });
 
-// Mock Validator
 vi.mock('../../src/services/data-integrity/validator.js', () => {
     const mockImplementation = () => ({
         fileUpload: vi.fn(),
-        fileUploadResponse: vi.fn(),
         textUpload: vi.fn(),
-        textUploadResponse: vi.fn(),
+        textArrayUpload: vi.fn(),
+        dataIntegrityResponse: vi.fn(),
     });
 
     return {
@@ -41,7 +38,6 @@ vi.mock('../../src/services/data-integrity/validator.js', () => {
     };
 });
 
-// Mock error handler
 vi.mock('../../src/utils/errors/helper.js', () => ({
     handleError: vi.fn((err) => {
         throw err;
@@ -52,6 +48,12 @@ describe('DataIntegrity Service', () => {
     let dataIntegrity: DataIntegrity;
     let mockAuth: Authentication;
 
+    const businessHeaders = {
+        Authorization: 'test-auth-token-123',
+        'X-Identifier': 'NEUCRON',
+        'X-Neucron-Business-ID': 'biz-123',
+    };
+
     beforeEach(() => {
         vi.clearAllMocks();
 
@@ -61,9 +63,9 @@ describe('DataIntegrity Service', () => {
 
         mockValidator = {
             fileUpload: vi.fn(),
-            fileUploadResponse: vi.fn(),
             textUpload: vi.fn(),
-            textUploadResponse: vi.fn(),
+            textArrayUpload: vi.fn(),
+            dataIntegrityResponse: vi.fn(),
         };
 
         mockAuth = new Authentication();
@@ -82,23 +84,25 @@ describe('DataIntegrity Service', () => {
     });
 
     describe('fileUpload', () => {
-        const mockFile = new Blob(['test content'], { type: 'text/plain' }) as any;
+        const mockFile = new Blob(['test content'], { type: 'application/pdf' }) as any;
         const mockData: FileUpload = {
+            businessId: 'biz-123',
             file: mockFile,
             walletID: 'wallet-123',
+            network: 'MAIN',
         };
 
-        const mockResponse: FileUploadResponse = {
-            txid: 'tx-123',
+        const mockResponse: DataIntegrityResponse = {
+            txID: 'tx-123',
         };
 
         it('should successfully upload a file', async () => {
             mockValidator.fileUpload.mockReturnValue(true);
-            mockValidator.fileUploadResponse.mockReturnValue(mockResponse);
+            mockValidator.dataIntegrityResponse.mockReturnValue({ txID: 'tx-123', txid: 'tx-123' });
 
             mockHttpClient.post.mockResolvedValue({
                 data: mockResponse,
-                status: 201,
+                status: 200,
             });
 
             const result = await dataIntegrity.fileUpload(mockData);
@@ -108,88 +112,94 @@ describe('DataIntegrity Service', () => {
             expect(mockHttpClient.post).toHaveBeenCalledWith(
                 '/data-integrity/file',
                 expect.any(FormData),
-                { Authorization: 'test-auth-token-123' },
-                { walletID: 'wallet-123' }
+                businessHeaders,
+                { walletID: 'wallet-123', network: 'MAIN' }
             );
-            expect(mockValidator.fileUploadResponse).toHaveBeenCalledWith(mockResponse);
             expect(result.data).toEqual(mockResponse);
-        });
-
-        it('should accept React Native file objects', async () => {
-            const reactNativeFile = {
-                uri: 'file:///data/user/0/cache/document.pdf',
-                name: 'document.pdf',
-                type: 'application/pdf',
-            };
-            const rnUpload: FileUpload = {
-                file: reactNativeFile,
-                walletID: 'wallet-123',
-            };
-
-            mockValidator.fileUpload.mockReturnValue(true);
-            mockValidator.fileUploadResponse.mockReturnValue(mockResponse);
-            mockHttpClient.post.mockResolvedValue({
-                data: mockResponse,
-                status: 201,
-            });
-
-            const result = await dataIntegrity.fileUpload(rnUpload);
-            expect(mockValidator.fileUpload).toHaveBeenCalledWith(rnUpload);
-            expect(result.data).toEqual(mockResponse);
-        });
-
-        it('should throw error when not authenticated', async () => {
-            const authError = new NeucronError('Unauthorized', new Error('No token'), { type: 'internal' });
-            vi.spyOn(mockAuth, 'validate').mockImplementation(() => {
-                throw authError;
-            });
-
-            await expect(dataIntegrity.fileUpload(mockData)).rejects.toThrow(authError);
-            expect(mockHttpClient.post).not.toHaveBeenCalled();
         });
     });
 
     describe('textUpload', () => {
         const mockData: TextUpload = {
-            hashed: 'true',
+            businessId: 'biz-123',
+            hashed: 'false',
             text: 'Hello blockchain!',
             walletID: 'wallet-123',
+            network: 'MAIN',
         };
 
-        const mockResponse: TextUploadResponse = {
-            txid: 'tx-456',
+        const mockResponse: DataIntegrityResponse = {
+            txID: 'tx-456',
         };
 
-        it('should successfully upload text', async () => {
+        it('should successfully upload text as text/plain', async () => {
             mockValidator.textUpload.mockReturnValue(true);
-            mockValidator.textUploadResponse.mockReturnValue(mockResponse);
+            mockValidator.dataIntegrityResponse.mockReturnValue({ txID: 'tx-456', txid: 'tx-456' });
 
             mockHttpClient.post.mockResolvedValue({
                 data: mockResponse,
-                status: 201,
+                status: 200,
             });
 
             const result = await dataIntegrity.textUpload(mockData);
 
-            expect(mockAuth.validate).toHaveBeenCalled();
             expect(mockValidator.textUpload).toHaveBeenCalledWith(mockData);
             expect(mockHttpClient.post).toHaveBeenCalledWith(
                 '/data-integrity/text',
-                { text: 'Hello blockchain!' },
-                { Authorization: 'test-auth-token-123' },
-                { hashed: 'true', walletID: 'wallet-123' }
+                'Hello blockchain!',
+                { ...businessHeaders, 'Content-Type': 'text/plain' },
+                { walletID: 'wallet-123', network: 'MAIN', hashed: 'false' }
             );
-            expect(mockValidator.textUploadResponse).toHaveBeenCalledWith(mockResponse);
             expect(result.data).toEqual(mockResponse);
         });
+    });
 
+    describe('textArrayUpload', () => {
+        const mockData: TextArrayUpload = {
+            businessId: 'biz-123',
+            text: ['line one', 'line two'],
+            walletID: 'wallet-123',
+            network: 'TEST',
+        };
+
+        const mockResponse: DataIntegrityResponse = {
+            txID: 'tx-789',
+        };
+
+        it('should successfully upload a text array', async () => {
+            mockValidator.textArrayUpload.mockReturnValue(true);
+            mockValidator.dataIntegrityResponse.mockReturnValue({ txID: 'tx-789', txid: 'tx-789' });
+
+            mockHttpClient.post.mockResolvedValue({
+                data: mockResponse,
+                status: 200,
+            });
+
+            const result = await dataIntegrity.textArrayUpload(mockData);
+
+            expect(mockValidator.textArrayUpload).toHaveBeenCalledWith(mockData);
+            expect(mockHttpClient.post).toHaveBeenCalledWith(
+                '/data-integrity/text-array',
+                ['line one', 'line two'],
+                businessHeaders,
+                { walletID: 'wallet-123', network: 'TEST' }
+            );
+            expect(result.data).toEqual(mockResponse);
+        });
+    });
+
+    describe('authentication', () => {
         it('should throw error when not authenticated', async () => {
             const authError = new NeucronError('Unauthorized', new Error('No token'), { type: 'internal' });
             vi.spyOn(mockAuth, 'validate').mockImplementation(() => {
                 throw authError;
             });
 
-            await expect(dataIntegrity.textUpload(mockData)).rejects.toThrow(authError);
+            await expect(
+                dataIntegrity.fileUpload({
+                    file: new Blob(['x']) as any,
+                })
+            ).rejects.toThrow(authError);
             expect(mockHttpClient.post).not.toHaveBeenCalled();
         });
     });

@@ -51,6 +51,7 @@ export const Routes = {
     DATA_INTEGRITY: {
         FILE_UPLOAD: '/data-integrity/file',
         TEXT_UPLOAD: '/data-integrity/text',
+        TEXT_ARRAY_UPLOAD: '/data-integrity/text-array',
     },
     WALLET: {
         CREATE: '/wallet/create',
