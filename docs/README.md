@@ -1,80 +1,80 @@
 # Neucron TypeScript SDK
 
-The **Neucron TypeScript SDK** (`@neucron/ts-sdk`) is the official client library for integrating with the [Neucron](https://neucron.io) platform APIs. It provides type-safe, validated access to wallet management, digital assets, payments, invoicing, vendor management, team collaboration, and business operations — all from Node.js, browsers, or any TypeScript/JavaScript runtime.
+Welcome to the official documentation for **@neucron/ts-sdk** — a type-safe TypeScript SDK for building applications on the Neucron platform.
 
-## What is Neucron?
+Neucron provides wallets, digital assets, payments, invoicing, security tokens, and business tooling on Bitcoin SV. This SDK exposes those capabilities as typed methods so you can build products without wiring low-level requests yourself.
 
-Neucron is a blockchain-powered financial and asset management platform built on Bitcoin SV (BSV). It enables:
+## What you can build
 
-- **Wallet management** — Create and manage BSV wallets with Paymail support
-- **Digital assets** — Mint, transfer, and track tokens, tickets, certificates, and utilities
-- **Business operations** — Invoicing, vendor bills, payouts, and subscription billing
-- **Team collaboration** — Multi-user businesses with role-based access control (RBAC)
-- **Payments** — Pay via address, email, or Paymail; payment collections and sessions
+| Domain | Capabilities |
+| --- | --- |
+| **Identity** | Sign up, login, profile management, password recovery |
+| **Wallets** | Create wallets, addresses, balances, transaction history |
+| **Payments** | Pay by address, email, or paymail; manage paymail aliases |
+| **Assets** | Certificates, utility tokens, tickets, transfers, ledgers |
+| **Security tokens (Asset21)** | Register, deploy, mint, redeem, freeze, blacklist, governance |
+| **Business** | Business profiles, teams, members, RBAC roles |
+| **Commerce** | Customers, invoices, payment collections, vendors, bills, payouts |
+| **Developer apps** | Create apps, secrets, publish to the app store, blob uploads |
+| **Data integrity** | Inscribe files and text on-chain for tamper-evident records |
+| **Billing** | Plans, credits, subscriptions, platform invoices |
 
-## Why use this SDK?
+## Package
 
-| Feature | Benefit |
-|---------|---------|
-| **Full TypeScript support** | Autocomplete, compile-time checks, and exported types for every API |
-| **Zod validation** | Request and response payloads are validated before and after each call |
-| **Unified error model** | `NeucronError` with typed categories: `network`, `validation`, `internal` |
-| **Shared authentication** | Log in once; all services share the same auth token automatically |
-| **Business context headers** | Pass `businessId` and `teamId` per request for multi-tenant apps |
-| **ESM + CJS** | Works with both `import` and `require` |
-
-## SDK Architecture
-
-```
-NeucronSDK
-├── auth              Authentication (login, signup, user profile)
-├── wallet            Wallet CRUD, addresses, sync, transactions
-├── assets            Asset ledger, transfers, balances, public listings
-├── asset21             STAS token operations (deploy, transfer, UTXOs)
-├── assetSwap           Cross-asset swap rates and execution
-├── pay                 Pay by address, email, or Paymail
-├── paymail             Paymail alias management
-├── utility             Utility token register, mint, redeem
-├── dataIntegrity       File and text integrity proofs
-├── team                Team invites, members, roles
-├── business            Business profile and listing
-├── members             Business member invites and role assignment
-├── rbac                Roles and permissions management
-├── apps                API app registration and secrets
-├── blob                Document upload
-├── invoice             Invoices and payment collections
-├── customer            Customer CRUD
-├── vendor              Vendor management and expenses
-├── bill                Vendor bill lifecycle
-├── payout              Payout creation and confirmation
-└── billing             Subscriptions, credits, and payment methods
+```bash
+npm install @neucron/ts-sdk
 ```
 
-## Base API URL
+```typescript
+import NeucronSDK from '@neucron/ts-sdk';
 
-All requests are sent to:
+const sdk = new NeucronSDK();
+```
 
+## SDK surface
+
+Every feature is exposed as a property on the main client:
+
+```typescript
+sdk.auth          // Authentication
+sdk.wallet        // Wallets & transactions
+sdk.paymail       // Paymail aliases
+sdk.pay           // BSV payments
+sdk.assets        // Digital assets
+sdk.asset21       // Security / regulated tokens
+sdk.utility       // Utility tokens
+sdk.dataIntegrity // On-chain inscriptions
+sdk.assetSwap     // Asset swaps
+sdk.business      // Business profiles
+sdk.team          // Teams & invites
+sdk.members       // Business members
+sdk.rbac          // Roles & permissions
+sdk.apps          // Developer apps
+sdk.blob          // File / image uploads
+sdk.customer      // Customers
+sdk.invoice       // Invoices & payment collections
+sdk.vendor        // Vendors & expenses
+sdk.bill          // Vendor bills
+sdk.payout        // Payouts
+sdk.billing       // Platform billing & subscriptions
 ```
-https://api.neucron.io/v1
-```
+
+## How this documentation is organized
+
+1. **[Quick Start](getting-started/quick-start.md)** — install, authenticate, and make your first calls.
+2. **[Overview](getting-started/overview.md)** — configuration, auth, headers, responses, and errors.
+3. **Features** — one page per domain with feature background, then every SDK function documented with parameters, headers, query fields, request body, and response.
+
+{% hint style="info" %}
+This documentation describes **SDK functions only**. Interact with Neucron through typed methods such as `sdk.wallet.createWallet(...)`.
+{% endhint %}
 
 ## Requirements
 
-- **Node.js** 18+ (recommended)
-- **TypeScript** 5.x (optional but recommended)
-- A Neucron account with API access
+- Node.js 18+ (or a modern bundler / React Native environment)
+- TypeScript 5+ recommended (JavaScript works; types are included)
+- A Neucron account (email + password) or an existing auth token
 
-## Package Information
+## Next step
 
-| Property | Value |
-|----------|-------|
-| Package name | `@neucron/ts-sdk` |
-| Version | 1.0.0 |
-| License | MIT |
-| Repository | [github.com/rustybuddha/neucron-ts-sdk-v2](https://github.com/rustybuddha/neucron-ts-sdk-v2) |
-
-## Next Steps
-
-1. [Install the SDK](getting-started/installation.md)
-2. [Run your first API call](getting-started/quick-start.md)
-3. Browse the [API Reference](api-reference/overview.md)
+Start with the [Quick Start](getting-started/quick-start.md) guide.

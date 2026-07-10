@@ -2,7 +2,7 @@
 
 ## Authentication Flow
 
-The SDK uses a **shared authentication model**. The `Authentication` service owns the bearer token; every other service receives a reference to it and calls `auth.validate()` before protected endpoints.
+The SDK uses a **shared authentication model**. The `Authentication` service owns the bearer token; every other service receives a reference to it and calls `auth.validate()` before protected methods.
 
 ```
 ┌─────────────┐     login()      ┌──────────────────┐
@@ -18,36 +18,27 @@ The SDK uses a **shared authentication model**. The `Authentication` service own
 └─────────────┘                  └──────────────────┘
 ```
 
-## Auth Service Methods
+## Auth Helpers
 
-| Method | Auth Required | Description |
-|--------|---------------|-------------|
-| `signUp(options)` | No | Register a new user |
-| `login(options)` | No | Authenticate and store token |
-| `logout()` | Yes | Clear stored token |
-| `emailExists(options)` | No | Check if email is registered |
-| `phoneExists(options)` | No | Check if phone is registered |
-| `forgotPassword(options)` | No | Initiate password reset |
-| `updatePassword(options)` | Yes | Change password |
-| `userInfo()` | Yes | Get current user profile |
-| `updateUser(options)` | Yes | Update user profile |
-| `getToken()` | — | Read current token |
-| `setToken(token)` | — | Manually set token |
-| `validate()` | — | Throws if no token (used internally) |
+| Method | Description |
+|--------|-------------|
+| `getToken()` | Read the current token |
+| `setToken(token)` | Manually set a token |
+| `validate()` | Throws if no token (used internally by services) |
+| `logout()` | Clears the stored token locally |
 
 ## Request Headers
-
-### Standard authenticated requests
 
 Most services build headers via `buildAuthHeaders()`:
 
 | Header | Value | When |
 |--------|-------|------|
-| `Authorization` | Bearer token from `auth.getToken()` | All authenticated calls |
-| `X-Identifier` | `NEUCRON` (default) | Most non-auth endpoints |
+| `Authorization` | Token from `auth.getToken()` | All authenticated calls |
+| `X-Identifier` | `NEUCRON` (default) | Most authenticated calls |
 | `X-Neucron-Business-ID` | Business ID string | When `businessId` is passed |
 | `X-Neucron-Team-ID` | Team ID string | When `teamId` is passed |
-| `Content-Type` | `application/json` | JSON bodies (auto) |
+| `X-App-Secret` | App secret string | Data integrity / app-authenticated payouts |
+| `Content-Type` | `application/json` | JSON bodies (automatic) |
 
 ### Example: business-scoped call
 
@@ -55,8 +46,7 @@ Most services build headers via `buildAuthHeaders()`:
 await sdk.customer.createCustomer({
   businessId: 'biz_abc123',
   customerData: {
-    name: 'Acme Corp',
-    email: 'billing@acme.com',
+    // ...
   },
 });
 ```
@@ -72,11 +62,11 @@ Content-Type: application/json
 
 ### File uploads
 
-For `sdk.blob.uploadDocument()`, `Content-Type` is omitted so the browser/axios can set the multipart boundary automatically.
+For `sdk.blob.uploadDocument()` and similar methods, `Content-Type` is omitted so the runtime can set the multipart boundary automatically.
 
 ## Platform Identifier
 
-Sign-up and some auth flows require a `platform` value:
+Sign-up requires a `platform` value:
 
 ```typescript
 type Platform = 'NEUCRON' | 'ASSETYZER' | 'CERTIFICATE' | 'TICKETING';
@@ -90,10 +80,10 @@ type Identifier = 'NEUCRON' | 'ASSETYZER';
 
 ## Token Lifecycle
 
-1. **Login** — `login()` validates credentials, stores `response.data.token`
-2. **Use** — All services read token via `auth.getToken()`
-3. **Expiry** — API returns 401/403; catch `NeucronError` and re-authenticate
-4. **Logout** — `logout()` clears token locally (no server-side session invalidation)
+1. **Login** — `login()` validates credentials and stores `response.data.token`
+2. **Use** — All services read the token via `auth.getToken()`
+3. **Expiry** — Catch `NeucronError` with status `401` and re-authenticate
+4. **Logout** — `logout()` clears the token locally
 
 ### Re-authentication pattern
 
@@ -113,7 +103,7 @@ async function withRetry<T>(fn: () => Promise<T>): Promise<T> {
 await withRetry(() => sdk.wallet.walletList());
 ```
 
-## Unauthenticated Endpoints
+## Unauthenticated Methods
 
 These methods work without calling `login()` first:
 
@@ -124,3 +114,24 @@ These methods work without calling `login()` first:
 - `auth.forgotPassword()`
 
 All other SDK methods require a valid token.
+
+## Personal vs Business vs Team Context
+
+| Context | How to use |
+|---------|------------|
+| **Personal** | Omit `businessId` on method options |
+| **Business** | Pass `businessId` → sets `X-Neucron-Business-ID` |
+| **Team** | Pass `teamId` or `'X-Neucron-Team-ID'` → sets team header |
+
+```typescript
+// Personal
+await sdk.wallet.walletList();
+
+// Business
+await sdk.wallet.walletList({ businessId: 'biz_123' });
+
+// Team
+await sdk.team.getMemberList({
+  'X-Neucron-Team-ID': 'team_456',
+});
+```
