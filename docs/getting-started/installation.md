@@ -35,6 +35,14 @@ const NeucronSDK = require('@neucron/ts-sdk').default;
 const { NeucronError } = require('@neucron/ts-sdk');
 ```
 
+### Zod Schemas (optional)
+
+Runtime validation schemas are available as a separate export:
+
+```typescript
+import { walletSchemas, commonSchemas } from '@neucron/ts-sdk/schemas';
+```
+
 ## TypeScript Configuration
 
 The SDK ships with TypeScript declaration files (`.d.ts`). Ensure your `tsconfig.json` includes:
@@ -49,20 +57,20 @@ The SDK ships with TypeScript declaration files (`.d.ts`). Ensure your `tsconfig
 }
 ```
 
-## Peer Dependencies
+## Dependencies
 
 The SDK bundles its own runtime dependencies:
 
 | Dependency | Purpose |
 |------------|---------|
-| `axios` | HTTP client for API requests |
+| `axios` | Internal transport used by the SDK |
 | `zod` | Runtime schema validation |
 
 You do not need to install these separately.
 
-## Browser Usage
+## Browser & React Native
 
-The SDK uses `axios` and is compatible with modern bundlers (Vite, Webpack, esbuild). For file uploads via `sdk.blob.uploadDocument()`, the browser `FormData` API is used natively.
+The SDK is compatible with modern bundlers (Vite, Webpack, esbuild) and React Native / Expo. For file uploads (`sdk.blob`, `sdk.dataIntegrity`), use the browser `File`/`Blob` APIs or a React Native upload object `{ uri, name, type }`.
 
 ## Verify Installation
 
@@ -74,3 +82,7 @@ console.log(typeof sdk.auth.login); // "function"
 ```
 
 If this runs without import errors, installation succeeded.
+
+## Next Step
+
+Continue to [Quick Start](quick-start.md) to authenticate and call your first SDK functions.
