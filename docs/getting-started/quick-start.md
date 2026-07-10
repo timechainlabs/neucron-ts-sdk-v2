@@ -1,6 +1,6 @@
 # Quick Start
 
-This guide walks you through authenticating and making your first API calls with the Neucron SDK.
+This guide walks you through authenticating and making your first calls with the Neucron TypeScript SDK.
 
 ## 1. Initialize the SDK
 
@@ -31,14 +31,16 @@ const signUpResult = await sdk.auth.signUp({
 
 console.log(signUpResult.data);
 // {
-//   paymail_id: 'jane@paymail.com',
+//   paymail_id: 'jane@...',
 //   token: 'eyJhbG...',
 //   user_id: 'usr_...',
 //   wallet_id: 'wal_...'
 // }
 ```
 
-> Sign-up automatically creates a default wallet and Paymail for the user.
+{% hint style="info" %}
+Sign-up automatically creates a default wallet and Paymail for the user, and returns an auth token.
+{% endhint %}
 
 ## 3. Log In
 
@@ -81,7 +83,7 @@ console.log(newWallet.data.wallet_id);
 
 ## 7. Work in Business Context
 
-Most business features require a `businessId` header. Pass it per request:
+Most business features require a `businessId`. Pass it per request:
 
 ```typescript
 const invoices = await sdk.invoice.getInvoices({
@@ -112,13 +114,13 @@ async function main() {
 
     // Business operations
     const businesses = await sdk.business.getBusinessList();
-    const businessId = businesses.data[0]?.business_id;
+    const businessId = businesses.data[0]?.business_id as string | undefined;
 
     if (businessId) {
       const customers = await sdk.customer.getCustomers({
         businessId,
-        pageNumber: 1,
-        pageSize: 20,
+        page: 1,
+        size: 20,
       });
       console.log('Customers:', customers.data);
     }
@@ -141,11 +143,10 @@ main();
 
 ```typescript
 await sdk.auth.logout();
-// Clears the stored token; protected endpoints will throw until you log in again
+// Clears the stored token; protected methods will throw until you log in again
 ```
 
 ## What's Next?
 
-- [Configuration](../core/configuration.md) — SDK config options
-- [Authentication & Headers](../core/authentication-and-headers.md) — Token management and business headers
-- [API Reference](../api-reference/overview.md) — Full method documentation
+- [Overview](overview.md) — Configuration, auth, headers, responses, and errors
+- [Features Overview](../features/overview.md) — Full SDK function documentation by feature
