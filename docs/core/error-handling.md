@@ -9,8 +9,8 @@ import { NeucronError } from '@neucron/ts-sdk';
 
 class NeucronError extends Error {
   type: 'network' | 'validation' | 'internal';
-  status?: number;       // HTTP status (network errors)
-  data?: unknown;        // API error body (network errors)
+  status?: number;       // Status code (network errors)
+  data?: unknown;        // Error body (network errors)
   headers?: Record<string, string>;
   issues?: Array<{ path: string; message: string }>; // validation errors
 }
@@ -20,7 +20,7 @@ class NeucronError extends Error {
 
 ### `validation`
 
-Thrown when request or response data fails Zod schema validation **before** or **after** an API call.
+Thrown when request or response data fails Zod schema validation **before** or **after** a call.
 
 ```typescript
 try {
@@ -33,11 +33,11 @@ try {
 }
 ```
 
-Validation errors on requests prevent the HTTP call from being made.
+Validation errors on requests prevent the network call from being made.
 
 ### `network`
 
-Thrown for API errors (4xx, 5xx) and server failures.
+Thrown for remote errors (4xx, 5xx) and connectivity failures.
 
 ```typescript
 try {
@@ -45,8 +45,8 @@ try {
 } catch (err) {
   if (err instanceof NeucronError && err.type === 'network') {
     console.log(err.status);   // 401
-    console.log(err.message);  // "Invalid credentials" (from API)
-    console.log(err.data);     // { message: 'Invalid credentials' }
+    console.log(err.message);  // message from the platform
+    console.log(err.data);     // raw error body
   }
 }
 ```
@@ -54,7 +54,7 @@ try {
 | Status range | Message behavior |
 |--------------|------------------|
 | 500+ or 0 | Message: `"Network error"` |
-| 4xx | Message from `response.data.message` or `response.data.error` |
+| 4xx | Message from `data.message` or `data.error` |
 
 ### `internal`
 
@@ -74,7 +74,7 @@ try {
 ## Recommended Error Handler
 
 ```typescript
-import NeucronSDK, { NeucronError } from '@neucron/ts-sdk';
+import { NeucronError } from '@neucron/ts-sdk';
 
 function handleNeucronError(err: unknown): void {
   if (!(err instanceof NeucronError)) {
@@ -92,7 +92,7 @@ function handleNeucronError(err: unknown): void {
       } else if (err.status && err.status >= 500) {
         console.error('Server error — retry later');
       } else {
-        console.error(`API error (${err.status}):`, err.message);
+        console.error(`Request failed (${err.status}):`, err.message);
       }
       break;
     case 'internal':
@@ -102,9 +102,9 @@ function handleNeucronError(err: unknown): void {
 }
 ```
 
-## API Error Response Shapes
+## Typical Error Bodies
 
-The Neucron API typically returns:
+Neucron typically returns:
 
 ```json
 { "error": "Description of the error" }

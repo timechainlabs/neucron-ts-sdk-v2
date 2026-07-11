@@ -106,12 +106,24 @@ export async function neucron_customer_manage(services: McpFlowServices, action:
     switch (action.action) {
         case 'create': {
             const customer = await services.customer.createCustomer(action.options);
-            return {
-                customer: customer.data,
-                inviteNote: action.invite
-                    ? 'Customer invite (POST /invoice/customer/invite) is not yet exposed on the Customer SDK service.'
-                    : undefined,
-            };
+            let invite: unknown;
+            if (action.invite) {
+                const customerId = String(
+                    (customer.data as Record<string, unknown>).customer_id ??
+                        (customer.data as Record<string, unknown>).customerID ??
+                        (customer.data as Record<string, unknown>).customerId ??
+                        ''
+                );
+                if (customerId) {
+                    invite = (
+                        await services.customer.inviteCustomer({
+                            businessId: action.options.businessId,
+                            customerId,
+                        })
+                    ).data;
+                }
+            }
+            return { customer: customer.data, invite };
         }
         case 'update': {
             const customer = await services.customer.updateCustomer(action.options);
@@ -119,6 +131,10 @@ export async function neucron_customer_manage(services: McpFlowServices, action:
         }
         case 'delete': {
             const result = await services.customer.deleteCustomer(action.options);
+            return { result: result.data };
+        }
+        case 'invite': {
+            const result = await services.customer.inviteCustomer(action.options);
             return { result: result.data };
         }
         case 'list': {

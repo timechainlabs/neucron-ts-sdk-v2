@@ -196,9 +196,15 @@ export const createRequestSchema = asset21ContextSchema.extend({
     rejectionsRequired: z.number().optional(),
 });
 
-export const createRequestResponseSchema = messageResponseSchema.extend({
-    requestId: z.string().optional(),
-});
+export const createRequestResponseSchema = z
+    .object({
+        message: z.string().optional(),
+        requestId: z.string().optional(),
+        redirect_url: z.string().optional(),
+        redirectUrl: z.string().optional(),
+        intent_id: z.string().optional(),
+    })
+    .passthrough();
 
 export const updateRequestSchema = asset21ContextSchema.extend({
     action: requestActionEnum,
@@ -206,7 +212,14 @@ export const updateRequestSchema = asset21ContextSchema.extend({
     requestId: nonEmptyString,
 });
 
-export const updateRequestResponseSchema = messageResponseSchema;
+export const updateRequestResponseSchema = z
+    .object({
+        message: z.string().optional(),
+        redirect_url: z.string().optional(),
+        redirectUrl: z.string().optional(),
+        intent_id: z.string().optional(),
+    })
+    .passthrough();
 
 export const getRequestSchema = asset21ContextSchema.extend({
     assetID: nonEmptyString,

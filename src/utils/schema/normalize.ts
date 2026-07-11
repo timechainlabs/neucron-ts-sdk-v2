@@ -61,15 +61,18 @@ export function normalizeTransactionsResponse(data: unknown): {
     return { list: [], page_meta: { page: 1, limit: 0, total: 0, next_page: -1, total_pages: 0 } };
 }
 
-/** Normalize data-integrity upload responses that may return a bare txid string. */
-export function normalizeTxidResponse(data: unknown): { txid: string } {
+/** Normalize data-integrity upload responses that may return txID, txid, or a bare string. */
+export function normalizeTxidResponse(data: unknown): { txID: string; txid: string } {
     if (typeof data === 'string') {
-        return { txid: data };
+        return { txID: data, txid: data };
     }
     if (data && typeof data === 'object') {
         const record = data as Record<string, unknown>;
-        if (record.txid) return { txid: String(record.txid) };
-        if (record.transaction_id) return { txid: String(record.transaction_id) };
+        const tx = record.txID ?? record.txid ?? record.transaction_id ?? record.transactionId;
+        if (tx) {
+            const value = String(tx);
+            return { txID: value, txid: value };
+        }
     }
     throw new Error('Expected transaction id in response');
 }

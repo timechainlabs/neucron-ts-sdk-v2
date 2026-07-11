@@ -4,7 +4,7 @@ const AssetTypeEnum = z.enum(['CERTIFICATE', 'UTILITY', 'SECURITY', 'STABLECOIN'
 
 const ProtocolEnum = z.enum(['STAS-20', 'STAS-789', 'STAS-50', 'STAS-LEGACY', 'NULL']);
 
-const assetStatusEnum = z.enum(['drafted', 'minted', 'expired', 'deployed']);
+const assetStatusEnum = z.enum(['DRAFTED', 'MINTED', 'EXPIRED', 'DEPLOYED']);
 
 const assetScopeEnum = z.enum(['public', 'private']);
 
@@ -189,6 +189,7 @@ export const assetListSchema = z.object({
     walletID: z.string().optional(),
     pageNumber: z.number().int().min(1).optional(),
     pageSize: z.number().int().min(1).optional(),
+    businessId: z.string().optional(),
 });
 
 export const assetListResponseSchema = z.any();

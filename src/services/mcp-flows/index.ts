@@ -142,7 +142,7 @@ export class McpFlows {
     neucron_get_expenses = (options: Parameters<typeof payFlows.neucron_get_expenses>[1]) =>
         payFlows.neucron_get_expenses(this.services, options);
 
-    /** Upload a document and inscribe it for proof of existence. */
+    /** Inscribe a file on-chain for proof of existence. */
     neucron_inscribe_document = (options: Parameters<typeof dataIntegrity.neucron_inscribe_document>[1]) =>
         dataIntegrity.neucron_inscribe_document(this.services, options);
 
@@ -150,13 +150,9 @@ export class McpFlows {
     neucron_inscribe_text = (options: Parameters<typeof dataIntegrity.neucron_inscribe_text>[1]) =>
         dataIntegrity.neucron_inscribe_text(this.services, options);
 
-    /** Cryptographically sign data using wallet keys. */
-    neucron_sign_data = (options: Parameters<typeof dataIntegrity.neucron_sign_data>[1]) =>
-        dataIntegrity.neucron_sign_data(this.services, options);
-
-    /** Encrypt data for secure storage or transmission. */
-    neucron_encrypt_data = (options: Parameters<typeof dataIntegrity.neucron_encrypt_data>[1]) =>
-        dataIntegrity.neucron_encrypt_data(this.services, options);
+    /** Inscribe multiple text entries on-chain in a single transaction. */
+    neucron_inscribe_text_array = (options: Parameters<typeof dataIntegrity.neucron_inscribe_text_array>[1]) =>
+        dataIntegrity.neucron_inscribe_text_array(this.services, options);
 
     /** Issue a security token (Asset21) through register, governance, and mint phases. */
     neucron_issue_security_token = (options: Parameters<typeof assetIssuance.neucron_issue_security_token>[1]) =>
