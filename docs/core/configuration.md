@@ -39,23 +39,15 @@ const current = sdk.auth.getToken();
 
 ### `businessId`
 
-> **Note:** `businessId` in the constructor `Config` is defined in the type but business-scoped services accept `businessId` per method call. Always pass `businessId` on individual requests for business operations.
+{% hint style="warning" %}
+`businessId` in the constructor `Config` is declared in the type but **not applied globally**. Always pass `businessId` on individual method calls for business-scoped operations.
+{% endhint %}
 
 ```typescript
 await sdk.invoice.getInvoices({
   businessId: 'biz_abc123',
 });
 ```
-
-## Base URL
-
-The API base URL is fixed in the SDK:
-
-```
-https://api.neucron.io/v1
-```
-
-It is defined in `src/config.ts` as `BASE_URL`. If you need a custom endpoint (e.g., staging), you would need to fork or extend the SDK — there is no runtime override in v1.0.0.
 
 ## Environment Variables (recommended pattern)
 
@@ -75,14 +67,15 @@ const sdk = new NeucronSDK({
   authToken: process.env.NEUCRON_AUTH_TOKEN,
 });
 
-// Or login at startup
 await sdk.auth.login({
   email: process.env.NEUCRON_EMAIL!,
   password: process.env.NEUCRON_PASSWORD!,
 });
 ```
 
-> Never commit `.env` files or hardcode credentials in source code.
+{% hint style="danger" %}
+Never commit `.env` files or hardcode credentials in source code.
+{% endhint %}
 
 ## Singleton vs. Per-Request Instances
 
@@ -95,4 +88,4 @@ import NeucronSDK from '@neucron/ts-sdk';
 export const sdk = new NeucronSDK();
 ```
 
-For multi-tenant server apps, you may create one SDK instance per user session, or share the instance and call `setToken()` when the active user changes.
+For multi-tenant server apps, create one SDK instance per user session, or share the instance and call `setToken()` when the active user changes.

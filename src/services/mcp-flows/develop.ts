@@ -1,4 +1,3 @@
-import { NeucronError } from '../../utils/errors/sdk-error.js';
 import type { McpFlowServices } from './types.js';
 import type { NeucronCreateAppOptions, NeucronPublishAppOptions, NeucronBrowseAppstoreOptions } from './types.js';
 
@@ -43,13 +42,47 @@ export async function neucron_create_app(services: McpFlowServices, options: Neu
  * MCP Tool: `neucron_publish_app`
  */
 export async function neucron_publish_app(services: McpFlowServices, options: NeucronPublishAppOptions) {
-    void services;
-    void options;
-    throw new NeucronError(
-        'App publish APIs (GET/PUT /app, POST /app/publish) are not yet fully exposed on the Apps SDK service.',
-        new Error('publishApp not implemented'),
-        { type: 'internal' }
-    );
+    const { businessId, appId } = options;
+
+    const app = await services.apps.getApp({ businessId, appId });
+
+    let iconUpload: unknown;
+    const appData: Record<string, unknown> = { ...(options.finalUpdate ?? {}) };
+
+    if (options.uploadIcon) {
+        const uploaded = await services.blob.uploadImage(options.uploadIcon);
+        iconUpload = uploaded.data;
+        const iconUrl =
+            (uploaded.data as Record<string, unknown>).url ??
+            (uploaded.data as Record<string, unknown>).image_url ??
+            (uploaded.data as Record<string, unknown>).imageUrl;
+        if (iconUrl) {
+            appData.app_icon = iconUrl;
+        }
+    }
+
+    let updated: unknown;
+    if (Object.keys(appData).length > 0) {
+        const updateResult = await services.apps.updateApp({
+            businessId,
+            appId,
+            appData,
+        });
+        updated = updateResult.data;
+    }
+
+    let publish: unknown;
+    if (!options.skipPublish) {
+        const published = await services.apps.publishApp({ businessId, appId });
+        publish = published.data;
+    }
+
+    return {
+        app: app.data,
+        iconUpload,
+        updated,
+        publish,
+    };
 }
 
 /**

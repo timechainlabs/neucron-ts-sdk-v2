@@ -1,7 +1,7 @@
 import type { z } from 'zod';
-import { fileUploadSchema, fileUploadResponseSchema, textUploadSchema, textUploadResponseSchema } from './schema.js';
+import { fileUploadSchema, textUploadSchema, textArrayUploadSchema, dataIntegrityResponseSchema } from './schema.js';
 
 export type FileUpload = z.infer<typeof fileUploadSchema>;
-export type FileUploadResponse = z.infer<typeof fileUploadResponseSchema>;
 export type TextUpload = z.infer<typeof textUploadSchema>;
-export type TextUploadResponse = z.infer<typeof textUploadResponseSchema>;
+export type TextArrayUpload = z.infer<typeof textArrayUploadSchema>;
+export type DataIntegrityResponse = z.infer<typeof dataIntegrityResponseSchema>;

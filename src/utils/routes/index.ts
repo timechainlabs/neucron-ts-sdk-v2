@@ -51,6 +51,7 @@ export const Routes = {
     DATA_INTEGRITY: {
         FILE_UPLOAD: '/data-integrity/file',
         TEXT_UPLOAD: '/data-integrity/text',
+        TEXT_ARRAY_UPLOAD: '/data-integrity/text-array',
     },
     WALLET: {
         CREATE: '/wallet/create',
@@ -102,10 +103,13 @@ export const Routes = {
     APP: {
         LIST: '/app/list',
         CREATE: '/app',
+        DETAILS: '/app',
         SECRET: '/app/secret',
+        PUBLISH: '/app/publish',
     },
     BLOB: {
         DOCUMENT_UPLOAD: '/blob/document/upload',
+        IMAGE_UPLOAD: '/blob/image/upload',
     },
     INVOICE: {
         CREATE: '/invoice',
@@ -123,6 +127,7 @@ export const Routes = {
         CUSTOMER_BALANCES: '/invoice/customer-balances',
         CUSTOMERS: '/invoice/customers',
         CUSTOMER: '/invoice/customer',
+        CUSTOMER_INVITE: '/invoice/customer/invite',
     },
     PAYMENT_COLLECTION: {
         CREATE: '/payment-collection',

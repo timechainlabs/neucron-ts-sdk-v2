@@ -31,9 +31,9 @@ import type {
 import type { CreateBill, UpdateBill, ListBills, ReviewBill } from '../bill/types.js';
 import type { CreatePayout, ListPayouts, ConfirmPayout, PayoutId } from '../payout/types.js';
 import type { PayRequestInput } from '../pay/types.js';
-import type { FileUpload, TextUpload } from '../data-integrity/types.js';
+import type { FileUpload, TextUpload, TextArrayUpload } from '../data-integrity/types.js';
 import type { Register, CreateRequest, UpdateRequest, GetRequest, RequestDetails } from '../asset21/types.js';
-import type { UploadDocument } from '../blob/types.js';
+import type { UploadDocument, UploadImage } from '../blob/types.js';
 import type {
     WalletCustomization,
     SubmitCollection,
@@ -148,6 +148,8 @@ export interface NeucronPublishAppOptions {
     businessId?: string;
     appId: string;
     finalUpdate?: Record<string, unknown>;
+    uploadIcon?: UploadImage;
+    skipPublish?: boolean;
 }
 
 export interface NeucronBrowseAppstoreOptions {
@@ -174,6 +176,7 @@ export type NeucronCustomerManageAction =
     | { action: 'create'; options: CreateCustomer; invite?: boolean }
     | { action: 'update'; options: UpdateCustomer }
     | { action: 'delete'; options: DeleteCustomer }
+    | { action: 'invite'; options: GetCustomer }
     | { action: 'list'; options: ListCustomers }
     | { action: 'get'; options: GetCustomer };
 
@@ -262,26 +265,11 @@ export type NeucronGetExpensesOptions = ExpenseGraphFilters;
 
 // --- Data Integrity ---
 
-export interface NeucronInscribeDocumentOptions {
-    document: UploadDocument;
-    inscribe?: FileUpload;
-}
+export type NeucronInscribeDocumentOptions = FileUpload;
 
 export type NeucronInscribeTextOptions = TextUpload;
 
-export interface NeucronSignDataOptions {
-    data: string;
-    walletID: string;
-    algorithm?: string;
-}
-
-export interface NeucronEncryptDataOptions {
-    data: string;
-    walletID: string;
-    recipientPublicKey?: string;
-    decrypt?: boolean;
-    encryptedPayload?: string;
-}
+export type NeucronInscribeTextArrayOptions = TextArrayUpload;
 
 // --- Asset Issuance (Asset21) ---
 

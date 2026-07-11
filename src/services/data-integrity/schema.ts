@@ -1,25 +1,32 @@
 import { z } from 'zod';
-import { uploadableFileSchema } from '../../utils/schema/common.js';
+import { businessIdSchema, uploadableFileSchema } from '../../utils/schema/common.js';
 
-export const fileUploadSchema = z.object({
+export const dataIntegrityNetworkEnum = z.enum(['MAIN', 'TEST']);
+
+export const dataIntegrityContextSchema = businessIdSchema.extend({
+    appSecret: z.string().optional(),
+    network: dataIntegrityNetworkEnum.optional(),
+});
+
+export const fileUploadSchema = dataIntegrityContextSchema.extend({
     walletID: z.string().min(1).optional(),
     file: uploadableFileSchema,
 });
 
-export const fileUploadResponseSchema = z
-    .object({
-        txid: z.string().min(1),
-    })
-    .passthrough();
-
-export const textUploadSchema = z.object({
+export const textUploadSchema = dataIntegrityContextSchema.extend({
     hashed: z.string().min(1),
     walletID: z.string().min(1).optional(),
     text: z.string().min(1),
 });
 
-export const textUploadResponseSchema = z
+export const textArrayUploadSchema = dataIntegrityContextSchema.extend({
+    walletID: z.string().min(1).optional(),
+    text: z.array(z.string().min(1)).min(1),
+});
+
+export const dataIntegrityResponseSchema = z
     .object({
-        txid: z.string().min(1),
+        txID: z.string().optional(),
+        txid: z.string().optional(),
     })
     .passthrough();
