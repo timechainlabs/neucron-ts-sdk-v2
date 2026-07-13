@@ -15,7 +15,7 @@ import type { DataIntegrity } from '../data-integrity/index.js';
 import type { Assets21 } from '../asset21/index.js';
 import type { LoginBody } from '../authentication/types.js';
 import type { CreateWalletBody } from '../wallet/types.js';
-import type { UpdateBusinessDetails } from '../business/types.js';
+import type { UpdateBusinessDetails, CreateBusinessBody } from '../business/types.js';
 import type { CreateApp } from '../apps/types.js';
 import type { CreateCustomer, UpdateCustomer, ListCustomers, GetCustomer, DeleteCustomer } from '../customer/types.js';
 import type { CreateInvoice, UpdateInvoice, ShareInvoice, PaymentCollection } from '../invoice/types.js';
@@ -97,7 +97,7 @@ export interface NeucronChooseEntityResult {
 }
 
 export interface NeucronCreateBusinessOptions {
-    payload: Record<string, unknown>;
+    payload: CreateBusinessBody;
     businessId?: string;
     submitKyb?: boolean;
     updateAfterCreate?: UpdateBusinessDetails['data'];

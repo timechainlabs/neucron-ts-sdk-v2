@@ -6,6 +6,7 @@ import type {
     NeucronChooseEntityResult,
     NeucronCreateBusinessOptions,
 } from './types.js';
+import type { CreateBusinessBody } from '../business/types.js';
 
 /**
  * Authenticate a user via email/password and refresh the user profile.
@@ -81,20 +82,25 @@ export async function neucron_choose_entity(
 /**
  * Register a new business entity and refresh the business list.
  * MCP Tool: `neucron_create_business`
- *
- * Note: Business creation requires `Business.createBusiness` in the SDK. Until that method
- * exists, pass `businessId` with `updateAfterCreate` to run post-creation update steps only.
  */
 export async function neucron_create_business(services: McpFlowServices, options: NeucronCreateBusinessOptions) {
-    if (!options.businessId) {
-        throw new NeucronError(
-            'Business creation (POST /business) is not yet exposed on the Business SDK service. Provide businessId to run post-creation steps.',
-            new Error('createBusiness not implemented'),
-            { type: 'internal' }
-        );
+    let businessId = options.businessId;
+    let createResult: unknown;
+
+    if (!businessId) {
+        const createResponse = await services.business.createBusiness(options.payload as CreateBusinessBody);
+        createResult = createResponse.data;
+        const data = createResponse.data as { business_id?: string; data?: { business_id?: string } };
+        businessId = data.business_id ?? data.data?.business_id;
+        if (!businessId) {
+            throw new NeucronError(
+                'Business was created but no business_id was returned',
+                new Error('missing business_id'),
+                { type: 'internal' }
+            );
+        }
     }
 
-    const businessId = options.businessId;
     let updateResult: unknown;
 
     if (options.updateAfterCreate) {
@@ -109,6 +115,7 @@ export async function neucron_create_business(services: McpFlowServices, options
 
     return {
         business_id: businessId,
+        create: createResult,
         update: updateResult,
         businessList: businessList.data,
     };

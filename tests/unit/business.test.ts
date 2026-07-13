@@ -19,6 +19,8 @@ vi.mock('../../src/utils/http/http-client.js', () => ({
 
 vi.mock('../../src/services/business/validator.js', () => ({
     default: vi.fn().mockImplementation(() => ({
+        createBusiness: vi.fn(),
+        createBusinessResponse: vi.fn(),
         getBusinessDetails: vi.fn(),
         businessDetailsResponse: vi.fn(),
         businessListResponse: vi.fn(),
@@ -41,6 +43,8 @@ describe('Business Service', () => {
         vi.clearAllMocks();
         mockHttpClient = createMockHttpClient();
         mockValidator = {
+            createBusiness: vi.fn(),
+            createBusinessResponse: vi.fn(),
             getBusinessDetails: vi.fn(),
             businessDetailsResponse: vi.fn(),
             businessListResponse: vi.fn(),
@@ -55,6 +59,37 @@ describe('Business Service', () => {
 
     afterEach(() => {
         vi.restoreAllMocks();
+    });
+
+    describe('createBusiness', () => {
+        it('should create a business', async () => {
+            const options = {
+                business_name: 'Acme Corp',
+                display_name: 'Acme',
+                business_type: 'private',
+                business_model: 'b2b',
+                business_email: 'billing@acme.com',
+                jurisdiction: 'IN',
+            };
+            const response = { business_id: BUSINESS_ID, data: { business_id: BUSINESS_ID } };
+            mockValidator.createBusiness.mockReturnValue(true);
+            mockValidator.createBusinessResponse.mockReturnValue(response);
+            mockHttpClient.post.mockResolvedValue(mockHttpResponse(response));
+
+            const result = await business.createBusiness(options);
+
+            expect(mockValidator.createBusiness).toHaveBeenCalledWith(options);
+            expect(mockHttpClient.post).toHaveBeenCalledWith('/business', options, AUTH_HEADERS);
+            expect(result.data).toEqual(response);
+        });
+
+        it('should throw when not authenticated', async () => {
+            const authError = createUnauthorizedError();
+            vi.spyOn(mockAuth, 'validate').mockImplementation(() => {
+                throw authError;
+            });
+            await expect(business.createBusiness({ business_name: 'Acme' })).rejects.toThrow(authError);
+        });
     });
 
     describe('getBusinessDetails', () => {
