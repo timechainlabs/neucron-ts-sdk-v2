@@ -6,6 +6,8 @@ import Validator from './validator.js';
 import { handleError } from '../../utils/errors/helper.js';
 import { Routes } from '../../utils/routes/index.js';
 import type {
+    CreateBusinessBody,
+    CreateBusinessResponse,
     GetBusinessDetails,
     BusinessDetailsResponse,
     BusinessListResponse,
@@ -20,6 +22,19 @@ export class Business {
     constructor(private readonly auth: Authentication) {
         this.validator = new Validator();
         this.httpClient = new HttpClient();
+    }
+
+    async createBusiness(options: CreateBusinessBody): Promise<HttpResponse<CreateBusinessResponse>> {
+        try {
+            this.auth.validate();
+            this.validator.createBusiness(options);
+            const headers = buildAuthHeaders(this.auth);
+            const resp = await this.httpClient.post<CreateBusinessResponse>(Routes.BUSINESS.CREATE, options, headers);
+            this.validator.createBusinessResponse(resp.data);
+            return resp;
+        } catch (err) {
+            handleError(err);
+        }
     }
 
     async getBusinessDetails(options: GetBusinessDetails): Promise<HttpResponse<BusinessDetailsResponse>> {

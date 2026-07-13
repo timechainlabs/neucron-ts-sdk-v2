@@ -88,6 +88,7 @@ export const Routes = {
         REMOVE_MEMBER: '/team/remove',
     },
     BUSINESS: {
+        CREATE: '/business',
         DETAILS: '/business',
         LIST: '/business/list',
         UPDATE: '/business/update',
