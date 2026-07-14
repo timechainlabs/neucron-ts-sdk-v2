@@ -11,7 +11,7 @@ export const billingHistoryItemSchema = z.object({
     created_at: z.string(),
     valid_from: z.string(),
     expires_at: z.string(),
-    metadata: z.record(z.unknown()),
+    metadata: z.record(z.string(), z.unknown()),
 });
 
 export const billingHistoryResponseSchema = z.object({
@@ -19,7 +19,7 @@ export const billingHistoryResponseSchema = z.object({
     page_meta: pageMetaSchema,
 });
 
-export const pricingPlanSchema = z.record(z.unknown());
+export const pricingPlanSchema = z.record(z.string(), z.unknown());
 
 export const creditBalanceResponseSchema = z.object({
     plan_balance: z.number(),
@@ -53,14 +53,14 @@ export const graphDataSchema = z.object({
 });
 
 export const paymentHistoryResponseSchema = z.object({
-    list: z.array(z.record(z.unknown())),
+    list: z.array(z.record(z.string(), z.unknown())),
     page_meta: pageMetaSchema,
 });
 
 export const paymentMethodSchema = z.object({
     id: z.string(),
     type: z.enum(['card', 'bank_account', 'paypal']),
-    details: z.record(z.unknown()),
+    details: z.record(z.string(), z.unknown()),
     isDefault: z.boolean(),
 });
 
@@ -77,8 +77,8 @@ export const raisePaymentSchema = z.object({
     invoiceId: nonEmptyString,
 });
 
-export const billingInfoResponseSchema = z.record(z.unknown());
+export const billingInfoResponseSchema = z.record(z.string(), z.unknown());
 export const pricingPlansResponseSchema = z.array(pricingPlanSchema);
 export const graphDataResponseSchema = z.array(graphDataSchema);
-export const invoiceListResponseSchema = z.record(z.unknown());
+export const invoiceListResponseSchema = z.record(z.string(), z.unknown());
 export const paymentMethodsResponseSchema = z.array(paymentMethodSchema);

@@ -22,19 +22,19 @@ export const customerApiSchema = z.object({
             phone_number: z.string().optional(),
         })
         .optional(),
-    contact_persons: z.array(z.record(z.unknown())).default([]),
+    contact_persons: z.array(z.record(z.string(), z.unknown())).default([]),
     created_at: z.string().optional(),
     customer_id: z.string().optional(),
     customer_type: z.enum(['BUSINESS', 'INDIVIDUAL']).optional(),
-    individual_details: z.record(z.unknown()).optional(),
-    payment_details: z.record(z.unknown()).optional(),
-    tax_payer_info: z.record(z.unknown()).optional(),
+    individual_details: z.record(z.string(), z.unknown()).optional(),
+    payment_details: z.record(z.string(), z.unknown()).optional(),
+    tax_payer_info: z.record(z.string(), z.unknown()).optional(),
     team_id: z.string().optional(),
     business_id: z.string().optional(),
     status: z.string().optional(),
     total_invoices: z.number().optional(),
-    total_invoiced: z.union([z.number(), z.record(z.number())]).optional(),
-    total_outstanding: z.union([z.number(), z.record(z.number())]).optional(),
+    total_invoiced: z.union([z.number(), z.record(z.string(), z.number())]).optional(),
+    total_outstanding: z.union([z.number(), z.record(z.string(), z.number())]).optional(),
 });
 
 export const listCustomersSchema = businessIdSchema.extend({
@@ -69,4 +69,4 @@ export const inviteCustomerSchema = getCustomerSchema;
 export const inviteCustomerResponseSchema = z.object({ message: z.string() }).passthrough();
 
 export const customerResponseSchema = customerApiSchema.passthrough();
-export const deleteCustomerResponseSchema = z.record(z.unknown());
+export const deleteCustomerResponseSchema = z.record(z.string(), z.unknown());

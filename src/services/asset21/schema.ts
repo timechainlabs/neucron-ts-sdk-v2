@@ -45,7 +45,7 @@ export const registerBodySchema = z.object({
             icon: z.string().optional(),
             decimal: z.number().optional(),
             feeStructure: z.array(feeStructureSchema).optional(),
-            holder_identity_config: z.record(z.unknown()).optional(),
+            holder_identity_config: z.record(z.string(), z.unknown()).optional(),
             request_config: z
                 .object({
                     min_approval: z.number(),
@@ -298,7 +298,7 @@ export const transferBodySchema = z.object({
     toAddress: nonEmptyString,
     amount: nonEmptyString,
     tokenAddress: z.string().optional(),
-    metadata: z.record(z.unknown()).optional(),
+    metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const transferSchema = asset21ContextSchema.extend({
@@ -369,7 +369,7 @@ const UTXOInfoSchema = z
     })
     .passthrough();
 
-export const getUnspentUTXOsResponseSchema = z.union([z.array(UTXOInfoSchema), z.record(z.unknown())]);
+export const getUnspentUTXOsResponseSchema = z.union([z.array(UTXOInfoSchema), z.record(z.string(), z.unknown())]);
 
 export const getOutputInfoSchema = asset21ContextSchema.extend({
     outpoint: nonEmptyString,
@@ -378,7 +378,7 @@ export const getOutputInfoSchema = asset21ContextSchema.extend({
 export const getOutputInfoResponseSchema = z
     .object({
         outpoint: z.string().optional(),
-        output: z.record(z.unknown()).optional(),
+        output: z.record(z.string(), z.unknown()).optional(),
     })
     .passthrough();
 
@@ -416,6 +416,6 @@ export const listDeployedAssetsSchema = asset21ContextSchema.extend({
 });
 
 export const listDeployedAssetsResponseSchema = z.object({
-    list: z.array(z.record(z.unknown())),
+    list: z.array(z.record(z.string(), z.unknown())),
     page_meta: pageMetaSchema.optional(),
 });

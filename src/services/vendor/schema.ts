@@ -96,13 +96,13 @@ export const payVendorSchema = vendorIdSchema.extend({
         currency: nonEmptyString,
         schedule_at: z.string().optional(),
         sender_wallet_id: nonEmptyString,
-        meta: z.record(z.unknown()).optional(),
+        meta: z.record(z.string(), z.unknown()).optional(),
     }),
 });
 
-export const vendorsListResponseSchema = z.record(z.unknown());
-export const vendorResponseSchema = z.record(z.unknown());
+export const vendorsListResponseSchema = z.record(z.string(), z.unknown());
+export const vendorResponseSchema = z.record(z.string(), z.unknown());
 export const messageSchema = messageResponseSchema;
-export const vendorLedgerResponseSchema = z.record(z.unknown());
-export const vendorExpenseGraphResponseSchema = z.record(z.unknown());
-export const vendorExpenseSummaryResponseSchema = z.array(z.record(z.unknown()));
+export const vendorLedgerResponseSchema = z.record(z.string(), z.unknown());
+export const vendorExpenseGraphResponseSchema = z.record(z.string(), z.unknown());
+export const vendorExpenseSummaryResponseSchema = z.array(z.record(z.string(), z.unknown()));

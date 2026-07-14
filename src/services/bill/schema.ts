@@ -14,7 +14,7 @@ export const vendorBillItemSchema = z.object({
 });
 
 export const vendorBillPayloadSchema = z.object({
-    additional_charge: z.record(z.number()),
+    additional_charge: z.record(z.string(), z.number()),
     bill_items: z.array(vendorBillItemSchema),
     billing_address: z.object({
         designation_supply: z.string(),
@@ -33,7 +33,7 @@ export const vendorBillPayloadSchema = z.object({
     currency: z.string(),
     discount: z.number(),
     other_details: z.object({
-        additional_fields: z.record(z.string()),
+        additional_fields: z.record(z.string(), z.string()),
         attachment: z.object({ link: z.string(), name: z.string() }),
         lut: z.string(),
         note: z.string(),
@@ -79,7 +79,7 @@ export const payBillSchema = billIdSchema.extend({
         asset_id: nonEmptyString,
         sender_wallet_id: nonEmptyString,
         schedule_at: z.string().optional(),
-        meta: z.record(z.unknown()).optional(),
+        meta: z.record(z.string(), z.unknown()).optional(),
     }),
 });
 
@@ -96,5 +96,5 @@ export const acceptVendorInvitationSchema = businessIdSchema.extend({
 export const createBillResponseSchema = z.object({ billID: z.string() });
 export const updateBillResponseSchema = messageResponseSchema;
 export const payBillResponseSchema = z.object({ payout_id: z.string(), txmeta: z.string() });
-export const billResponseSchema = z.record(z.unknown());
-export const billsListResponseSchema = z.record(z.unknown());
+export const billResponseSchema = z.record(z.string(), z.unknown());
+export const billsListResponseSchema = z.record(z.string(), z.unknown());

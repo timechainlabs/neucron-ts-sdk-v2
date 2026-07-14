@@ -126,14 +126,14 @@ export const walletAddressListResponseSchema = z.array(
 );
 
 export const availableAssetsResponseSchema = z.object({
-    list: z.array(z.record(z.unknown())),
+    list: z.array(z.record(z.string(), z.unknown())),
 });
 
 export const transactionsResponseSchema = z.object({
-    list: z.array(z.record(z.unknown())).default([]),
+    list: z.array(z.record(z.string(), z.unknown())).default([]),
     page_meta: pageMetaSchema,
 });
 
-export const transactionDetailsResponseSchema = z.record(z.unknown());
-export const syncAssetResponseSchema = z.record(z.unknown());
-export const importAssetResponseSchema = z.record(z.unknown());
+export const transactionDetailsResponseSchema = z.record(z.string(), z.unknown());
+export const syncAssetResponseSchema = z.record(z.string(), z.unknown());
+export const importAssetResponseSchema = z.record(z.string(), z.unknown());

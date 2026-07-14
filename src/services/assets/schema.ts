@@ -215,8 +215,8 @@ export const balancesSchema = z.object({
 });
 
 export const balancesResponseSchema = z.object({
-    total_balance: z.record(z.number().optional()),
-    asset_balance: z.array(z.record(z.unknown())),
+    total_balance: z.record(z.string(), z.number().optional()),
+    asset_balance: z.array(z.record(z.string(), z.unknown())),
 });
 
 export const publicAssetListSchema = z.object({
@@ -229,7 +229,7 @@ export const publicAssetListSchema = z.object({
     businessId: z.string().optional(),
 });
 
-export const publicAssetListResponseSchema = z.record(z.unknown());
+export const publicAssetListResponseSchema = z.record(z.string(), z.unknown());
 
 export const ownedAssetDetailsSchema = z.object({
     assetID: z.string().min(1),
@@ -237,11 +237,11 @@ export const ownedAssetDetailsSchema = z.object({
     businessId: z.string().optional(),
 });
 
-export const ownedAssetDetailsResponseSchema = z.record(z.unknown());
+export const ownedAssetDetailsResponseSchema = z.record(z.string(), z.unknown());
 
 export const eventDetailsSchema = z.object({
     eventId: z.string().min(1),
     businessId: z.string().optional(),
 });
 
-export const eventDetailsResponseSchema = z.record(z.unknown());
+export const eventDetailsResponseSchema = z.record(z.string(), z.unknown());

@@ -20,8 +20,7 @@ export function handleError(err: unknown): never {
 
         // Otherwise use provided message (like "Invalid credentials", "Invalid email")
         const message =
-            (err.response.data && (err.response.data.message || err.response.data.error)) ||
-            'Request failed';
+            (err.response.data && (err.response.data.message || err.response.data.error)) || 'Request failed';
         throw new NeucronError(message, err, {
             type: 'network',
             status,
@@ -31,10 +30,10 @@ export function handleError(err: unknown): never {
     }
 
     if (err instanceof ZodError) {
-        const message = err.errors[0]?.message || 'Validation error';
+        const message = err.issues[0]?.message || 'Validation error';
         throw new NeucronError(message, err, {
             type: 'validation',
-            issues: err.errors.map((issue) => ({
+            issues: err.issues.map((issue) => ({
                 path: issue.path.join('.'),
                 message: issue.message,
             })),

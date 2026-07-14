@@ -44,7 +44,7 @@ export const createInvitesSchema = businessIdSchema.extend({
 
 export const createInvitesResponseSchema = messageResponseSchema;
 
-export const invitesListResponseSchema = z.array(z.record(z.unknown()));
+export const invitesListResponseSchema = z.array(z.record(z.string(), z.unknown()));
 
 export const assignRolesSchema = businessIdSchema.extend({
     memberID: nonEmptyString,

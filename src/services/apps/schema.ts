@@ -16,10 +16,10 @@ export const appSchema = z.object({
 export const appsListResponseSchema = z.array(appSchema);
 
 export const createAppSchema = businessIdSchema.extend({
-    appData: z.record(z.unknown()),
+    appData: z.record(z.string(), z.unknown()),
 });
 
-export const createAppResponseSchema = z.record(z.unknown());
+export const createAppResponseSchema = z.record(z.string(), z.unknown());
 
 export const getAppSecretSchema = businessIdSchema.extend({
     appId: nonEmptyString,
@@ -29,13 +29,13 @@ export const getAppSchema = getAppSecretSchema;
 
 export const updateAppSchema = businessIdSchema.extend({
     appId: nonEmptyString,
-    appData: z.record(z.unknown()),
+    appData: z.record(z.string(), z.unknown()),
 });
 
 export const publishAppSchema = getAppSecretSchema;
 
-export const appSecretResponseSchema = z.record(z.unknown());
+export const appSecretResponseSchema = z.record(z.string(), z.unknown());
 
-export const appResponseSchema = z.record(z.unknown());
+export const appResponseSchema = z.record(z.string(), z.unknown());
 
 export const publishAppResponseSchema = z.object({ message: z.string() }).passthrough();

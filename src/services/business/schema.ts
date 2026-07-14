@@ -83,11 +83,11 @@ export const businessDetailsResponseSchema = z
     })
     .passthrough();
 
-export const businessListResponseSchema = z.array(z.record(z.unknown()));
+export const businessListResponseSchema = z.array(z.record(z.string(), z.unknown()));
 
 export const updateBusinessDetailsSchema = businessIdSchema.extend({
     businessId: nonEmptyString,
-    data: z.record(z.unknown()),
+    data: z.record(z.string(), z.unknown()),
 });
 
-export const updateBusinessDetailsResponseSchema = z.record(z.unknown());
+export const updateBusinessDetailsResponseSchema = z.record(z.string(), z.unknown());

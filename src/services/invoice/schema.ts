@@ -49,7 +49,7 @@ export const listInvoicesSchema = businessIdSchema.extend({
 });
 
 export const updateInvoiceSchema = invoiceIdSchema.extend({
-    invoiceData: z.record(z.unknown()),
+    invoiceData: z.record(z.string(), z.unknown()),
 });
 
 export const emailPayloadSchema = z.object({
@@ -81,7 +81,7 @@ export const createPublicPaymentCollectionSchema = businessIdSchema.extend({
     data: z.object({
         amount: z.number().optional(),
         currency: z.string().optional(),
-        metadata: z.record(z.unknown()).optional(),
+        metadata: z.record(z.string(), z.unknown()).optional(),
         wallet_id: z.string(),
     }),
 });
@@ -94,7 +94,7 @@ export const paymentCollectionSchema = invoiceIdSchema.extend({
 export const paymentSessionSchema = businessIdSchema.extend({
     collectionID: nonEmptyString,
     assetID: nonEmptyString,
-    metadata: z.record(z.unknown()).optional(),
+    metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const sessionIdSchema = businessIdSchema.extend({
@@ -142,12 +142,12 @@ export const revenueGraphFiltersSchema = businessIdSchema.extend({
     period: z.enum(['weekly', 'monthly', 'quarterly', 'yearly']).optional(),
 });
 
-export const invoiceItemSchema = z.record(z.unknown());
+export const invoiceItemSchema = z.record(z.string(), z.unknown());
 export const invoicesListResponseSchema = z.object({
     invoices: z.array(invoiceItemSchema),
     page_meta: pageMetaSchema,
 });
 export const invoiceResponseSchema = invoiceItemSchema;
 export const messageSchema = messageResponseSchema;
-export const walletInfoPayloadSchema = z.record(z.unknown());
-export const paymentCollectionResponseSchema = z.record(z.unknown());
+export const walletInfoPayloadSchema = z.record(z.string(), z.unknown());
+export const paymentCollectionResponseSchema = z.record(z.string(), z.unknown());
