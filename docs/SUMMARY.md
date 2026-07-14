@@ -10,6 +10,7 @@
 
 * [Configuration](core/configuration.md)
 * [Authentication & Headers](core/authentication-and-headers.md)
+* [Sign in with Neucron (OAuth)](guides/sign-in-with-neucron.md)
 * [Response Format](core/response-format.md)
 * [Error Handling](core/error-handling.md)
 
