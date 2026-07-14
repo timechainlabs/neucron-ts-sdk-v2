@@ -2,6 +2,7 @@
 // Consumers (e.g. the MCP server) use these as runtime-validated input
 // shapes instead of re-declaring validation rules that already live here.
 export * as authenticationSchemas from './services/authentication/schema.js';
+export * as oauthSchemas from './services/oauth/schema.js';
 export * as walletSchemas from './services/wallet/schema.js';
 export * as assetsSchemas from './services/assets/schema.js';
 export * as asset21Schemas from './services/asset21/schema.js';

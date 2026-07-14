@@ -1,4 +1,5 @@
 import type { Authentication } from '../authentication/index.js';
+import type { OAuth } from '../oauth/index.js';
 import type { Wallet } from '../wallet/index.js';
 import type { Team } from '../team/index.js';
 import type { Business } from '../business/index.js';
@@ -47,6 +48,7 @@ import type { Balances, LedgerList } from '../assets/types.js';
 /** SDK services injected into MCP flow orchestrators. */
 export interface McpFlowServices {
     auth: Authentication;
+    oauth: OAuth;
     wallet: Wallet;
     team: Team;
     business: Business;

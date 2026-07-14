@@ -1,4 +1,8 @@
 export const Routes = {
+    OAUTH: {
+        AUTHORIZE: '/oauth/authorize',
+        TOKEN: '/oauth/token',
+    },
     AUTH: {
         LOGIN: '/auth/login',
         SIGNUP: '/auth/signup',

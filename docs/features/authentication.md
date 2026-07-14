@@ -4,6 +4,8 @@
 
 Authentication establishes a **user session** for the Neucron platform. After a successful login or signup, the SDK holds a JWT that authorizes every subsequent wallet, asset, business, and commerce call.
 
+For third-party applications, use **Sign in with Neucron** (OAuth 2.0 authorization code flow) via `sdk.oauth`. See the dedicated guide: [Sign in with Neucron (OAuth)](guides/sign-in-with-neucron.md).
+
 Neucron accounts can be linked to one or more **platforms** (`NEUCRON`, `ASSETYZER`, `CERTIFICATE`, `TICKETING`). Signup requires choosing a platform; login returns the platforms associated with the account.
 
 ### Session lifecycle

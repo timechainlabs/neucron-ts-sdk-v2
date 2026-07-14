@@ -15,7 +15,7 @@ import type { CreateBusinessBody } from '../business/types.js';
 export async function neucron_login(services: McpFlowServices, options: NeucronLoginOptions) {
     if (options.method !== 'email') {
         throw new NeucronError(
-            'Passkey and OAuth login paths require dedicated SDK methods not yet available',
+            'Passkey login is not yet supported. Use email/password or sdk.oauth for Sign in with Neucron.',
             new Error('Unsupported login method'),
             { type: 'internal' }
         );
