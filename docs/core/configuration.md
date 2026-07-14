@@ -8,6 +8,13 @@ The Neucron SDK accepts an optional configuration object when instantiated.
 interface Config {
   authToken?: string;
   businessId?: string;
+  baseUrl?: string;
+  oauth?: {
+    clientId?: string;
+    clientSecret?: string;
+    redirectUri?: string;
+    platform?: string;
+  };
 }
 ```
 
@@ -58,7 +65,14 @@ Store credentials outside your codebase:
 NEUCRON_EMAIL=user@example.com
 NEUCRON_PASSWORD=your-password
 NEUCRON_BUSINESS_ID=biz_abc123
+NEUCRON_API_BASE_URL=https://dev.neucron.io/v1
+NEUCRON_CLIENT_ID=your-oauth-client-id
+NEUCRON_CLIENT_SECRET=your-oauth-client-secret
+OAUTH_REDIRECT_URI=https://your-domain.com/auth/callback
+PLATFORM_NAME=YourApp
 ```
+
+For Sign in with Neucron, see [Sign in with Neucron (OAuth)](../guides/sign-in-with-neucron.md).
 
 ```typescript
 import NeucronSDK from '@neucron/ts-sdk';

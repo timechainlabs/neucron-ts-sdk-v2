@@ -1,4 +1,6 @@
 import {
+    createBusinessSchema,
+    createBusinessResponseSchema,
     getBusinessDetailsSchema,
     businessDetailsResponseSchema,
     businessListResponseSchema,
@@ -6,6 +8,8 @@ import {
     updateBusinessDetailsResponseSchema,
 } from './schema.js';
 import type {
+    CreateBusinessBody,
+    CreateBusinessResponse,
     GetBusinessDetails,
     BusinessDetailsResponse,
     BusinessListResponse,
@@ -14,6 +18,14 @@ import type {
 } from './types.js';
 
 export default class Validator {
+    createBusiness(options: CreateBusinessBody): void {
+        createBusinessSchema.parse(options);
+    }
+
+    createBusinessResponse(response: CreateBusinessResponse): void {
+        createBusinessResponseSchema.parse(response);
+    }
+
     getBusinessDetails(options: GetBusinessDetails): void {
         getBusinessDetailsSchema.parse(options);
     }

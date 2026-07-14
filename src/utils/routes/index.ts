@@ -1,4 +1,8 @@
 export const Routes = {
+    OAUTH: {
+        AUTHORIZE: '/oauth/authorize',
+        TOKEN: '/oauth/token',
+    },
     AUTH: {
         LOGIN: '/auth/login',
         SIGNUP: '/auth/signup',
@@ -88,6 +92,7 @@ export const Routes = {
         REMOVE_MEMBER: '/team/remove',
     },
     BUSINESS: {
+        CREATE: '/business',
         DETAILS: '/business',
         LIST: '/business/list',
         UPDATE: '/business/update',

@@ -1,6 +1,7 @@
 import type { NeucronSDK } from '../../nuecron-sdk.js';
 import type { McpFlowServices } from './types.js';
 import * as authSetup from './auth-setup.js';
+import * as oauth from './oauth.js';
 import * as holdings from './holdings.js';
 import * as develop from './develop.js';
 import * as getPaid from './get-paid.js';
@@ -20,6 +21,7 @@ export class McpFlows {
     constructor(sdk: NeucronSDK) {
         this.services = {
             auth: sdk.auth,
+            oauth: sdk.oauth,
             wallet: sdk.wallet,
             team: sdk.team,
             business: sdk.business,
@@ -40,6 +42,14 @@ export class McpFlows {
     /** Authenticate a user via email/password and return a session token. */
     neucron_login = (options: Parameters<typeof authSetup.neucron_login>[1]) =>
         authSetup.neucron_login(this.services, options);
+
+    /** Start Sign in with Neucron and return the hosted login URL. */
+    neucron_oauth_authorize = (options: Parameters<typeof oauth.neucron_oauth_authorize>[1]) =>
+        oauth.neucron_oauth_authorize(this.services, options);
+
+    /** Exchange an OAuth authorization code for an access token and user profile. */
+    neucron_oauth_exchange_token = (options: Parameters<typeof oauth.neucron_oauth_exchange_token>[1]) =>
+        oauth.neucron_oauth_exchange_token(this.services, options);
 
     /** List available personal and business entities and set the active operating context. */
     neucron_choose_entity = (options?: Parameters<typeof authSetup.neucron_choose_entity>[1]) =>
