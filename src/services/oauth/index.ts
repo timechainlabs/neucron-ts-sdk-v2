@@ -2,6 +2,7 @@ import type { HttpResponse, QueryParams } from '../../utils/http/types.js';
 import type {
     OAuthAuthorizeRequest,
     OAuthAuthorizeResponse,
+    OAuthClientInfo,
     OAuthTokenExchangeRequest,
     OAuthTokenResponse,
 } from './types.js';
@@ -63,6 +64,9 @@ export class OAuth {
     /**
      * Exchange an authorization code for an access token.
      * Automatically stores the token on the linked Authentication instance.
+     *
+     * Sent as a form POST so the client secret stays out of the URL, where it
+     * would otherwise be captured by access logs and proxies.
      */
     async exchangeToken(options: OAuthTokenExchangeRequest): Promise<HttpResponse<OAuthTokenResponse>> {
         try {
@@ -73,22 +77,73 @@ export class OAuth {
                 redirect_uri: options.redirect_uri ?? this.clientConfig.redirectUri ?? '',
             });
 
-            const params: QueryParams = {
+            const body = new URLSearchParams({
                 grant_type: parsed.grant_type,
                 code: parsed.code,
                 redirect_uri: parsed.redirect_uri,
                 client_id: parsed.client_id,
                 client_secret: parsed.client_secret,
                 state: parsed.state,
-            };
+            });
 
-            const resp = await this.httpClient.get<OAuthTokenResponse>(Routes.OAUTH.TOKEN, {}, params);
+            const resp = await this.httpClient.post<OAuthTokenResponse>(Routes.OAUTH.TOKEN, body, {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            });
             const data = this.validator.tokenResponse(resp.data);
             this.auth.setToken(data.access_token);
             return { ...resp, data };
         } catch (err) {
             handleError(err);
         }
+    }
+
+    /**
+     * Public branding for an OAuth client: app name, icon, legal links and
+     * theme. Unauthenticated, so it can be called before the user signs in.
+     */
+    async clientInfo(clientId?: string): Promise<HttpResponse<OAuthClientInfo>> {
+        try {
+            const id = clientId ?? this.clientConfig.clientId ?? '';
+            if (!id) {
+                throw new Error('clientInfo requires a client_id');
+            }
+
+            const resp = await this.httpClient.get<OAuthClientInfo>(
+                Routes.OAUTH.CLIENT_INFO,
+                { Accept: 'application/json' },
+                { client_id: id }
+            );
+            const data = this.validator.clientInfoResponse(resp.data);
+            return { ...resp, data };
+        } catch (err) {
+            handleError(err);
+        }
+    }
+
+    /**
+     * Finish the flow from a callback request: verifies `state` matches the
+     * value issued at login, exchanges the code, and returns the token.
+     *
+     * `expectedState` is whatever your app stashed in the user's session when
+     * it called `authorize()`. Skipping that comparison leaves the callback
+     * open to CSRF, so it is required rather than optional.
+     */
+    async handleCallback(options: {
+        code: string;
+        state: string;
+        expectedState: string;
+        redirect_uri?: string;
+    }): Promise<HttpResponse<OAuthTokenResponse>> {
+        if (!options.expectedState || options.state !== options.expectedState) {
+            throw new Error('OAuth state mismatch — possible CSRF, aborting sign-in');
+        }
+
+        return this.exchangeToken({
+            grant_type: 'authorization_code',
+            code: options.code,
+            state: options.state,
+            redirect_uri: options.redirect_uri ?? this.clientConfig.redirectUri,
+        });
     }
 }
 

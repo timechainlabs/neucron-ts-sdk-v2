@@ -1,5 +1,4 @@
-import { HttpClient } from '../../utils/http/http-client.js';
-import type { Headers, HttpResponse, QueryParams } from '../../utils/http/types.js';
+import type { Headers, HttpResponse, QueryParams, IHttpClient } from '../../utils/http/types.js';
 import { Authentication } from '../authentication/index.js';
 import { buildAuthHeaders } from '../../utils/http/headers.js';
 import Validator from './validator.js';
@@ -63,11 +62,11 @@ function buildAsset21Headers(auth: Authentication, context: Asset21Context): Hea
 
 export class Assets21 {
     private readonly validator: Validator;
-    private readonly httpClient: HttpClient;
+    private readonly httpClient: IHttpClient;
 
     constructor(private readonly auth: Authentication) {
         this.validator = new Validator();
-        this.httpClient = new HttpClient();
+        this.httpClient = auth.getHttpClient();
     }
 
     async getAddressState(options: GetAddressState): Promise<HttpResponse<GetAddressStateResponse>> {

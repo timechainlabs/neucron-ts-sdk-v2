@@ -1,19 +1,18 @@
-import type { Headers, HttpResponse, QueryParams } from "../../utils/http/types.js";
-import type { PayRequest, PayResponse, PayRequestInput } from "./types.js";
-import { HttpClient } from "../../utils/http/http-client.js";
-import { Authentication } from "../authentication/index.js";
-import Validator from "./validator.js";
-import { handleError } from "../../utils/errors/helper.js";
-import { Routes } from "../../utils/routes/index.js";
-import { ASSET_IDS } from "../../utils/constants/asset.js";
+import type { Headers, HttpResponse, IHttpClient, QueryParams } from '../../utils/http/types.js';
+import type { PayRequest, PayResponse, PayRequestInput } from './types.js';
+import { Authentication } from '../authentication/index.js';
+import Validator from './validator.js';
+import { handleError } from '../../utils/errors/helper.js';
+import { Routes } from '../../utils/routes/index.js';
+import { ASSET_IDS } from '../../utils/constants/asset.js';
 
 export class Pay {
     private readonly validator: Validator;
-    private readonly httpClient: HttpClient;
+    private readonly httpClient: IHttpClient;
 
     constructor(private readonly auth: Authentication) {
         this.validator = new Validator();
-        this.httpClient = new HttpClient();
+        this.httpClient = auth.getHttpClient();
     }
 
     private async executePayment(
@@ -51,12 +50,7 @@ export class Pay {
                 transfer_destinations: normalizedOptions.transfer_destinations,
             };
 
-            const res = await this.httpClient.post<PayResponse>(
-                reqPath,
-                payload,
-                headers,
-                params
-            );
+            const res = await this.httpClient.post<PayResponse>(reqPath, payload, headers, params);
 
             this.validator.payResponse(res.data);
             return res;

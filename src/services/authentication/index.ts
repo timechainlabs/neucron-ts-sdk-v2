@@ -29,11 +29,20 @@ export class Authentication {
     private readonly httpClient: IHttpClient;
     constructor(private readonly config?: Config) {
         this.token = config?.authToken ?? '';
-        this.httpClient = new HttpClient();
+        this.httpClient = new HttpClient(config?.baseUrl);
         this.validator = new Validator();
     }
     public getToken(): string {
         return this.token;
+    }
+    /**
+     * The HTTP client bound to the configured `baseUrl`. Other services reuse
+     * this rather than constructing their own — a bare `new HttpClient()`
+     * silently falls back to the production API, so a sandbox or self-hosted
+     * consumer would send its tokens to the wrong host.
+     */
+    public getHttpClient(): IHttpClient {
+        return this.httpClient;
     }
     public setToken(token: string) {
         this.token = token;

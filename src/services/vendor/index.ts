@@ -1,5 +1,4 @@
-import type { HttpResponse, QueryParams } from '../../utils/http/types.js';
-import { HttpClient } from '../../utils/http/http-client.js';
+import type { HttpResponse, QueryParams, IHttpClient } from '../../utils/http/types.js';
 import { Authentication } from '../authentication/index.js';
 import { buildAuthHeaders } from '../../utils/http/headers.js';
 import Validator from './validator.js';
@@ -24,11 +23,11 @@ import type {
 
 export class Vendor {
     private readonly validator: Validator;
-    private readonly httpClient: HttpClient;
+    private readonly httpClient: IHttpClient;
 
     constructor(private readonly auth: Authentication) {
         this.validator = new Validator();
-        this.httpClient = new HttpClient();
+        this.httpClient = auth.getHttpClient();
     }
 
     async listVendors(options: ListVendors): Promise<HttpResponse<VendorsListResponse>> {

@@ -29,6 +29,7 @@ describe('OAuth Service', () => {
 
         mockHttpClient = {
             get: vi.fn(),
+            post: vi.fn(),
         };
 
         mockValidator = {
@@ -36,6 +37,7 @@ describe('OAuth Service', () => {
             authorizeResponse: vi.fn(),
             exchangeToken: vi.fn(),
             tokenResponse: vi.fn(),
+            clientInfoResponse: vi.fn(),
         };
 
         auth = new Authentication();
@@ -153,27 +155,105 @@ describe('OAuth Service', () => {
                 access_token: 'access-token-123',
             });
 
-            mockHttpClient.get.mockResolvedValue({
+            mockHttpClient.post.mockResolvedValue({
                 data: { access_token: 'access-token-123' },
                 status: 200,
             });
 
             const result = await oauth.exchangeToken(request);
 
-            expect(mockHttpClient.get).toHaveBeenCalledWith(
-                '/oauth/token',
-                {},
-                {
-                    grant_type: 'authorization_code',
-                    code: 'auth-code-123',
-                    redirect_uri: 'https://app.example.com/auth/callback',
-                    client_id: 'client-123',
-                    client_secret: 'secret-123',
-                    state: 'state-123',
-                }
-            );
+            const [path, body, headers] = mockHttpClient.post.mock.calls[0];
+            expect(path).toBe('/oauth/token');
+            expect(headers).toEqual({ 'Content-Type': 'application/x-www-form-urlencoded' });
+
+            // Form-encoded body, so the secret never reaches the query string.
+            expect(body).toBeInstanceOf(URLSearchParams);
+            expect(Object.fromEntries(body as URLSearchParams)).toEqual({
+                grant_type: 'authorization_code',
+                code: 'auth-code-123',
+                redirect_uri: 'https://app.example.com/auth/callback',
+                client_id: 'client-123',
+                client_secret: 'secret-123',
+                state: 'state-123',
+            });
+
             expect(result.data.access_token).toBe('access-token-123');
             expect(auth.getToken()).toBe('access-token-123');
+        });
+    });
+
+    describe('handleCallback', () => {
+        beforeEach(() => {
+            mockValidator.exchangeToken.mockReturnValue({
+                grant_type: 'authorization_code',
+                code: 'auth-code-123',
+                redirect_uri: 'https://app.example.com/auth/callback',
+                client_id: 'client-from-config',
+                client_secret: 'secret-from-config',
+                state: 'state-123',
+            });
+            mockValidator.tokenResponse.mockReturnValue({ access_token: 'access-token-123' });
+            mockHttpClient.post.mockResolvedValue({
+                data: { access_token: 'access-token-123' },
+                status: 200,
+            });
+        });
+
+        it('should exchange the code when state matches', async () => {
+            const result = await oauth.handleCallback({
+                code: 'auth-code-123',
+                state: 'state-123',
+                expectedState: 'state-123',
+            });
+
+            expect(result.data.access_token).toBe('access-token-123');
+            expect(mockHttpClient.post).toHaveBeenCalledTimes(1);
+        });
+
+        it('should reject a mismatched state without exchanging the code', async () => {
+            await expect(
+                oauth.handleCallback({
+                    code: 'auth-code-123',
+                    state: 'attacker-state',
+                    expectedState: 'state-123',
+                })
+            ).rejects.toThrow(/state mismatch/i);
+
+            expect(mockHttpClient.post).not.toHaveBeenCalled();
+        });
+
+        it('should reject an empty expected state rather than trusting the callback', async () => {
+            await expect(
+                oauth.handleCallback({
+                    code: 'auth-code-123',
+                    state: '',
+                    expectedState: '',
+                })
+            ).rejects.toThrow(/state mismatch/i);
+
+            expect(mockHttpClient.post).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('clientInfo', () => {
+        it('should fetch public branding for the configured client', async () => {
+            mockValidator.clientInfoResponse.mockReturnValue({
+                client_id: 'client-from-config',
+                app_name: 'Your App',
+            });
+            mockHttpClient.get.mockResolvedValue({
+                data: { client_id: 'client-from-config', app_name: 'Your App' },
+                status: 200,
+            });
+
+            const result = await oauth.clientInfo();
+
+            expect(mockHttpClient.get).toHaveBeenCalledWith(
+                '/oauth/client-info',
+                { Accept: 'application/json' },
+                { client_id: 'client-from-config' }
+            );
+            expect(result.data.app_name).toBe('Your App');
         });
     });
 });

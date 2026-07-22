@@ -2,6 +2,7 @@ import {
     oauthAuthorizeSchema,
     oauthAuthorizeStrictSchema,
     oauthAuthorizeResponseSchema,
+    oauthClientInfoSchema,
     oauthTokenExchangeSchema,
     oauthTokenExchangeStrictSchema,
     oauthTokenResponseSchema,
@@ -9,6 +10,7 @@ import {
 import type {
     OAuthAuthorizeRequest,
     OAuthAuthorizeResponse,
+    OAuthClientInfo,
     OAuthTokenExchangeRequest,
     OAuthTokenResponse,
 } from './types.js';
@@ -30,5 +32,9 @@ export default class Validator {
 
     tokenResponse(response: OAuthTokenResponse) {
         return oauthTokenResponseSchema.parse(response);
+    }
+
+    clientInfoResponse(response: OAuthClientInfo) {
+        return oauthClientInfoSchema.parse(response);
     }
 }

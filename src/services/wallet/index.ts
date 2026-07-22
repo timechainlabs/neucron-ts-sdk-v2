@@ -1,4 +1,4 @@
-import type { HttpResponse, QueryParams } from '../../utils/http/types.js';
+import type { HttpResponse, QueryParams, IHttpClient } from '../../utils/http/types.js';
 import type {
     CreateWalletBody,
     CreateBSVWalletBody,
@@ -22,7 +22,6 @@ import type {
     ImportAsset,
     ImportAssetResponse,
 } from './types.js';
-import { HttpClient } from '../../utils/http/http-client.js';
 import { Authentication } from '../authentication/index.js';
 import { buildAuthHeaders } from '../../utils/http/headers.js';
 import Validator from './validator.js';
@@ -31,10 +30,10 @@ import { Routes } from '../../utils/routes/index.js';
 
 export class Wallet {
     private readonly validator: Validator;
-    private readonly httpClient: HttpClient;
+    private readonly httpClient: IHttpClient;
     constructor(private readonly auth: Authentication) {
         this.validator = new Validator();
-        this.httpClient = new HttpClient();
+        this.httpClient = auth.getHttpClient();
     }
 
     async createWallet(options: CreateWalletBody): Promise<HttpResponse<CreateWalletReponse>> {

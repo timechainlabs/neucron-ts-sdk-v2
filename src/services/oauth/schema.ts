@@ -43,3 +43,27 @@ export const oauthTokenResponseSchema = z
         access_token: z.string().min(1),
     })
     .passthrough();
+
+export const oauthBrandingSchema = z
+    .object({
+        accent_color: z.string().optional(),
+        theme: z.enum(['dark', 'light']).optional(),
+        logo_url: z.string().optional(),
+        login_methods: z.array(z.string()).optional(),
+    })
+    .passthrough();
+
+export const oauthClientInfoSchema = z
+    .object({
+        client_id: z.string().min(1),
+        app_id: z.string().optional(),
+        app_name: z.string().optional(),
+        app_icon: z.string().optional(),
+        app_domain: z.string().optional(),
+        description: z.string().optional(),
+        website_url: z.string().optional(),
+        terms_and_conditions: z.string().optional(),
+        privacy_policy: z.string().optional(),
+        branding: oauthBrandingSchema.optional(),
+    })
+    .passthrough();

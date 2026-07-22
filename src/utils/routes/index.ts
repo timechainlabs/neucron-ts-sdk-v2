@@ -2,6 +2,7 @@ export const Routes = {
     OAUTH: {
         AUTHORIZE: '/oauth/authorize',
         TOKEN: '/oauth/token',
+        CLIENT_INFO: '/oauth/client-info',
     },
     AUTH: {
         LOGIN: '/auth/login',
