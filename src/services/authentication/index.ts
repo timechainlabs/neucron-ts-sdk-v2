@@ -1,5 +1,5 @@
 import type { HttpResponse, IHttpClient, Headers, QueryParams } from '../../utils/http/types.js';
-import type { Config } from '../../config.js';
+import { resolveBaseUrl, type Config } from '../../config.js';
 import type {
     LoginBody,
     LoginResponse,
@@ -29,7 +29,7 @@ export class Authentication {
     private readonly httpClient: IHttpClient;
     constructor(private readonly config?: Config) {
         this.token = config?.authToken ?? '';
-        this.httpClient = new HttpClient(config?.baseUrl);
+        this.httpClient = new HttpClient(resolveBaseUrl(config));
         this.validator = new Validator();
     }
     public getToken(): string {

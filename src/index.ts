@@ -31,3 +31,4 @@ export * from './services/asset21/types.js';
 export * from './services/mcp-flows/types.js';
 export { McpFlows } from './services/mcp-flows/index.js';
 export type { Config, OAuthClientConfig } from './config.js';
+export { BASE_URL, SANDBOX_BASE_URL, resolveBaseUrl } from './config.js';

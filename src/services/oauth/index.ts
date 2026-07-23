@@ -6,7 +6,7 @@ import type {
     OAuthTokenExchangeRequest,
     OAuthTokenResponse,
 } from './types.js';
-import type { OAuthClientConfig, Config } from '../../config.js';
+import { resolveBaseUrl, type Config, type OAuthClientConfig } from '../../config.js';
 import { HttpClient } from '../../utils/http/http-client.js';
 import { Authentication } from '../authentication/index.js';
 import Validator from './validator.js';
@@ -23,7 +23,7 @@ export class OAuth {
         config?: Config
     ) {
         this.validator = new Validator();
-        this.httpClient = new HttpClient(config?.baseUrl);
+        this.httpClient = new HttpClient(resolveBaseUrl(config));
         this.clientConfig = config?.oauth ?? {};
     }
 
