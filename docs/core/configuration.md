@@ -9,6 +9,7 @@ interface Config {
   authToken?: string;
   businessId?: string;
   baseUrl?: string;
+  sandbox?: boolean;
   oauth?: {
     clientId?: string;
     clientSecret?: string;
@@ -19,6 +20,27 @@ interface Config {
 ```
 
 ## Options
+
+### `sandbox`
+
+Use the Neucron sandbox (dev) API instead of production:
+
+```typescript
+const sdk = new NeucronSDK({ sandbox: true });
+// equivalent to: { baseUrl: 'https://dev.neucron.io/v1' }
+```
+
+### `baseUrl`
+
+Override the API host explicitly (including `/v1`). Useful for self-hosted or custom environments.
+
+**Precedence:** if both `baseUrl` and `sandbox` are set, `baseUrl` wins.
+
+```typescript
+const sdk = new NeucronSDK({
+  baseUrl: process.env.NEUCRON_API_BASE_URL, // e.g. https://dev.neucron.io/v1
+});
+```
 
 ### `authToken`
 

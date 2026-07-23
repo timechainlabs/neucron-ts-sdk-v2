@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Authentication } from '../../src/services/authentication/index.js';
 import { NeucronError } from '../../src/utils/errors/sdk-error.js';
 import type { LoginBody, SignUpBody, LoginResponse, SignupResponse } from '../../src/services/authentication/types.js';
@@ -11,7 +11,9 @@ const mockHttpClientInstance = {
     delete: vi.fn(),
 };
 vi.mock('../../src/utils/http/http-client.js', () => ({
-    HttpClient: vi.fn(() => mockHttpClientInstance),
+    HttpClient: vi.fn(function HttpClient() {
+        return mockHttpClientInstance;
+    }),
 }));
 
 // --- Mock Validator ---
@@ -22,7 +24,9 @@ const mockValidatorInstance = {
     loginResponse: vi.fn(),
 };
 vi.mock('../../src/services/authentication/validator.js', () => ({
-    default: vi.fn(() => mockValidatorInstance),
+    default: vi.fn(function Validator() {
+        return mockValidatorInstance;
+    }),
 }));
 
 // --- Mock error handler ---
@@ -36,12 +40,15 @@ describe('Authentication Service', () => {
     let auth: Authentication;
 
     beforeEach(() => {
-        vi.clearAllMocks();
+        mockHttpClientInstance.post.mockReset();
+        mockHttpClientInstance.get.mockReset();
+        mockHttpClientInstance.put.mockReset();
+        mockHttpClientInstance.delete.mockReset();
+        mockValidatorInstance.signUp.mockReset();
+        mockValidatorInstance.signUpResponse.mockReset();
+        mockValidatorInstance.login.mockReset();
+        mockValidatorInstance.loginResponse.mockReset();
         auth = new Authentication();
-    });
-
-    afterEach(() => {
-        vi.restoreAllMocks();
     });
 
     describe('Token Management', () => {

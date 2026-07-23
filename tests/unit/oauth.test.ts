@@ -7,11 +7,15 @@ let mockHttpClient: any;
 let mockValidator: any;
 
 vi.mock('../../src/utils/http/http-client.js', () => ({
-    HttpClient: vi.fn().mockImplementation(() => mockHttpClient),
+    HttpClient: vi.fn(function HttpClient() {
+        return mockHttpClient;
+    }),
 }));
 
 vi.mock('../../src/services/oauth/validator.js', () => ({
-    default: vi.fn().mockImplementation(() => mockValidator),
+    default: vi.fn(function Validator() {
+        return mockValidator;
+    }),
 }));
 
 vi.mock('../../src/utils/errors/helper.js', () => ({
