@@ -29,7 +29,10 @@ export class Authentication {
     private readonly httpClient: IHttpClient;
     constructor(private readonly config?: Config) {
         this.token = config?.authToken ?? '';
-        this.httpClient = new HttpClient(resolveBaseUrl(config));
+        this.httpClient = new HttpClient(resolveBaseUrl(config), {
+            timeoutMs: config?.timeoutMs,
+            maxRetries: config?.maxRetries,
+        });
         this.validator = new Validator();
     }
     public getToken(): string {

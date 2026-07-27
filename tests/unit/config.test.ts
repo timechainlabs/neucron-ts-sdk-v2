@@ -63,23 +63,23 @@ describe('HttpClient base URL wiring', () => {
 
     it('Authentication uses production URL by default', () => {
         new Authentication();
-        expect(HttpClient).toHaveBeenCalledWith(BASE_URL);
+        expect(HttpClient).toHaveBeenCalledWith(BASE_URL, expect.any(Object));
     });
 
     it('Authentication uses sandbox URL when sandbox is true', () => {
         new Authentication({ sandbox: true });
-        expect(HttpClient).toHaveBeenCalledWith(SANDBOX_BASE_URL);
+        expect(HttpClient).toHaveBeenCalledWith(SANDBOX_BASE_URL, expect.any(Object));
     });
 
     it('Authentication prefers baseUrl over sandbox', () => {
         new Authentication({ sandbox: true, baseUrl: 'https://custom.example/v1' });
-        expect(HttpClient).toHaveBeenCalledWith('https://custom.example/v1');
+        expect(HttpClient).toHaveBeenCalledWith('https://custom.example/v1', expect.any(Object));
     });
 
     it('OAuth uses the resolved base URL', () => {
         const auth = new Authentication({ sandbox: true });
         vi.clearAllMocks();
         new OAuth(auth, { sandbox: true });
-        expect(HttpClient).toHaveBeenCalledWith(SANDBOX_BASE_URL);
+        expect(HttpClient).toHaveBeenCalledWith(SANDBOX_BASE_URL, expect.any(Object));
     });
 });

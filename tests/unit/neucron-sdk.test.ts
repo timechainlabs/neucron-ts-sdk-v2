@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { NeucronSDK } from '../../src/nuecron-sdk.js';
+import { NeucronSDK } from '../../src/neucron-sdk.js';
 import type { Config } from '../../src/config.js';
 import type { LoginBody, LoginResponse } from '../../src/services/authentication/types.js';
 import type { CreateWalletBody, CreateWalletReponse } from '../../src/services/wallet/types.js';

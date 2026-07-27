@@ -1,4 +1,4 @@
-import type { NeucronSDK } from '../../nuecron-sdk.js';
+import type { NeucronSDK } from '../../neucron-sdk.js';
 import type { McpFlowServices } from './types.js';
 import * as authSetup from './auth-setup.js';
 import * as oauth from './oauth.js';

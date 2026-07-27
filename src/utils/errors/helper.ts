@@ -7,6 +7,10 @@ export function handleError(err: unknown): never {
     if (axios.isAxiosError(err) && err.response) {
         // Distinguish network vs other API errors
         const status = err.response.status;
+        const request = {
+            method: err.config?.method?.toUpperCase(),
+            url: err.config?.url,
+        };
 
         // If status indicates a connection/server issue → normalize to "Network error"
         if (status >= 500 || status === 0) {
@@ -15,6 +19,7 @@ export function handleError(err: unknown): never {
                 status,
                 data: err.response.data,
                 headers: err.response.headers as Headers,
+                request,
             });
         }
 
@@ -26,6 +31,19 @@ export function handleError(err: unknown): never {
             status,
             data: err.response.data,
             headers: err.response.headers as Headers,
+            request,
+        });
+    }
+
+    // Timeouts and connection failures reach here without a response.
+    if (axios.isAxiosError(err)) {
+        const timedOut = err.code === 'ECONNABORTED' || err.code === 'ETIMEDOUT';
+        throw new NeucronError(timedOut ? 'Request timed out' : 'Network error', err, {
+            type: 'network',
+            request: {
+                method: err.config?.method?.toUpperCase(),
+                url: err.config?.url,
+            },
         });
     }
 

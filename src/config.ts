@@ -17,6 +17,13 @@ export interface Config {
     sandbox?: boolean;
     /** Default OAuth client credentials for Sign in with Neucron. */
     oauth?: OAuthClientConfig;
+    /** Per-request timeout in milliseconds. Defaults to 30000. */
+    timeoutMs?: number;
+    /**
+     * Max automatic retries for idempotent (GET) requests on 408/429/5xx or
+     * network errors. Mutating requests are never retried. Defaults to 2.
+     */
+    maxRetries?: number;
 }
 
 /** Resolve the API base URL from config: `baseUrl` > `sandbox` > production. */

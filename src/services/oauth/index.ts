@@ -23,7 +23,10 @@ export class OAuth {
         config?: Config
     ) {
         this.validator = new Validator();
-        this.httpClient = new HttpClient(resolveBaseUrl(config));
+        this.httpClient = new HttpClient(resolveBaseUrl(config), {
+            timeoutMs: config?.timeoutMs,
+            maxRetries: config?.maxRetries,
+        });
         this.clientConfig = config?.oauth ?? {};
     }
 

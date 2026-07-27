@@ -1,9 +1,10 @@
 //main sdk
-import { NeucronSDK } from './nuecron-sdk.js';
+import { NeucronSDK } from './neucron-sdk.js';
 export default NeucronSDK;
+export { NeucronSDK };
 
 //error type
-export { NeucronError } from './utils/errors/sdk-error.js';
+export { NeucronError, isNeucronError, type NeucronErrorType } from './utils/errors/sdk-error.js';
 //types
 export * from './services/authentication/types.js';
 export * from './services/oauth/types.js';
