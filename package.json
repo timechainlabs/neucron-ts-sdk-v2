@@ -1,6 +1,6 @@
 {
   "name": "@timechainlabs/neucron-ts-sdk",
-  "version": "1.1.2",
+  "version": "2.0.0",
   "description": "TypeScript SDK providing type-safe access to Neucron APIs for seamless integration",
   "type": "module",
   "main": "./dist/index.cjs",
