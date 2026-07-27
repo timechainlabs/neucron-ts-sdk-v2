@@ -3,7 +3,6 @@ import type { Headers } from './types.js';
 
 export interface BusinessHeadersOptions {
     businessId?: string;
-    teamId?: string;
     identifier?: string;
     appSecret?: string;
 }
@@ -16,10 +15,6 @@ export function buildAuthHeaders(auth: Authentication, options?: BusinessHeaders
 
     if (options?.businessId) {
         headers['X-Neucron-Business-ID'] = options.businessId;
-    }
-
-    if (options?.teamId) {
-        headers['X-Neucron-Team-ID'] = options.teamId;
     }
 
     if (options?.appSecret) {

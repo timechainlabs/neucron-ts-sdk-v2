@@ -24,7 +24,7 @@ function mapOperationAction(action: NeucronSecurityTokenOperationsOptions['actio
 
 async function findLatestPendingRequest(
     services: McpFlowServices,
-    context: { businessId?: string; teamId?: string },
+    context: { businessId?: string },
     assetId: string,
     state: string
 ) {
@@ -45,7 +45,7 @@ async function findLatestPendingRequest(
 
 async function approveRequest(
     services: McpFlowServices,
-    context: { businessId?: string; teamId?: string },
+    context: { businessId?: string },
     assetId: string,
     requestId: string
 ) {
@@ -65,8 +65,8 @@ export async function neucron_create_security_token(
     services: McpFlowServices,
     options: NeucronCreateSecurityTokenOptions
 ) {
-    const { businessId, teamId, deploy = true } = options;
-    const context = { businessId, teamId };
+    const { businessId, deploy = true } = options;
+    const context = { businessId };
     const steps: Record<string, unknown> = {};
 
     let assetID = options.assetID;
@@ -105,8 +105,8 @@ export async function neucron_create_asset21_customer(
     services: McpFlowServices,
     options: NeucronCreateAsset21CustomerOptions
 ) {
-    const { businessId, teamId, assetId, autoApprove = true } = options;
-    const context = { businessId, teamId };
+    const { businessId, assetId, autoApprove = true } = options;
+    const context = { businessId };
     const steps: Record<string, unknown> = {};
 
     let requestId = options.requestId;
@@ -155,8 +155,8 @@ export async function neucron_security_token_operations(
     services: McpFlowServices,
     options: NeucronSecurityTokenOperationsOptions
 ) {
-    const { businessId, teamId, assetId, autoApprove = true } = options;
-    const context = { businessId, teamId };
+    const { businessId, assetId, autoApprove = true } = options;
+    const context = { businessId };
     const state = mapOperationAction(options.action);
     const steps: Record<string, unknown> = {};
 
@@ -212,8 +212,8 @@ export async function neucron_issue_security_token(
     services: McpFlowServices,
     options: NeucronIssueSecurityTokenOptions
 ) {
-    const { businessId, teamId } = options;
-    const context = { businessId, teamId };
+    const { businessId } = options;
+    const context = { businessId };
     const steps: Record<string, unknown> = {};
 
     const walletID = await resolveWalletId(services, businessId, options.walletID);
@@ -221,7 +221,6 @@ export async function neucron_issue_security_token(
 
     const { assetID, steps: tokenSteps } = await neucron_create_security_token(services, {
         businessId,
-        teamId,
         walletID,
         register: options.register,
         deploy: false,

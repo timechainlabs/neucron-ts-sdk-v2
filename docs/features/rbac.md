@@ -14,33 +14,27 @@ List available permission strings for a business.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `businessId` | `string` | No | Header | Business scope |
+| Name         | Type     | Required | Sent as | Description    |
+| ------------ | -------- | -------- | ------- | -------------- |
+| `businessId` | `string` | No       | Header  | Business scope |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, optional business ID |
+|                   |                                                       |
+| ----------------- | ----------------------------------------------------- |
+| **Auth required** | Yes                                                   |
+| **Headers**       | `Authorization`, `X-Identifier`, optional business ID |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_abc123"
+    "businessId": "biz_abc123"
 }
 ```
 
 ### Response Payload
 
 ```json
-[
-  "invoice:read",
-  "invoice:write",
-  "wallet:read",
-  "payout:write",
-  "member:manage"
-]
+["invoice:read", "invoice:write", "wallet:read", "payout:write", "member:manage"]
 ```
 
 ```typescript
@@ -55,20 +49,20 @@ Get roles assigned to the authenticated member in a business.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `businessId` | `string` | No | Header | Business scope |
+| Name         | Type     | Required | Sent as | Description    |
+| ------------ | -------- | -------- | ------- | -------------- |
+| `businessId` | `string` | No       | Header  | Business scope |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, optional business ID |
+|                   |                                                       |
+| ----------------- | ----------------------------------------------------- |
+| **Auth required** | Yes                                                   |
+| **Headers**       | `Authorization`, `X-Identifier`, optional business ID |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_abc123"
+    "businessId": "biz_abc123"
 }
 ```
 
@@ -76,13 +70,13 @@ Get roles assigned to the authenticated member in a business.
 
 ```json
 [
-  {
-    "role_id": "role_editor",
-    "role_name": "Editor",
-    "description": "Can manage invoices",
-    "permissions": ["invoice:read", "invoice:write"],
-    "business_id": "biz_abc123"
-  }
+    {
+        "role_id": "role_editor",
+        "role_name": "Editor",
+        "description": "Can manage invoices",
+        "permissions": ["invoice:read", "invoice:write"],
+        "business_id": "biz_abc123"
+    }
 ]
 ```
 
@@ -98,20 +92,20 @@ List all roles defined for a business.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `businessId` | `string` | No | Header | Business scope |
+| Name         | Type     | Required | Sent as | Description    |
+| ------------ | -------- | -------- | ------- | -------------- |
+| `businessId` | `string` | No       | Header  | Business scope |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, optional business ID |
+|                   |                                                       |
+| ----------------- | ----------------------------------------------------- |
+| **Auth required** | Yes                                                   |
+| **Headers**       | `Authorization`, `X-Identifier`, optional business ID |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_abc123"
+    "businessId": "biz_abc123"
 }
 ```
 
@@ -119,20 +113,20 @@ List all roles defined for a business.
 
 ```json
 [
-  {
-    "role_id": "role_editor",
-    "role_name": "Editor",
-    "description": "Can manage invoices",
-    "permissions": ["invoice:read", "invoice:write"],
-    "business_id": "biz_abc123"
-  },
-  {
-    "role_id": "role_viewer",
-    "role_name": "Viewer",
-    "description": "Read-only access",
-    "permissions": ["invoice:read", "wallet:read"],
-    "business_id": "biz_abc123"
-  }
+    {
+        "role_id": "role_editor",
+        "role_name": "Editor",
+        "description": "Can manage invoices",
+        "permissions": ["invoice:read", "invoice:write"],
+        "business_id": "biz_abc123"
+    },
+    {
+        "role_id": "role_viewer",
+        "role_name": "Viewer",
+        "description": "Read-only access",
+        "permissions": ["invoice:read", "wallet:read"],
+        "business_id": "biz_abc123"
+    }
 ]
 ```
 
@@ -148,28 +142,28 @@ Create a new role.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `businessId` | `string` | Yes | Header | Business scope |
-| `role` | `object` | Yes | Body | Role definition |
+| Name         | Type     | Required | Sent as | Description     |
+| ------------ | -------- | -------- | ------- | --------------- |
+| `businessId` | `string` | Yes      | Header  | Business scope  |
+| `role`       | `object` | Yes      | Body    | Role definition |
 
 `role` fields: `role_name`, `description`, `permissions` (string[]).
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, business ID |
+|                   |                                              |
+| ----------------- | -------------------------------------------- |
+| **Auth required** | Yes                                          |
+| **Headers**       | `Authorization`, `X-Identifier`, business ID |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_abc123",
-  "role": {
-    "role_name": "Billing Admin",
-    "description": "Manage payouts and billing",
-    "permissions": ["payout:write", "billing:read", "billing:write"]
-  }
+    "businessId": "biz_abc123",
+    "role": {
+        "role_name": "Billing Admin",
+        "description": "Manage payouts and billing",
+        "permissions": ["payout:write", "billing:read", "billing:write"]
+    }
 }
 ```
 
@@ -177,18 +171,18 @@ Create a new role.
 
 ```json
 {
-  "message": "Role created successfully"
+    "message": "Role created successfully"
 }
 ```
 
 ```typescript
 await sdk.rbac.createRole({
-  businessId: 'biz_abc123',
-  role: {
-    role_name: 'Billing Admin',
-    description: 'Manage payouts and billing',
-    permissions: ['payout:write', 'billing:read', 'billing:write'],
-  },
+    businessId: 'biz_abc123',
+    role: {
+        role_name: 'Billing Admin',
+        description: 'Manage payouts and billing',
+        permissions: ['payout:write', 'billing:read', 'billing:write'],
+    },
 });
 ```
 
@@ -200,29 +194,29 @@ Update an existing role.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `businessId` | `string` | Yes | Header | Business scope |
-| `roleId` | `string` | Yes | — | Role ID (also included in body) |
-| `role` | `object` | Yes | Body | Updated role (`role_id`, `role_name`, `description`, `permissions`) |
+| Name         | Type     | Required | Sent as | Description                                                         |
+| ------------ | -------- | -------- | ------- | ------------------------------------------------------------------- |
+| `businessId` | `string` | Yes      | Header  | Business scope                                                      |
+| `roleId`     | `string` | Yes      | —       | Role ID (also included in body)                                     |
+| `role`       | `object` | Yes      | Body    | Updated role (`role_id`, `role_name`, `description`, `permissions`) |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, business ID |
+|                   |                                              |
+| ----------------- | -------------------------------------------- |
+| **Auth required** | Yes                                          |
+| **Headers**       | `Authorization`, `X-Identifier`, business ID |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_abc123",
-  "roleId": "role_billing",
-  "role": {
-    "role_id": "role_billing",
-    "role_name": "Billing Admin",
-    "description": "Manage payouts, billing, and invoices",
-    "permissions": ["payout:write", "billing:read", "billing:write", "invoice:read"]
-  }
+    "businessId": "biz_abc123",
+    "roleId": "role_billing",
+    "role": {
+        "role_id": "role_billing",
+        "role_name": "Billing Admin",
+        "description": "Manage payouts, billing, and invoices",
+        "permissions": ["payout:write", "billing:read", "billing:write", "invoice:read"]
+    }
 }
 ```
 
@@ -230,20 +224,20 @@ Update an existing role.
 
 ```json
 {
-  "message": "Role updated successfully"
+    "message": "Role updated successfully"
 }
 ```
 
 ```typescript
 await sdk.rbac.updateRole({
-  businessId: 'biz_abc123',
-  roleId: 'role_billing',
-  role: {
-    role_id: 'role_billing',
-    role_name: 'Billing Admin',
-    description: 'Manage payouts, billing, and invoices',
-    permissions: ['payout:write', 'billing:read', 'billing:write', 'invoice:read'],
-  },
+    businessId: 'biz_abc123',
+    roleId: 'role_billing',
+    role: {
+        role_id: 'role_billing',
+        role_name: 'Billing Admin',
+        description: 'Manage payouts, billing, and invoices',
+        permissions: ['payout:write', 'billing:read', 'billing:write', 'invoice:read'],
+    },
 });
 ```
 
@@ -255,22 +249,22 @@ Delete a role.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `businessId` | `string` | Yes | Header | Business scope |
-| `roleId` | `string` | Yes | Query (`roleID`) | Role to delete |
+| Name         | Type     | Required | Sent as          | Description    |
+| ------------ | -------- | -------- | ---------------- | -------------- |
+| `businessId` | `string` | Yes      | Header           | Business scope |
+| `roleId`     | `string` | Yes      | Query (`roleID`) | Role to delete |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, business ID |
+|                   |                                              |
+| ----------------- | -------------------------------------------- |
+| **Auth required** | Yes                                          |
+| **Headers**       | `Authorization`, `X-Identifier`, business ID |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_abc123",
-  "roleId": "role_billing"
+    "businessId": "biz_abc123",
+    "roleId": "role_billing"
 }
 ```
 
@@ -278,13 +272,13 @@ Delete a role.
 
 ```json
 {
-  "message": "Role deleted successfully"
+    "message": "Role deleted successfully"
 }
 ```
 
 ```typescript
 await sdk.rbac.deleteRole({
-  businessId: 'biz_abc123',
-  roleId: 'role_billing',
+    businessId: 'biz_abc123',
+    roleId: 'role_billing',
 });
 ```

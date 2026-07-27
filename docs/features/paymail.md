@@ -21,23 +21,23 @@ Create a new paymail alias for a wallet.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `paymailName` | `string` | Yes | Query | Local-part of the paymail |
-| `walletID` | `string` | No | Query | Target wallet (default wallet if omitted) |
+| Name          | Type     | Required | Sent as | Description                               |
+| ------------- | -------- | -------- | ------- | ----------------------------------------- |
+| `paymailName` | `string` | Yes      | Query   | Local-part of the paymail                 |
+| `walletID`    | `string` | No       | Query   | Target wallet (default wallet if omitted) |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization` |
-| **Request body** | None |
+|                   |                 |
+| ----------------- | --------------- |
+| **Auth required** | Yes             |
+| **Headers**       | `Authorization` |
+| **Request body**  | None            |
 
 ### Request Payload
 
 ```json
 {
-  "paymailName": "treasury",
-  "walletID": "wal_def456"
+    "paymailName": "treasury",
+    "walletID": "wal_def456"
 }
 ```
 
@@ -45,14 +45,14 @@ Create a new paymail alias for a wallet.
 
 ```json
 {
-  "message": "Paymail created successfully"
+    "message": "Paymail created successfully"
 }
 ```
 
 ```typescript
 await sdk.paymail.createPaymail({
-  walletID: 'wal_def456',
-  paymailName: 'treasury',
+    walletID: 'wal_def456',
+    paymailName: 'treasury',
 });
 ```
 
@@ -64,20 +64,20 @@ List paymail aliases for a wallet.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `walletID` | `string` | No | Query | Filter by wallet |
+| Name       | Type     | Required | Sent as | Description      |
+| ---------- | -------- | -------- | ------- | ---------------- |
+| `walletID` | `string` | No       | Query   | Filter by wallet |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization` |
+|                   |                 |
+| ----------------- | --------------- |
+| **Auth required** | Yes             |
+| **Headers**       | `Authorization` |
 
 ### Request Payload
 
 ```json
 {
-  "walletID": "wal_def456"
+    "walletID": "wal_def456"
 }
 ```
 
@@ -85,16 +85,16 @@ List paymail aliases for a wallet.
 
 ```json
 [
-  {
-    "alias": "treasury",
-    "wallet_id": "wal_def456",
-    "is_wallet_default": true
-  },
-  {
-    "alias": "ops",
-    "wallet_id": "wal_def456",
-    "is_wallet_default": false
-  }
+    {
+        "alias": "treasury",
+        "wallet_id": "wal_def456",
+        "is_wallet_default": true
+    },
+    {
+        "alias": "ops",
+        "wallet_id": "wal_def456",
+        "is_wallet_default": false
+    }
 ]
 ```
 
@@ -110,23 +110,23 @@ Set the default paymail alias for a wallet.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `alias` | `string` | Yes | Query | Paymail alias to make default |
-| `walletID` | `string` | No | Query | Wallet scope |
+| Name       | Type     | Required | Sent as | Description                   |
+| ---------- | -------- | -------- | ------- | ----------------------------- |
+| `alias`    | `string` | Yes      | Query   | Paymail alias to make default |
+| `walletID` | `string` | No       | Query   | Wallet scope                  |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization` |
-| **Request body** | None |
+|                   |                 |
+| ----------------- | --------------- |
+| **Auth required** | Yes             |
+| **Headers**       | `Authorization` |
+| **Request body**  | None            |
 
 ### Request Payload
 
 ```json
 {
-  "alias": "treasury",
-  "walletID": "wal_def456"
+    "alias": "treasury",
+    "walletID": "wal_def456"
 }
 ```
 
@@ -134,14 +134,14 @@ Set the default paymail alias for a wallet.
 
 ```json
 {
-  "message": "Default paymail updated"
+    "message": "Default paymail updated"
 }
 ```
 
 ```typescript
 await sdk.paymail.updateDefaultPaymail({
-  alias: 'treasury',
-  walletID: 'wal_def456',
+    alias: 'treasury',
+    walletID: 'wal_def456',
 });
 ```
 
@@ -153,21 +153,21 @@ Delete a paymail alias.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `alias` | `string` | Yes | Query | Alias to delete |
+| Name    | Type     | Required | Sent as | Description     |
+| ------- | -------- | -------- | ------- | --------------- |
+| `alias` | `string` | Yes      | Query   | Alias to delete |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization` |
-| **Request body** | None |
+|                   |                 |
+| ----------------- | --------------- |
+| **Auth required** | Yes             |
+| **Headers**       | `Authorization` |
+| **Request body**  | None            |
 
 ### Request Payload
 
 ```json
 {
-  "alias": "old-alias"
+    "alias": "old-alias"
 }
 ```
 
@@ -175,7 +175,7 @@ Delete a paymail alias.
 
 ```json
 {
-  "message": "Paymail deleted successfully"
+    "message": "Paymail deleted successfully"
 }
 ```
 

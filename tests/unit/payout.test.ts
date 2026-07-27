@@ -99,14 +99,12 @@ describe('Payout Service', () => {
         const response = { payout_id: 'payout-request-1' };
         const headers = {
             ...BUSINESS_HEADERS,
-            'X-Neucron-Team-ID': 'team-123',
             'X-App-Secret': 'app-secret-123',
         };
         mockValidator.createPayoutResponse.mockReturnValue(response);
         mockHttpClient.post.mockResolvedValue(mockHttpResponse(response));
         const result = await payout.createPayoutRequest({
             businessId: BUSINESS_ID,
-            teamId: 'team-123',
             appSecret: 'app-secret-123',
             payload,
         });

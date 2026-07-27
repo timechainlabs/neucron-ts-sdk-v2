@@ -59,8 +59,8 @@ sequenceDiagram
 3. Set the platform / app name (e.g. `YourApp`). This **must match** the `platform` parameter you send in the authorize request.
 4. Copy the **Client ID** and **Client Secret**.
 5. Register exact redirect URIs, for example:
-   - Development: `https://localhost:3000/auth/callback`
-   - Production: `https://your-domain.com/auth/callback`
+    - Development: `https://localhost:3000/auth/callback`
+    - Production: `https://your-domain.com/auth/callback`
 
 `redirect_uri` must match **exactly** (scheme, host, port, path) in:
 
@@ -94,13 +94,13 @@ Create a shared SDK instance with OAuth defaults:
 import NeucronSDK, { generateOAuthState } from '@neucron/ts-sdk';
 
 export const sdk = new NeucronSDK({
-  baseUrl: process.env.NEUCRON_API_BASE_URL,
-  oauth: {
-    clientId: process.env.NEUCRON_CLIENT_ID,
-    clientSecret: process.env.NEUCRON_CLIENT_SECRET,
-    redirectUri: process.env.OAUTH_REDIRECT_URI,
-    platform: process.env.PLATFORM_NAME,
-  },
+    baseUrl: process.env.NEUCRON_API_BASE_URL,
+    oauth: {
+        clientId: process.env.NEUCRON_CLIENT_ID,
+        clientSecret: process.env.NEUCRON_CLIENT_SECRET,
+        redirectUri: process.env.OAUTH_REDIRECT_URI,
+        platform: process.env.PLATFORM_NAME,
+    },
 });
 
 export { generateOAuthState };
@@ -108,11 +108,11 @@ export { generateOAuthState };
 
 ### SDK OAuth methods
 
-| Method | Endpoint | Purpose |
-| --- | --- | --- |
-| `sdk.oauth.authorize()` | `GET /oauth/authorize` | Returns `{ redirect_url }` for hosted login |
-| `sdk.oauth.exchangeToken()` | `GET /oauth/token` | Exchanges `code` for `{ access_token }` and stores token on `sdk.auth` |
-| `generateOAuthState()` | — | Generates a random CSRF `state` value |
+| Method                      | Endpoint               | Purpose                                                                |
+| --------------------------- | ---------------------- | ---------------------------------------------------------------------- |
+| `sdk.oauth.authorize()`     | `GET /oauth/authorize` | Returns `{ redirect_url }` for hosted login                            |
+| `sdk.oauth.exchangeToken()` | `GET /oauth/token`     | Exchanges `code` for `{ access_token }` and stores token on `sdk.auth` |
+| `generateOAuthState()`      | —                      | Generates a random CSRF `state` value                                  |
 
 After `exchangeToken()`, call any protected SDK method — for example `sdk.auth.userInfo()`.
 
@@ -126,20 +126,20 @@ After `exchangeToken()`, call any protected SDK method — for example `sdk.auth
 import { sdk, generateOAuthState } from './neucron.js';
 
 export async function startOAuthLogin(req, res) {
-  const state = generateOAuthState();
+    const state = generateOAuthState();
 
-  // Persist state in session / signed cookie for CSRF validation on callback
-  req.session.oauthState = state;
+    // Persist state in session / signed cookie for CSRF validation on callback
+    req.session.oauthState = state;
 
-  const { data } = await sdk.oauth.authorize({
-    state,
-    flow: req.query.flow === 'sign-up' ? 'sign-up' : 'sign-in',
-    client_id: process.env.NEUCRON_CLIENT_ID!,
-    redirect_uri: process.env.OAUTH_REDIRECT_URI!,
-    platform: process.env.PLATFORM_NAME!,
-  });
+    const { data } = await sdk.oauth.authorize({
+        state,
+        flow: req.query.flow === 'sign-up' ? 'sign-up' : 'sign-in',
+        client_id: process.env.NEUCRON_CLIENT_ID!,
+        redirect_uri: process.env.OAUTH_REDIRECT_URI!,
+        platform: process.env.PLATFORM_NAME!,
+    });
 
-  res.redirect(data.redirect_url);
+    res.redirect(data.redirect_url);
 }
 ```
 
@@ -149,29 +149,29 @@ When OAuth defaults are configured on the SDK instance, you can omit `client_id`
 
 ```typescript
 export async function handleOAuthCallback(req, res) {
-  const { code, state } = req.query;
+    const { code, state } = req.query;
 
-  if (!code || typeof code !== 'string') {
-    return res.status(400).send('Missing authorization code');
-  }
+    if (!code || typeof code !== 'string') {
+        return res.status(400).send('Missing authorization code');
+    }
 
-  if (!state || state !== req.session.oauthState) {
-    return res.status(400).send('Invalid OAuth state');
-  }
+    if (!state || state !== req.session.oauthState) {
+        return res.status(400).send('Invalid OAuth state');
+    }
 
-  const { data } = await sdk.oauth.exchangeToken({
-    code,
-    state,
-    client_id: process.env.NEUCRON_CLIENT_ID!,
-    client_secret: process.env.NEUCRON_CLIENT_SECRET!,
-    redirect_uri: process.env.OAUTH_REDIRECT_URI!,
-  });
+    const { data } = await sdk.oauth.exchangeToken({
+        code,
+        state,
+        client_id: process.env.NEUCRON_CLIENT_ID!,
+        client_secret: process.env.NEUCRON_CLIENT_SECRET!,
+        redirect_uri: process.env.OAUTH_REDIRECT_URI!,
+    });
 
-  // Token is already stored on sdk.auth; persist session as needed
-  req.session.accessToken = data.access_token;
-  delete req.session.oauthState;
+    // Token is already stored on sdk.auth; persist session as needed
+    req.session.accessToken = data.access_token;
+    delete req.session.oauthState;
 
-  res.redirect('/dashboard');
+    res.redirect('/dashboard');
 }
 ```
 
@@ -179,15 +179,15 @@ export async function handleOAuthCallback(req, res) {
 
 ```typescript
 export async function getSession(req, res) {
-  const token = req.session.accessToken;
-  if (!token) {
-    return res.json({ authenticated: false });
-  }
+    const token = req.session.accessToken;
+    if (!token) {
+        return res.json({ authenticated: false });
+    }
 
-  sdk.auth.setToken(token);
-  const { data: user } = await sdk.auth.userInfo();
+    sdk.auth.setToken(token);
+    const { data: user } = await sdk.auth.userInfo();
 
-  return res.json({ authenticated: true, token, user });
+    return res.json({ authenticated: true, token, user });
 }
 ```
 
@@ -195,10 +195,10 @@ export async function getSession(req, res) {
 
 ```typescript
 export function logout(req, res) {
-  req.session.destroy(() => {
-    sdk.auth.logout();
-    res.json({ ok: true });
-  });
+    req.session.destroy(() => {
+        sdk.auth.logout();
+        res.json({ ok: true });
+    });
 }
 ```
 
@@ -212,7 +212,7 @@ Use a full-page redirect (not XHR alone) so the browser can follow Neucron’s h
 
 ```typescript
 function signInWithNeucron(flow: 'sign-in' | 'sign-up' = 'sign-in') {
-  window.location.href = `/auth/login?flow=${encodeURIComponent(flow)}`;
+    window.location.href = `/auth/login?flow=${encodeURIComponent(flow)}`;
 }
 ```
 
@@ -240,7 +240,7 @@ const { data: wallets } = await sdk.wallet.walletList();
 Typical hydration after sign-in:
 
 - `GET /auth/user/info`
-- Load businesses / teams
+- Load businesses
 - Resolve roles / permissions
 - Load product-specific resources (wallets, assets, etc.)
 
@@ -282,10 +282,10 @@ Both use the same authorize → callback → token exchange pipeline. Pass `flow
 
 ### Endpoints
 
-| Step | Method | Path |
-| --- | --- | --- |
-| Authorize | `GET` | `/v1/oauth/authorize` |
-| Token exchange | `GET` | `/v1/oauth/token` |
+| Step           | Method | Path                  |
+| -------------- | ------ | --------------------- |
+| Authorize      | `GET`  | `/v1/oauth/authorize` |
+| Token exchange | `GET`  | `/v1/oauth/token`     |
 
 ### Authorize parameters
 
@@ -305,11 +305,11 @@ Both use the same authorize → callback → token exchange pipeline. Pass `flow
 
 If you use the Neucron MCP server, equivalent tools are available:
 
-| MCP Tool | SDK equivalent |
-| --- | --- |
-| `neucron_oauth_authorize` | `sdk.oauth.authorize()` |
+| MCP Tool                       | SDK equivalent                                      |
+| ------------------------------ | --------------------------------------------------- |
+| `neucron_oauth_authorize`      | `sdk.oauth.authorize()`                             |
 | `neucron_oauth_exchange_token` | `sdk.oauth.exchangeToken()` + `sdk.auth.userInfo()` |
 
 ---
 
-*Neucron OAuth 2.0 Authorization Code — Sign in with Neucron. Applicable to any application stack.*
+_Neucron OAuth 2.0 Authorization Code — Sign in with Neucron. Applicable to any application stack._

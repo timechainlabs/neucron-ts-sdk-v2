@@ -43,8 +43,8 @@ interface TestConfig {
         skipIntegrationTests: boolean;
         logLevel: string;
     };
-    testTeam: {
-        teamId: string;
+    testBusiness: {
+        businessId: string;
         inviteEmail: string;
     };
 }
@@ -66,8 +66,8 @@ const DEFAULT_TEST_CONFIG: TestConfig = {
         skipIntegrationTests: false, // Set to false to enable integration tests
         logLevel: 'info',
     },
-    testTeam: {
-        teamId: process.env.TEST_TEAM_ID || '',
+    testBusiness: {
+        businessId: process.env.TEST_BUSINESS_ID || '',
         inviteEmail: process.env.TEST_INVITE_EMAIL || '',
     },
 };
@@ -322,31 +322,25 @@ describe('Integration Tests - Real API', () => {
         });
     });
 
-    describe('Team Integration', () => {
-        it('should get team list', async () => {
-            const result = await sdk.team.getTeamList();
+    describe('Business Integration', () => {
+        it('should get business list', async () => {
+            const result = await sdk.business.getBusinessList();
 
             expect(result.data).toBeDefined();
             expect(Array.isArray(result.data)).toBe(true);
-            console.log('✅ Team list retrieved:', result.data);
+            console.log('✅ Business list retrieved:', result.data.length, 'businesses');
         }, 15000);
 
-        it('should get invites list', async () => {
-            const result = await sdk.team.getInvitesList();
+        it('should get business members', async () => {
+            const businessId = DEFAULT_TEST_CONFIG.testBusiness.businessId;
+            if (!businessId) {
+                console.log('ℹ️ Skipping members test (TEST_BUSINESS_ID not set)');
+                return;
+            }
+            const result = await sdk.members.getMembers({ businessId });
 
             expect(result.data).toBeDefined();
-            console.log('✅ Invites list:', result.data);
-        }, 15000);
-
-        // You can also add createInvite, acceptInvite, etc.
-        // but they need valid test data like teamId and email.
-    });
-
-    describe('Team Integration', () => {
-        it('should get team list', async () => {
-            const result = await sdk.team.getTeamList();
-            expect(result.data).toBeDefined();
-            console.log(' Team list:', result.data);
+            console.log('✅ Business members:', result.data);
         }, 15000);
     });
     //

@@ -78,7 +78,6 @@ export class Members {
             this.validator.assignRoles(options);
             const headers = buildAuthHeaders(this.auth, {
                 businessId: options.businessId,
-                teamId: options.teamID,
             });
             const params: QueryParams = {
                 memberID: options.memberID,
@@ -103,7 +102,6 @@ export class Members {
             this.validator.assignRoles(options);
             const headers = buildAuthHeaders(this.auth, {
                 businessId: options.businessId,
-                teamId: options.teamID,
             });
             const params: QueryParams = {
                 memberID: options.memberID,

@@ -14,19 +14,19 @@ Wallets are identified by a `wallet_id` and typically have:
 
 ### Types of wallets
 
-| Type | How you create it | Explanation |
-| --- | --- | --- |
-| **BSV wallet** | `createBSVWallet` | Simplified Bitcoin SV wallet — provide a name (and optional paymail). Best default for payments and everyday use. |
-| **Configurable / MPC / custodian wallet** | `createWallet` | Full options: `walletType`, `custodianProvider`, `customCustodianEndpoint`, `provider`. Use when you need institutional custody, MPC key shares, or a custom custodian. |
-| **Default wallet** | Marked via `updateDefaultWallet` | The wallet used when a method does not require an explicit `walletID`. |
+| Type                                      | How you create it                | Explanation                                                                                                                                                             |
+| ----------------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **BSV wallet**                            | `createBSVWallet`                | Simplified Bitcoin SV wallet — provide a name (and optional paymail). Best default for payments and everyday use.                                                       |
+| **Configurable / MPC / custodian wallet** | `createWallet`                   | Full options: `walletType`, `custodianProvider`, `customCustodianEndpoint`, `provider`. Use when you need institutional custody, MPC key shares, or a custom custodian. |
+| **Default wallet**                        | Marked via `updateDefaultWallet` | The wallet used when a method does not require an explicit `walletID`.                                                                                                  |
 
 ### Networks
 
 Wallet operations that touch the chain accept:
 
-| Value | Meaning |
-| --- | --- |
-| `MAIN` | Mainnet |
+| Value  | Meaning      |
+| ------ | ------------ |
+| `MAIN` | Mainnet      |
 | `TEST` | Test network |
 
 ### Personal vs business wallets
@@ -43,30 +43,30 @@ Create a wallet with full configuration (MPC / custodian options supported).
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `walletName` | `string` | Yes | Query | Display name |
-| `paymailName` | `string` | No | Query | Desired paymail local-part |
-| `walletType` | `string` | No | Query | Wallet type identifier |
-| `custodianProvider` | `string` | No | Query | Custodian provider name |
-| `customCustodianEndpoint` | `string` | No | Query | Custom custodian URL |
-| `provider` | `string` | No | Query | Key / wallet provider |
-| `businessId` | `string` | No | Header `X-Neucron-Business-ID` | Business scope |
+| Name                      | Type     | Required | Sent as                        | Description                |
+| ------------------------- | -------- | -------- | ------------------------------ | -------------------------- |
+| `walletName`              | `string` | Yes      | Query                          | Display name               |
+| `paymailName`             | `string` | No       | Query                          | Desired paymail local-part |
+| `walletType`              | `string` | No       | Query                          | Wallet type identifier     |
+| `custodianProvider`       | `string` | No       | Query                          | Custodian provider name    |
+| `customCustodianEndpoint` | `string` | No       | Query                          | Custom custodian URL       |
+| `provider`                | `string` | No       | Query                          | Key / wallet provider      |
+| `businessId`              | `string` | No       | Header `X-Neucron-Business-ID` | Business scope             |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, optional business ID |
-| **Request body** | None |
+|                   |                                                       |
+| ----------------- | ----------------------------------------------------- |
+| **Auth required** | Yes                                                   |
+| **Headers**       | `Authorization`, `X-Identifier`, optional business ID |
+| **Request body**  | None                                                  |
 
 ### Request Payload
 
 ```json
 {
-  "walletName": "Treasury",
-  "paymailName": "treasury",
-  "walletType": "MPC",
-  "businessId": "biz_abc123"
+    "walletName": "Treasury",
+    "paymailName": "treasury",
+    "walletType": "MPC",
+    "businessId": "biz_abc123"
 }
 ```
 
@@ -74,18 +74,18 @@ Create a wallet with full configuration (MPC / custodian options supported).
 
 ```json
 {
-  "wallet_id": "wal_def456",
-  "paymail_id": "treasury@neucron.io",
-  "message": "Wallet created successfully"
+    "wallet_id": "wal_def456",
+    "paymail_id": "treasury@neucron.io",
+    "message": "Wallet created successfully"
 }
 ```
 
 ```typescript
 const { data } = await sdk.wallet.createWallet({
-  walletName: 'Treasury',
-  paymailName: 'treasury',
-  walletType: 'MPC',
-  businessId: 'biz_abc123',
+    walletName: 'Treasury',
+    paymailName: 'treasury',
+    walletType: 'MPC',
+    businessId: 'biz_abc123',
 });
 ```
 
@@ -97,22 +97,22 @@ Create a simplified BSV wallet (paymail local-part defaults to `walletName`).
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `walletName` | `string` | Yes | Query | Display name |
-| `businessId` | `string` | No | Header | Business scope |
+| Name         | Type     | Required | Sent as | Description    |
+| ------------ | -------- | -------- | ------- | -------------- |
+| `walletName` | `string` | Yes      | Query   | Display name   |
+| `businessId` | `string` | No       | Header  | Business scope |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, optional business ID |
+|                   |                                                       |
+| ----------------- | ----------------------------------------------------- |
+| **Auth required** | Yes                                                   |
+| **Headers**       | `Authorization`, `X-Identifier`, optional business ID |
 
 ### Request Payload
 
 ```json
 {
-  "walletName": "Main",
-  "businessId": "biz_abc123"
+    "walletName": "Main",
+    "businessId": "biz_abc123"
 }
 ```
 
@@ -120,16 +120,16 @@ Create a simplified BSV wallet (paymail local-part defaults to `walletName`).
 
 ```json
 {
-  "wallet_id": "wal_ghi789",
-  "paymail_id": "main@neucron.io",
-  "message": "Wallet created successfully"
+    "wallet_id": "wal_ghi789",
+    "paymail_id": "main@neucron.io",
+    "message": "Wallet created successfully"
 }
 ```
 
 ```typescript
 const { data } = await sdk.wallet.createBSVWallet({
-  walletName: 'Main',
-  businessId: 'biz_abc123',
+    walletName: 'Main',
+    businessId: 'biz_abc123',
 });
 ```
 
@@ -139,18 +139,18 @@ const { data } = await sdk.wallet.createBSVWallet({
 
 List wallets for the authenticated user or business.
 
-| | |
-| --- | --- |
-| **Parameters** | `businessId?: string` |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, optional business ID |
-| **Request Payload** | None (or `businessId` only) |
+|                     |                                                       |
+| ------------------- | ----------------------------------------------------- |
+| **Parameters**      | `businessId?: string`                                 |
+| **Auth required**   | Yes                                                   |
+| **Headers**         | `Authorization`, `X-Identifier`, optional business ID |
+| **Request Payload** | None (or `businessId` only)                           |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_abc123"
+    "businessId": "biz_abc123"
 }
 ```
 
@@ -158,19 +158,19 @@ List wallets for the authenticated user or business.
 
 ```json
 [
-  {
-    "wallet_id": "wal_def456",
-    "wallet_name": "Treasury",
-    "paymail_id": "treasury@neucron.io",
-    "paymail_alias": "treasury",
-    "is_default": true,
-    "provider": "NEUCRON",
-    "wallet_type": "MPC",
-    "user_id": "usr_abc123",
-    "neucron_cloud_status": "SYNCED",
-    "cloud_sync_status": "SYNCED",
-    "backup_status": "ENABLED"
-  }
+    {
+        "wallet_id": "wal_def456",
+        "wallet_name": "Treasury",
+        "paymail_id": "treasury@neucron.io",
+        "paymail_alias": "treasury",
+        "is_default": true,
+        "provider": "NEUCRON",
+        "wallet_type": "MPC",
+        "user_id": "usr_abc123",
+        "neucron_cloud_status": "SYNCED",
+        "cloud_sync_status": "SYNCED",
+        "backup_status": "ENABLED"
+    }
 ]
 ```
 
@@ -186,22 +186,22 @@ Mark a wallet as the default.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `walletID` | `string` | Yes | Query | Wallet to make default |
-| `businessId` | `string` | No | Header | Business scope |
+| Name         | Type     | Required | Sent as | Description            |
+| ------------ | -------- | -------- | ------- | ---------------------- |
+| `walletID`   | `string` | Yes      | Query   | Wallet to make default |
+| `businessId` | `string` | No       | Header  | Business scope         |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, optional business ID |
+|                   |                                                       |
+| ----------------- | ----------------------------------------------------- |
+| **Auth required** | Yes                                                   |
+| **Headers**       | `Authorization`, `X-Identifier`, optional business ID |
 
 ### Request Payload
 
 ```json
 {
-  "walletID": "wal_def456",
-  "businessId": "biz_abc123"
+    "walletID": "wal_def456",
+    "businessId": "biz_abc123"
 }
 ```
 
@@ -209,14 +209,14 @@ Mark a wallet as the default.
 
 ```json
 {
-  "message": "Default wallet updated"
+    "message": "Default wallet updated"
 }
 ```
 
 ```typescript
 await sdk.wallet.updateDefaultWallet({
-  walletID: 'wal_def456',
-  businessId: 'biz_abc123',
+    walletID: 'wal_def456',
+    businessId: 'biz_abc123',
 });
 ```
 
@@ -228,22 +228,22 @@ Generate a new address for a wallet.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `walletID` | `string` | Yes | Query | Target wallet |
-| `businessId` | `string` | No | Header | Business scope |
+| Name         | Type     | Required | Sent as | Description    |
+| ------------ | -------- | -------- | ------- | -------------- |
+| `walletID`   | `string` | Yes      | Query   | Target wallet  |
+| `businessId` | `string` | No       | Header  | Business scope |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, optional business ID |
+|                   |                                                       |
+| ----------------- | ----------------------------------------------------- |
+| **Auth required** | Yes                                                   |
+| **Headers**       | `Authorization`, `X-Identifier`, optional business ID |
 
 ### Request Payload
 
 ```json
 {
-  "walletID": "wal_def456",
-  "businessId": "biz_abc123"
+    "walletID": "wal_def456",
+    "businessId": "biz_abc123"
 }
 ```
 
@@ -251,14 +251,14 @@ Generate a new address for a wallet.
 
 ```json
 {
-  "message": "Address created successfully"
+    "message": "Address created successfully"
 }
 ```
 
 ```typescript
 await sdk.wallet.createAddress({
-  walletID: 'wal_def456',
-  businessId: 'biz_abc123',
+    walletID: 'wal_def456',
+    businessId: 'biz_abc123',
 });
 ```
 
@@ -270,24 +270,24 @@ List addresses for a wallet.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `walletID` | `string` | No | Query | Filter by wallet |
-| `network` | `'MAIN' \| 'TEST'` | No | Query | Network filter |
-| `businessId` | `string` | No | Header | Business scope |
+| Name         | Type               | Required | Sent as | Description      |
+| ------------ | ------------------ | -------- | ------- | ---------------- |
+| `walletID`   | `string`           | No       | Query   | Filter by wallet |
+| `network`    | `'MAIN' \| 'TEST'` | No       | Query   | Network filter   |
+| `businessId` | `string`           | No       | Header  | Business scope   |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, optional business ID |
+|                   |                                                       |
+| ----------------- | ----------------------------------------------------- |
+| **Auth required** | Yes                                                   |
+| **Headers**       | `Authorization`, `X-Identifier`, optional business ID |
 
 ### Request Payload
 
 ```json
 {
-  "walletID": "wal_def456",
-  "network": "MAIN",
-  "businessId": "biz_abc123"
+    "walletID": "wal_def456",
+    "network": "MAIN",
+    "businessId": "biz_abc123"
 }
 ```
 
@@ -295,18 +295,18 @@ List addresses for a wallet.
 
 ```json
 [
-  {
-    "wallet_id": "wal_def456",
-    "address": "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2",
-    "chain": "BSV"
-  }
+    {
+        "wallet_id": "wal_def456",
+        "address": "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2",
+        "chain": "BSV"
+    }
 ]
 ```
 
 ```typescript
 const { data } = await sdk.wallet.walletAddressList({
-  walletID: 'wal_def456',
-  network: 'MAIN',
+    walletID: 'wal_def456',
+    network: 'MAIN',
 });
 ```
 
@@ -318,24 +318,24 @@ Sync wallet assets from the chain.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `walletID` | `string` | Yes | Query | Wallet to sync |
-| `network` | `'MAIN' \| 'TEST'` | Yes | Query | Network |
-| `businessId` | `string` | No | Header | Business scope |
+| Name         | Type               | Required | Sent as | Description    |
+| ------------ | ------------------ | -------- | ------- | -------------- |
+| `walletID`   | `string`           | Yes      | Query   | Wallet to sync |
+| `network`    | `'MAIN' \| 'TEST'` | Yes      | Query   | Network        |
+| `businessId` | `string`           | No       | Header  | Business scope |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, optional business ID |
+|                   |                                                       |
+| ----------------- | ----------------------------------------------------- |
+| **Auth required** | Yes                                                   |
+| **Headers**       | `Authorization`, `X-Identifier`, optional business ID |
 
 ### Request Payload
 
 ```json
 {
-  "walletID": "wal_def456",
-  "network": "MAIN",
-  "businessId": "biz_abc123"
+    "walletID": "wal_def456",
+    "network": "MAIN",
+    "businessId": "biz_abc123"
 }
 ```
 
@@ -343,15 +343,15 @@ Sync wallet assets from the chain.
 
 ```json
 {
-  "message": "Assets synced",
-  "synced_count": 3
+    "message": "Assets synced",
+    "synced_count": 3
 }
 ```
 
 ```typescript
 await sdk.wallet.syncAsset({
-  walletID: 'wal_def456',
-  network: 'MAIN',
+    walletID: 'wal_def456',
+    network: 'MAIN',
 });
 ```
 
@@ -363,31 +363,31 @@ List assets available to add to a wallet.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `businessId` | `string` | No | Header | Business scope |
-| `walletID` | `string` | No | Query | Wallet context |
-| `offset` | `number` | No | Query | Pagination offset |
-| `limit` | `number` | No | Query | Page size |
-| `search` | `string` | No | Query | Search text |
-| `chain` | `string` | No | Query | Chain filter (`'All'` is omitted) |
-| `network` | `'MAIN' \| 'TEST'` | No | Query | Network |
+| Name         | Type               | Required | Sent as | Description                       |
+| ------------ | ------------------ | -------- | ------- | --------------------------------- |
+| `businessId` | `string`           | No       | Header  | Business scope                    |
+| `walletID`   | `string`           | No       | Query   | Wallet context                    |
+| `offset`     | `number`           | No       | Query   | Pagination offset                 |
+| `limit`      | `number`           | No       | Query   | Page size                         |
+| `search`     | `string`           | No       | Query   | Search text                       |
+| `chain`      | `string`           | No       | Query   | Chain filter (`'All'` is omitted) |
+| `network`    | `'MAIN' \| 'TEST'` | No       | Query   | Network                           |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, optional business ID |
+|                   |                                                       |
+| ----------------- | ----------------------------------------------------- |
+| **Auth required** | Yes                                                   |
+| **Headers**       | `Authorization`, `X-Identifier`, optional business ID |
 
 ### Request Payload
 
 ```json
 {
-  "walletID": "wal_def456",
-  "network": "MAIN",
-  "limit": 20,
-  "offset": 0,
-  "search": "BSV",
-  "businessId": "biz_abc123"
+    "walletID": "wal_def456",
+    "network": "MAIN",
+    "limit": 20,
+    "offset": 0,
+    "search": "BSV",
+    "businessId": "biz_abc123"
 }
 ```
 
@@ -395,23 +395,23 @@ List assets available to add to a wallet.
 
 ```json
 {
-  "list": [
-    {
-      "asset_id": "asset_bsv001",
-      "asset_name": "BSV",
-      "symbol": "BSV",
-      "chain": "BSV",
-      "network": "MAIN"
-    }
-  ]
+    "list": [
+        {
+            "asset_id": "asset_bsv001",
+            "asset_name": "BSV",
+            "symbol": "BSV",
+            "chain": "BSV",
+            "network": "MAIN"
+        }
+    ]
 }
 ```
 
 ```typescript
 const { data } = await sdk.wallet.getAvailableAssets({
-  walletID: 'wal_def456',
-  network: 'MAIN',
-  limit: 20,
+    walletID: 'wal_def456',
+    network: 'MAIN',
+    limit: 20,
 });
 ```
 
@@ -423,24 +423,24 @@ Add an asset to a wallet.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `walletID` | `string` | Yes | Query | Target wallet |
-| `assetID` | `string` | Yes | Query | Asset to add |
-| `businessId` | `string` | No | Header | Business scope |
+| Name         | Type     | Required | Sent as | Description    |
+| ------------ | -------- | -------- | ------- | -------------- |
+| `walletID`   | `string` | Yes      | Query   | Target wallet  |
+| `assetID`    | `string` | Yes      | Query   | Asset to add   |
+| `businessId` | `string` | No       | Header  | Business scope |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, optional business ID |
+|                   |                                                       |
+| ----------------- | ----------------------------------------------------- |
+| **Auth required** | Yes                                                   |
+| **Headers**       | `Authorization`, `X-Identifier`, optional business ID |
 
 ### Request Payload
 
 ```json
 {
-  "walletID": "wal_def456",
-  "assetID": "asset_bsv001",
-  "businessId": "biz_abc123"
+    "walletID": "wal_def456",
+    "assetID": "asset_bsv001",
+    "businessId": "biz_abc123"
 }
 ```
 
@@ -448,14 +448,14 @@ Add an asset to a wallet.
 
 ```json
 {
-  "message": "Asset added to wallet"
+    "message": "Asset added to wallet"
 }
 ```
 
 ```typescript
 await sdk.wallet.addAssetToWallet({
-  walletID: 'wal_def456',
-  assetID: 'asset_bsv001',
+    walletID: 'wal_def456',
+    assetID: 'asset_bsv001',
 });
 ```
 
@@ -467,24 +467,24 @@ Remove an asset from a wallet.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `walletID` | `string` | Yes | Query | Target wallet |
-| `assetID` | `string` | Yes | Query | Asset to remove |
-| `businessId` | `string` | No | Header | Business scope |
+| Name         | Type     | Required | Sent as | Description     |
+| ------------ | -------- | -------- | ------- | --------------- |
+| `walletID`   | `string` | Yes      | Query   | Target wallet   |
+| `assetID`    | `string` | Yes      | Query   | Asset to remove |
+| `businessId` | `string` | No       | Header  | Business scope  |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, optional business ID |
+|                   |                                                       |
+| ----------------- | ----------------------------------------------------- |
+| **Auth required** | Yes                                                   |
+| **Headers**       | `Authorization`, `X-Identifier`, optional business ID |
 
 ### Request Payload
 
 ```json
 {
-  "walletID": "wal_def456",
-  "assetID": "asset_bsv001",
-  "businessId": "biz_abc123"
+    "walletID": "wal_def456",
+    "assetID": "asset_bsv001",
+    "businessId": "biz_abc123"
 }
 ```
 
@@ -492,14 +492,14 @@ Remove an asset from a wallet.
 
 ```json
 {
-  "message": "Asset removed from wallet"
+    "message": "Asset removed from wallet"
 }
 ```
 
 ```typescript
 await sdk.wallet.removeAssetFromWallet({
-  walletID: 'wal_def456',
-  assetID: 'asset_bsv001',
+    walletID: 'wal_def456',
+    assetID: 'asset_bsv001',
 });
 ```
 
@@ -511,24 +511,24 @@ Recover a wallet using a keyshard.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `walletID` | `string` | Yes | Query | Wallet to recover |
-| `keyshard` | `string` | Yes | Body | Recovery keyshard |
-| `businessId` | `string` | No | Header | Business scope |
+| Name         | Type     | Required | Sent as | Description       |
+| ------------ | -------- | -------- | ------- | ----------------- |
+| `walletID`   | `string` | Yes      | Query   | Wallet to recover |
+| `keyshard`   | `string` | Yes      | Body    | Recovery keyshard |
+| `businessId` | `string` | No       | Header  | Business scope    |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, optional business ID |
+|                   |                                                       |
+| ----------------- | ----------------------------------------------------- |
+| **Auth required** | Yes                                                   |
+| **Headers**       | `Authorization`, `X-Identifier`, optional business ID |
 
 ### Request Payload
 
 ```json
 {
-  "walletID": "wal_def456",
-  "keyshard": "ks_abc123def456...",
-  "businessId": "biz_abc123"
+    "walletID": "wal_def456",
+    "keyshard": "ks_abc123def456...",
+    "businessId": "biz_abc123"
 }
 ```
 
@@ -536,14 +536,14 @@ Recover a wallet using a keyshard.
 
 ```json
 {
-  "message": "Wallet recovered successfully"
+    "message": "Wallet recovered successfully"
 }
 ```
 
 ```typescript
 await sdk.wallet.recoverWallet({
-  walletID: 'wal_def456',
-  keyshard: 'ks_abc123def456...',
+    walletID: 'wal_def456',
+    keyshard: 'ks_abc123def456...',
 });
 ```
 
@@ -555,30 +555,30 @@ Paginated transaction history for a wallet.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `walletID` | `string` | Yes | Query | Wallet ID |
-| `page` | `number` (≥ 1) | Yes | Query | Page number |
-| `limit` | `number` (≥ 1) | Yes | Query | Page size |
-| `chain` | `string` | No | Query | Chain filter |
-| `network` | `'MAIN' \| 'TEST'` | No | Query | Network |
-| `businessId` | `string` | No | Header | Business scope |
+| Name         | Type               | Required | Sent as | Description    |
+| ------------ | ------------------ | -------- | ------- | -------------- |
+| `walletID`   | `string`           | Yes      | Query   | Wallet ID      |
+| `page`       | `number` (≥ 1)     | Yes      | Query   | Page number    |
+| `limit`      | `number` (≥ 1)     | Yes      | Query   | Page size      |
+| `chain`      | `string`           | No       | Query   | Chain filter   |
+| `network`    | `'MAIN' \| 'TEST'` | No       | Query   | Network        |
+| `businessId` | `string`           | No       | Header  | Business scope |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, optional business ID |
+|                   |                                                       |
+| ----------------- | ----------------------------------------------------- |
+| **Auth required** | Yes                                                   |
+| **Headers**       | `Authorization`, `X-Identifier`, optional business ID |
 
 ### Request Payload
 
 ```json
 {
-  "walletID": "wal_def456",
-  "page": 1,
-  "limit": 20,
-  "chain": "BSV",
-  "network": "MAIN",
-  "businessId": "biz_abc123"
+    "walletID": "wal_def456",
+    "page": 1,
+    "limit": 20,
+    "chain": "BSV",
+    "network": "MAIN",
+    "businessId": "biz_abc123"
 }
 ```
 
@@ -586,31 +586,31 @@ Paginated transaction history for a wallet.
 
 ```json
 {
-  "list": [
-    {
-      "txid": "a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456",
-      "amount": 5000,
-      "direction": "OUT",
-      "status": "CONFIRMED",
-      "timestamp": "2026-07-01T10:30:00Z"
+    "list": [
+        {
+            "txid": "a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456",
+            "amount": 5000,
+            "direction": "OUT",
+            "status": "CONFIRMED",
+            "timestamp": "2026-07-01T10:30:00Z"
+        }
+    ],
+    "page_meta": {
+        "page": 1,
+        "limit": 20,
+        "total": 42,
+        "next_page": 2,
+        "total_pages": 3
     }
-  ],
-  "page_meta": {
-    "page": 1,
-    "limit": 20,
-    "total": 42,
-    "next_page": 2,
-    "total_pages": 3
-  }
 }
 ```
 
 ```typescript
 const { data } = await sdk.wallet.getTransactions({
-  walletID: 'wal_def456',
-  page: 1,
-  limit: 20,
-  network: 'MAIN',
+    walletID: 'wal_def456',
+    page: 1,
+    limit: 20,
+    network: 'MAIN',
 });
 ```
 
@@ -622,28 +622,28 @@ Fetch details for a single transaction.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `txid` | `string` | Yes | Query | Transaction ID |
-| `chain` | `string` | Yes | Query | Chain |
-| `network` | `'MAIN' \| 'TEST'` | Yes | Query | Network |
-| `walletID` | `string` | Yes | Query | Wallet context |
-| `businessId` | `string` | No | Header | Business scope |
+| Name         | Type               | Required | Sent as | Description    |
+| ------------ | ------------------ | -------- | ------- | -------------- |
+| `txid`       | `string`           | Yes      | Query   | Transaction ID |
+| `chain`      | `string`           | Yes      | Query   | Chain          |
+| `network`    | `'MAIN' \| 'TEST'` | Yes      | Query   | Network        |
+| `walletID`   | `string`           | Yes      | Query   | Wallet context |
+| `businessId` | `string`           | No       | Header  | Business scope |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, optional business ID |
+|                   |                                                       |
+| ----------------- | ----------------------------------------------------- |
+| **Auth required** | Yes                                                   |
+| **Headers**       | `Authorization`, `X-Identifier`, optional business ID |
 
 ### Request Payload
 
 ```json
 {
-  "txid": "a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456",
-  "chain": "BSV",
-  "network": "MAIN",
-  "walletID": "wal_def456",
-  "businessId": "biz_abc123"
+    "txid": "a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456",
+    "chain": "BSV",
+    "network": "MAIN",
+    "walletID": "wal_def456",
+    "businessId": "biz_abc123"
 }
 ```
 
@@ -651,23 +651,23 @@ Fetch details for a single transaction.
 
 ```json
 {
-  "txid": "a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456",
-  "amount": 5000,
-  "fee": 200,
-  "confirmations": 6,
-  "status": "CONFIRMED",
-  "inputs": [],
-  "outputs": [],
-  "timestamp": "2026-07-01T10:30:00Z"
+    "txid": "a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456",
+    "amount": 5000,
+    "fee": 200,
+    "confirmations": 6,
+    "status": "CONFIRMED",
+    "inputs": [],
+    "outputs": [],
+    "timestamp": "2026-07-01T10:30:00Z"
 }
 ```
 
 ```typescript
 const { data } = await sdk.wallet.getTransactionDetails({
-  txid: 'a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456',
-  chain: 'BSV',
-  network: 'MAIN',
-  walletID: 'wal_def456',
+    txid: 'a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456',
+    chain: 'BSV',
+    network: 'MAIN',
+    walletID: 'wal_def456',
 });
 ```
 
@@ -679,34 +679,34 @@ Import an external asset into a wallet.
 
 ### Parameters
 
-| Name | Type | Required | Description |
-| --- | --- | --- | --- |
-| `asset_name` | `string` | Yes | Asset display name |
-| `chain` | `string` | Yes | Chain |
-| `contract_address` | `string` | Yes | Contract / token address |
-| `network` | `string` | Yes | Network |
-| `symbol` | `string` | Yes | Ticker symbol |
-| `wallet_id` | `string` | Yes | Target wallet |
-| `decimals` | `number` | Yes | Decimal places |
-| `businessId` | `string` | No | Business scope |
+| Name               | Type     | Required | Description              |
+| ------------------ | -------- | -------- | ------------------------ |
+| `asset_name`       | `string` | Yes      | Asset display name       |
+| `chain`            | `string` | Yes      | Chain                    |
+| `contract_address` | `string` | Yes      | Contract / token address |
+| `network`          | `string` | Yes      | Network                  |
+| `symbol`           | `string` | Yes      | Ticker symbol            |
+| `wallet_id`        | `string` | Yes      | Target wallet            |
+| `decimals`         | `number` | Yes      | Decimal places           |
+| `businessId`       | `string` | No       | Business scope           |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, optional business ID |
+|                   |                                                       |
+| ----------------- | ----------------------------------------------------- |
+| **Auth required** | Yes                                                   |
+| **Headers**       | `Authorization`, `X-Identifier`, optional business ID |
 
 ### Request Payload
 
 ```json
 {
-  "asset_name": "My Token",
-  "chain": "BSV",
-  "contract_address": "1ContractAddressExample...",
-  "network": "MAIN",
-  "symbol": "MTK",
-  "wallet_id": "wal_def456",
-  "decimals": 8,
-  "businessId": "biz_abc123"
+    "asset_name": "My Token",
+    "chain": "BSV",
+    "contract_address": "1ContractAddressExample...",
+    "network": "MAIN",
+    "symbol": "MTK",
+    "wallet_id": "wal_def456",
+    "decimals": 8,
+    "businessId": "biz_abc123"
 }
 ```
 
@@ -714,19 +714,19 @@ Import an external asset into a wallet.
 
 ```json
 {
-  "asset_id": "asset_mtk001",
-  "message": "Asset imported successfully"
+    "asset_id": "asset_mtk001",
+    "message": "Asset imported successfully"
 }
 ```
 
 ```typescript
 await sdk.wallet.importAsset({
-  asset_name: 'My Token',
-  chain: 'BSV',
-  contract_address: '1ContractAddressExample...',
-  network: 'MAIN',
-  symbol: 'MTK',
-  wallet_id: 'wal_def456',
-  decimals: 8,
+    asset_name: 'My Token',
+    chain: 'BSV',
+    contract_address: '1ContractAddressExample...',
+    network: 'MAIN',
+    symbol: 'MTK',
+    wallet_id: 'wal_def456',
+    decimals: 8,
 });
 ```

@@ -1,66 +1,66 @@
 name: CI (Lint & Test)
 
 on:
-  pull_request:
-    branches: [develop]
-  push:
-    branches: [develop]
-  workflow_dispatch:
+    pull_request:
+        branches: [develop]
+    push:
+        branches: [develop]
+    workflow_dispatch:
 
 jobs:
-  lint-and-test:
-    runs-on: ubuntu-latest
+    lint-and-test:
+        runs-on: ubuntu-latest
 
-    steps:
-      # Checkout repo
-      - name: Checkout repository
-        uses: actions/checkout@v4
+        steps:
+            # Checkout repo
+            - name: Checkout repository
+              uses: actions/checkout@v4
 
-      # Setup Node.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'npm'
+            # Setup Node.js
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: 'npm'
 
-      # Install dependencies
-      - name: Install dependencies
-        run: npm ci
+            # Install dependencies
+            - name: Install dependencies
+              run: npm ci
 
-      # Lint check
-      - name: Run ESLint
-        run: npm run lint
+            # Lint check
+            - name: Run ESLint
+              run: npm run lint
 
-      # Type check
-      - name: Run TypeScript typecheck
-        run: npm run typecheck
+            # Type check
+            - name: Run TypeScript typecheck
+              run: npm run typecheck
 
-      # Run unit tests
-      - name: Run unit tests
-        run: npm run test:unit -- --coverage
-      # Run integration tests against the live API. Non-blocking: these have
-      # failed since mid-July because the TEST_USER_EMAIL account returns
-      # "record not found" (test account missing on the API, not a code bug).
-      # Once the secrets point at a valid account again, remove
-      # continue-on-error so regressions block merges.
-      - name: Run integration tests
-        continue-on-error: true
-        run: npm run test:integration -- --coverage
-        env:
-          TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
-          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
-          TEST_TEAM_ID: ${{ secrets.TEST_TEAM_ID }}
-          TEST_INVITE_EMAIL: ${{ secrets.TEST_INVITE_EMAIL }}
-          TEST_PAY_WALLET_ID: ${{ secrets.TEST_PAY_WALLET_ID }}
-          TEST_PAY_AMOUNT: ${{ secrets.TEST_PAY_AMOUNT }}
-          TEST_PAY_WITH_ADDRESS: ${{ secrets.TEST_PAY_WITH_ADDRESS }}
-          TEST_PAY_WITH_EMAIL: ${{ secrets.TEST_PAY_WITH_EMAIL }}
-          TEST_PAY_WITH_PAYMAIL: ${{ secrets.TEST_PAY_WITH_PAYMAIL }}
+            # Run unit tests
+            - name: Run unit tests
+              run: npm run test:unit -- --coverage
+            # Run integration tests against the live API. Non-blocking: these have
+            # failed since mid-July because the TEST_USER_EMAIL account returns
+            # "record not found" (test account missing on the API, not a code bug).
+            # Once the secrets point at a valid account again, remove
+            # continue-on-error so regressions block merges.
+            - name: Run integration tests
+              continue-on-error: true
+              run: npm run test:integration -- --coverage
+              env:
+                  TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+                  TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+                  TEST_BUSINESS_ID: ${{ secrets.TEST_BUSINESS_ID }}
+                  TEST_INVITE_EMAIL: ${{ secrets.TEST_INVITE_EMAIL }}
+                  TEST_PAY_WALLET_ID: ${{ secrets.TEST_PAY_WALLET_ID }}
+                  TEST_PAY_AMOUNT: ${{ secrets.TEST_PAY_AMOUNT }}
+                  TEST_PAY_WITH_ADDRESS: ${{ secrets.TEST_PAY_WITH_ADDRESS }}
+                  TEST_PAY_WITH_EMAIL: ${{ secrets.TEST_PAY_WITH_EMAIL }}
+                  TEST_PAY_WITH_PAYMAIL: ${{ secrets.TEST_PAY_WITH_PAYMAIL }}
 
-      # (Optional) Upload coverage report as artifact
-      - name: Upload coverage report
-        if: always() # even if tests fail
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: coverage/
+            # (Optional) Upload coverage report as artifact
+            - name: Upload coverage report
+              if: always() # even if tests fail
+              uses: actions/upload-artifact@v4
+              with:
+                  name: coverage-report
+                  path: coverage/

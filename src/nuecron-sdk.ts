@@ -2,7 +2,6 @@ import { Authentication } from './services/authentication/index.js';
 import { OAuth } from './services/oauth/index.js';
 import type { Config } from './config.js';
 import { Wallet } from './services/wallet/index.js';
-import { Team } from './services/team/index.js';
 import { Assets } from './services/assets/index.js';
 import { Utility } from './services/utility/index.js';
 import { DataIntegrity } from './services/data-integrity/index.js';
@@ -28,7 +27,6 @@ export class NeucronSDK {
     readonly oauth: OAuth;
     readonly wallet: Wallet;
     readonly dataIntegrity: DataIntegrity;
-    readonly team: Team;
     readonly assets: Assets;
     readonly asset21: Assets21;
     readonly utility: Utility;
@@ -52,7 +50,6 @@ export class NeucronSDK {
         this.auth = new Authentication(config);
         this.oauth = new OAuth(this.auth, config);
         this.wallet = new Wallet(this.auth);
-        this.team = new Team(this.auth);
         this.dataIntegrity = new DataIntegrity(this.auth);
         this.assets = new Assets(this.auth);
         this.asset21 = new Assets21(this.auth);

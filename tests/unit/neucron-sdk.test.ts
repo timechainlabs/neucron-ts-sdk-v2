@@ -128,7 +128,6 @@ describe('NeucronSDK Integration', () => {
             const newSdk = new NeucronSDK();
             expect(newSdk.auth).toBeDefined();
             expect(newSdk.wallet).toBeDefined();
-            expect(newSdk.team).toBeDefined();
             expect(newSdk.assets).toBeDefined();
             expect(newSdk.business).toBeDefined();
             expect(newSdk.members).toBeDefined();

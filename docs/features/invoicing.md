@@ -14,13 +14,13 @@ Neucron invoicing covers the full **accounts receivable** loop:
 
 ### Key concepts
 
-| Concept | Description |
-| --- | --- |
-| **Invoice** | Bill issued to a `customer_id`, deposited into a `deposit_wallet` |
-| **Payment collection** | Receivable link that accepts one or more supported assets |
-| **Public collection** | Universal payment link not tied to a specific invoice |
-| **Payment session** | Checkout session for a collection + chosen `assetID` |
-| **Wallet customization** | Branding (`display_name`, `logo_url`) for wallet payment pages |
+| Concept                  | Description                                                       |
+| ------------------------ | ----------------------------------------------------------------- |
+| **Invoice**              | Bill issued to a `customer_id`, deposited into a `deposit_wallet` |
+| **Payment collection**   | Receivable link that accepts one or more supported assets         |
+| **Public collection**    | Universal payment link not tied to a specific invoice             |
+| **Payment session**      | Checkout session for a collection + chosen `assetID`              |
+| **Wallet customization** | Branding (`display_name`, `logo_url`) for wallet payment pages    |
 
 Access via `sdk.invoice`. Pass `businessId` for business scope.
 
@@ -32,56 +32,56 @@ Access via `sdk.invoice`. Pass `businessId` for business scope.
 
 #### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `businessId` | `string` | No | Header | Business |
-| `invoiceData` | object | Yes | Body | Invoice payload |
+| Name          | Type     | Required | Sent as | Description     |
+| ------------- | -------- | -------- | ------- | --------------- |
+| `businessId`  | `string` | No       | Header  | Business        |
+| `invoiceData` | object   | Yes      | Body    | Invoice payload |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | Auth + optional business ID |
+|                   |                             |
+| ----------------- | --------------------------- |
+| **Auth required** | Yes                         |
+| **Headers**       | Auth + optional business ID |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "invoiceData": {
-    "currency": "USD",
-    "customer_id": "cust_1",
-    "deposit_wallet": "wallet_1",
-    "discount": 0,
-    "due_date": "2026-08-01",
-    "invoice_number": "INV-1001",
-    "issue_date": "2026-07-10",
-    "items": [
-      {
-        "name": "Consulting",
-        "quantity": 10,
-        "cost_per_unit": 100,
-        "tax_rate": 18,
-        "sac_code": "9983"
-      }
-    ],
-    "lut_number": "",
-    "notes": "Net 30",
-    "order_number": "PO-55",
-    "payment_option": [
-      {
-        "chain": "BSV",
-        "network": "MAIN",
-        "asset_option": [
-          {
-            "asset_id": "00000000-0000-0000-0000-000000000000",
-            "asset_name": "BSV"
-          }
-        ]
-      }
-    ],
-    "payment_terms": "Net 30",
-    "round_off": true
-  }
+    "businessId": "biz_123",
+    "invoiceData": {
+        "currency": "USD",
+        "customer_id": "cust_1",
+        "deposit_wallet": "wallet_1",
+        "discount": 0,
+        "due_date": "2026-08-01",
+        "invoice_number": "INV-1001",
+        "issue_date": "2026-07-10",
+        "items": [
+            {
+                "name": "Consulting",
+                "quantity": 10,
+                "cost_per_unit": 100,
+                "tax_rate": 18,
+                "sac_code": "9983"
+            }
+        ],
+        "lut_number": "",
+        "notes": "Net 30",
+        "order_number": "PO-55",
+        "payment_option": [
+            {
+                "chain": "BSV",
+                "network": "MAIN",
+                "asset_option": [
+                    {
+                        "asset_id": "00000000-0000-0000-0000-000000000000",
+                        "asset_name": "BSV"
+                    }
+                ]
+            }
+        ],
+        "payment_terms": "Net 30",
+        "round_off": true
+    }
 }
 ```
 
@@ -91,42 +91,42 @@ Access via `sdk.invoice`. Pass `businessId` for business scope.
 
 ```typescript
 const { data: invoice } = await sdk.invoice.createInvoice({
-  businessId: 'biz_123',
-  invoiceData: {
-    currency: 'USD',
-    customer_id: 'cust_1',
-    deposit_wallet: 'wallet_1',
-    discount: 0,
-    due_date: '2026-08-01',
-    invoice_number: 'INV-1001',
-    issue_date: '2026-07-10',
-    items: [
-      {
-        name: 'Consulting',
-        quantity: 10,
-        cost_per_unit: 100,
-        tax_rate: 18,
-        sac_code: '9983',
-      },
-    ],
-    lut_number: '',
-    notes: 'Net 30',
-    order_number: 'PO-55',
-    payment_option: [
-      {
-        chain: 'BSV',
-        network: 'MAIN',
-        asset_option: [
-          {
-            asset_id: '00000000-0000-0000-0000-000000000000',
-            asset_name: 'BSV',
-          },
+    businessId: 'biz_123',
+    invoiceData: {
+        currency: 'USD',
+        customer_id: 'cust_1',
+        deposit_wallet: 'wallet_1',
+        discount: 0,
+        due_date: '2026-08-01',
+        invoice_number: 'INV-1001',
+        issue_date: '2026-07-10',
+        items: [
+            {
+                name: 'Consulting',
+                quantity: 10,
+                cost_per_unit: 100,
+                tax_rate: 18,
+                sac_code: '9983',
+            },
         ],
-      },
-    ],
-    payment_terms: 'Net 30',
-    round_off: true,
-  },
+        lut_number: '',
+        notes: 'Net 30',
+        order_number: 'PO-55',
+        payment_option: [
+            {
+                chain: 'BSV',
+                network: 'MAIN',
+                asset_option: [
+                    {
+                        asset_id: '00000000-0000-0000-0000-000000000000',
+                        asset_name: 'BSV',
+                    },
+                ],
+            },
+        ],
+        payment_terms: 'Net 30',
+        round_off: true,
+    },
 });
 ```
 
@@ -134,28 +134,28 @@ const { data: invoice } = await sdk.invoice.createInvoice({
 
 ### `getInvoices`
 
-| Parameters | `businessId?`, `pageNumber?`, `pageSize?`, `statuses?: string[]` |
-| --- | --- |
-| **Sent as** | Header + query |
-| **Response** | `{ invoices, page_meta }` |
+| Parameters   | `businessId?`, `pageNumber?`, `pageSize?`, `statuses?: string[]` |
+| ------------ | ---------------------------------------------------------------- |
+| **Sent as**  | Header + query                                                   |
+| **Response** | `{ invoices, page_meta }`                                        |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "pageNumber": 1,
-  "pageSize": 20,
-  "statuses": ["DRAFT", "SENT"]
+    "businessId": "biz_123",
+    "pageNumber": 1,
+    "pageSize": 20,
+    "statuses": ["DRAFT", "SENT"]
 }
 ```
 
 ```typescript
 const { data } = await sdk.invoice.getInvoices({
-  businessId: 'biz_123',
-  pageNumber: 1,
-  pageSize: 20,
-  statuses: ['DRAFT', 'SENT'],
+    businessId: 'biz_123',
+    pageNumber: 1,
+    pageSize: 20,
+    statuses: ['DRAFT', 'SENT'],
 });
 ```
 
@@ -163,17 +163,17 @@ const { data } = await sdk.invoice.getInvoices({
 
 ### `getInvoiceDetails`
 
-| Parameters | `invoiceID` (required), `businessId?` |
-| --- | --- |
-| **Query** | `invoiceID` |
-| **Response** | `InvoiceResponse` |
+| Parameters   | `invoiceID` (required), `businessId?` |
+| ------------ | ------------------------------------- |
+| **Query**    | `invoiceID`                           |
+| **Response** | `InvoiceResponse`                     |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "invoiceID": "inv_1"
+    "businessId": "biz_123",
+    "invoiceID": "inv_1"
 }
 ```
 
@@ -181,21 +181,21 @@ const { data } = await sdk.invoice.getInvoices({
 
 ### `updateInvoice`
 
-| Parameters | `invoiceID`, `invoiceData` (record), `businessId?` |
-| --- | --- |
-| **Response** | `InvoiceResponse` |
+| Parameters   | `invoiceID`, `invoiceData` (record), `businessId?` |
+| ------------ | -------------------------------------------------- |
+| **Response** | `InvoiceResponse`                                  |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "invoiceID": "inv_1",
-  "invoiceData": {
-    "notes": "Updated payment terms",
-    "payment_terms": "Net 15",
-    "discount": 5
-  }
+    "businessId": "biz_123",
+    "invoiceID": "inv_1",
+    "invoiceData": {
+        "notes": "Updated payment terms",
+        "payment_terms": "Net 15",
+        "discount": 5
+    }
 }
 ```
 
@@ -203,16 +203,16 @@ const { data } = await sdk.invoice.getInvoices({
 
 ### `deleteInvoice`
 
-| Parameters | `invoiceID`, `businessId?` |
-| --- | --- |
-| **Response** | `{ message }` |
+| Parameters   | `invoiceID`, `businessId?` |
+| ------------ | -------------------------- |
+| **Response** | `{ message }`              |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "invoiceID": "inv_1"
+    "businessId": "biz_123",
+    "invoiceID": "inv_1"
 }
 ```
 
@@ -222,16 +222,16 @@ const { data } = await sdk.invoice.getInvoices({
 
 Lock a draft invoice for issuance.
 
-| Parameters | `invoiceID`, `businessId?` |
-| --- | --- |
-| **Response** | `{ message }` |
+| Parameters   | `invoiceID`, `businessId?` |
+| ------------ | -------------------------- |
+| **Response** | `{ message }`              |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "invoiceID": "inv_1"
+    "businessId": "biz_123",
+    "invoiceID": "inv_1"
 }
 ```
 
@@ -243,23 +243,23 @@ await sdk.invoice.finaliseInvoice({ businessId: 'biz_123', invoiceID: 'inv_1' })
 
 ### `markInvoiceAsPaid`
 
-| Parameters | `invoiceID`, `payload: { emails, paid_at, cc?, bcc?, note? }`, `businessId?` |
-| --- | --- |
-| **Response** | `{ message }` |
+| Parameters   | `invoiceID`, `payload: { emails, paid_at, cc?, bcc?, note? }`, `businessId?` |
+| ------------ | ---------------------------------------------------------------------------- |
+| **Response** | `{ message }`                                                                |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "invoiceID": "inv_1",
-  "payload": {
-    "emails": ["billing@acme.com"],
-    "cc": ["finance@example.com"],
-    "bcc": [],
-    "paid_at": "2026-07-15T12:00:00Z",
-    "note": "Received via BSV"
-  }
+    "businessId": "biz_123",
+    "invoiceID": "inv_1",
+    "payload": {
+        "emails": ["billing@acme.com"],
+        "cc": ["finance@example.com"],
+        "bcc": [],
+        "paid_at": "2026-07-15T12:00:00Z",
+        "note": "Received via BSV"
+    }
 }
 ```
 
@@ -267,18 +267,18 @@ await sdk.invoice.finaliseInvoice({ businessId: 'biz_123', invoiceID: 'inv_1' })
 
 ### `shareInvoice`
 
-| Parameters | `invoiceID`, `emails: string[]`, `sendEmail?`, `businessId?` |
-| --- | --- |
-| **Response** | `{ message }` |
+| Parameters   | `invoiceID`, `emails: string[]`, `sendEmail?`, `businessId?` |
+| ------------ | ------------------------------------------------------------ |
+| **Response** | `{ message }`                                                |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "invoiceID": "inv_1",
-  "emails": ["billing@acme.com", "ap@acme.com"],
-  "sendEmail": true
+    "businessId": "biz_123",
+    "invoiceID": "inv_1",
+    "emails": ["billing@acme.com", "ap@acme.com"],
+    "sendEmail": true
 }
 ```
 
@@ -286,9 +286,9 @@ await sdk.invoice.finaliseInvoice({ businessId: 'biz_123', invoiceID: 'inv_1' })
 
 ### `sendInvoiceReminder` / `sendPaymentConfirmation`
 
-| Parameters | `invoiceID`, `payload: EmailPayload`, `businessId?` |
-| --- | --- |
-| **Response** | `{ message }` |
+| Parameters   | `invoiceID`, `payload: EmailPayload`, `businessId?` |
+| ------------ | --------------------------------------------------- |
+| **Response** | `{ message }`                                       |
 
 `EmailPayload`: `{ emails, cc?, bcc?, note?, paid_at? }`.
 
@@ -296,13 +296,13 @@ await sdk.invoice.finaliseInvoice({ businessId: 'biz_123', invoiceID: 'inv_1' })
 
 ```json
 {
-  "businessId": "biz_123",
-  "invoiceID": "inv_1",
-  "payload": {
-    "emails": ["billing@acme.com"],
-    "cc": ["finance@example.com"],
-    "note": "Friendly reminder — invoice due soon"
-  }
+    "businessId": "biz_123",
+    "invoiceID": "inv_1",
+    "payload": {
+        "emails": ["billing@acme.com"],
+        "cc": ["finance@example.com"],
+        "note": "Friendly reminder — invoice due soon"
+    }
 }
 ```
 
@@ -314,27 +314,27 @@ await sdk.invoice.finaliseInvoice({ businessId: 'biz_123', invoiceID: 'inv_1' })
 
 Create a collection linked to an invoice.
 
-| Parameters | `invoiceID`, `supportedAssets: string[]`, `walletID?`, `businessId?` |
-| --- | --- |
-| **Response** | `PaymentCollectionResponse` |
+| Parameters   | `invoiceID`, `supportedAssets: string[]`, `walletID?`, `businessId?` |
+| ------------ | -------------------------------------------------------------------- |
+| **Response** | `PaymentCollectionResponse`                                          |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "invoiceID": "inv_1",
-  "supportedAssets": ["00000000-0000-0000-0000-000000000000"],
-  "walletID": "wallet_1"
+    "businessId": "biz_123",
+    "invoiceID": "inv_1",
+    "supportedAssets": ["00000000-0000-0000-0000-000000000000"],
+    "walletID": "wallet_1"
 }
 ```
 
 ```typescript
 await sdk.invoice.createPaymentCollection({
-  businessId: 'biz_123',
-  invoiceID: 'inv_1',
-  supportedAssets: ['00000000-0000-0000-0000-000000000000'],
-  walletID: 'wallet_1',
+    businessId: 'biz_123',
+    invoiceID: 'inv_1',
+    supportedAssets: ['00000000-0000-0000-0000-000000000000'],
+    walletID: 'wallet_1',
 });
 ```
 
@@ -344,32 +344,32 @@ await sdk.invoice.createPaymentCollection({
 
 Create a universal payment link.
 
-| Parameters | `businessId?`, `data: { wallet_id, amount?, currency?, metadata? }` |
-| --- | --- |
-| **Response** | `PaymentCollectionResponse` |
+| Parameters   | `businessId?`, `data: { wallet_id, amount?, currency?, metadata? }` |
+| ------------ | ------------------------------------------------------------------- |
+| **Response** | `PaymentCollectionResponse`                                         |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "data": {
-    "wallet_id": "wallet_1",
-    "amount": 50,
-    "currency": "USD",
-    "metadata": { "campaign": "summer-sale" }
-  }
+    "businessId": "biz_123",
+    "data": {
+        "wallet_id": "wallet_1",
+        "amount": 50,
+        "currency": "USD",
+        "metadata": { "campaign": "summer-sale" }
+    }
 }
 ```
 
 ```typescript
 await sdk.invoice.createPublicPaymentCollection({
-  businessId: 'biz_123',
-  data: {
-    wallet_id: 'wallet_1',
-    amount: 50,
-    currency: 'USD',
-  },
+    businessId: 'biz_123',
+    data: {
+        wallet_id: 'wallet_1',
+        amount: 50,
+        currency: 'USD',
+    },
 });
 ```
 
@@ -377,20 +377,17 @@ await sdk.invoice.createPublicPaymentCollection({
 
 ### `updatePaymentCollection`
 
-| Parameters | Same shape as create (invoice + `supportedAssets`) |
-| --- | --- |
-| **Response** | `PaymentCollectionResponse` |
+| Parameters   | Same shape as create (invoice + `supportedAssets`) |
+| ------------ | -------------------------------------------------- |
+| **Response** | `PaymentCollectionResponse`                        |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "invoiceID": "inv_1",
-  "supportedAssets": [
-    "00000000-0000-0000-0000-000000000000",
-    "asset_usdt"
-  ]
+    "businessId": "biz_123",
+    "invoiceID": "inv_1",
+    "supportedAssets": ["00000000-0000-0000-0000-000000000000", "asset_usdt"]
 }
 ```
 
@@ -398,17 +395,17 @@ await sdk.invoice.createPublicPaymentCollection({
 
 ### `mapCollectionToInvoice`
 
-| Parameters | `invoiceID`, `collectionID`, `businessId?` |
-| --- | --- |
-| **Response** | `{ message }` |
+| Parameters   | `invoiceID`, `collectionID`, `businessId?` |
+| ------------ | ------------------------------------------ |
+| **Response** | `{ message }`                              |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "invoiceID": "inv_1",
-  "collectionID": "col_1"
+    "businessId": "biz_123",
+    "invoiceID": "inv_1",
+    "collectionID": "col_1"
 }
 ```
 
@@ -416,19 +413,19 @@ await sdk.invoice.createPublicPaymentCollection({
 
 ### `submitCollection`
 
-| Parameters | `businessId?`, `data: { asset_id, invoice_id }` |
-| --- | --- |
-| **Response** | `{ message }` |
+| Parameters   | `businessId?`, `data: { asset_id, invoice_id }` |
+| ------------ | ----------------------------------------------- |
+| **Response** | `{ message }`                                   |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "data": {
-    "asset_id": "00000000-0000-0000-0000-000000000000",
-    "invoice_id": "inv_1"
-  }
+    "businessId": "biz_123",
+    "data": {
+        "asset_id": "00000000-0000-0000-0000-000000000000",
+        "invoice_id": "inv_1"
+    }
 }
 ```
 
@@ -440,8 +437,8 @@ await sdk.invoice.createPublicPaymentCollection({
 
 ```json
 {
-  "businessId": "biz_123",
-  "invoiceID": "inv_1"
+    "businessId": "biz_123",
+    "invoiceID": "inv_1"
 }
 ```
 
@@ -453,8 +450,8 @@ await sdk.invoice.createPublicPaymentCollection({
 
 ```json
 {
-  "businessId": "biz_123",
-  "collectionID": "col_1"
+    "businessId": "biz_123",
+    "collectionID": "col_1"
 }
 ```
 
@@ -466,13 +463,13 @@ await sdk.invoice.createPublicPaymentCollection({
 
 ```json
 {
-  "businessId": "biz_123",
-  "page": 1,
-  "size": 20,
-  "collection_id": "col_1",
-  "reference": "INV-1001",
-  "wallet_id": "wallet_1",
-  "status": "OPEN"
+    "businessId": "biz_123",
+    "page": 1,
+    "size": 20,
+    "collection_id": "col_1",
+    "reference": "INV-1001",
+    "wallet_id": "wallet_1",
+    "status": "OPEN"
 }
 ```
 
@@ -480,17 +477,17 @@ await sdk.invoice.createPublicPaymentCollection({
 
 ### `getCollectionAssets`
 
-| Parameters | `collectionID`, `network?`, `businessId?` |
-| --- | --- |
-| **Response** | Supported assets for the collection |
+| Parameters   | `collectionID`, `network?`, `businessId?` |
+| ------------ | ----------------------------------------- |
+| **Response** | Supported assets for the collection       |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "collectionID": "col_1",
-  "network": "MAIN"
+    "businessId": "biz_123",
+    "collectionID": "col_1",
+    "network": "MAIN"
 }
 ```
 
@@ -500,18 +497,18 @@ await sdk.invoice.createPublicPaymentCollection({
 
 ### `createPaymentSession`
 
-| Parameters | `collectionID`, `assetID`, `metadata?`, `businessId?` |
-| --- | --- |
-| **Response** | `PaymentCollectionResponse` |
+| Parameters   | `collectionID`, `assetID`, `metadata?`, `businessId?` |
+| ------------ | ----------------------------------------------------- |
+| **Response** | `PaymentCollectionResponse`                           |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "collectionID": "col_1",
-  "assetID": "00000000-0000-0000-0000-000000000000",
-  "metadata": { "source": "checkout" }
+    "businessId": "biz_123",
+    "collectionID": "col_1",
+    "assetID": "00000000-0000-0000-0000-000000000000",
+    "metadata": { "source": "checkout" }
 }
 ```
 
@@ -519,16 +516,16 @@ await sdk.invoice.createPublicPaymentCollection({
 
 ### `getPaymentSession`
 
-| Parameters | `sessionID`, `businessId?` |
-| --- | --- |
-| **Response** | Session status payload |
+| Parameters   | `sessionID`, `businessId?` |
+| ------------ | -------------------------- |
+| **Response** | Session status payload     |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "sessionID": "sess_1"
+    "businessId": "biz_123",
+    "sessionID": "sess_1"
 }
 ```
 
@@ -542,9 +539,9 @@ Verify payment using optional `txHash`.
 
 ```json
 {
-  "businessId": "biz_123",
-  "collectionID": "col_1",
-  "txHash": "abc123..."
+    "businessId": "biz_123",
+    "collectionID": "col_1",
+    "txHash": "abc123..."
 }
 ```
 
@@ -552,17 +549,17 @@ Verify payment using optional `txHash`.
 
 ```json
 {
-  "businessId": "biz_123",
-  "sessionID": "sess_1",
-  "txHash": "abc123..."
+    "businessId": "biz_123",
+    "sessionID": "sess_1",
+    "txHash": "abc123..."
 }
 ```
 
 ```typescript
 await sdk.invoice.checkPaymentSession({
-  businessId: 'biz_123',
-  sessionID: 'sess_1',
-  txHash: 'abc123...',
+    businessId: 'biz_123',
+    sessionID: 'sess_1',
+    txHash: 'abc123...',
 });
 ```
 
@@ -572,17 +569,17 @@ await sdk.invoice.checkPaymentSession({
 
 ### `getWalletPaymentCollectionInfo`
 
-| Parameters | `walletID?`, `paymail?`, `businessId?` |
-| --- | --- |
-| **Response** | `WalletInfoPayload` |
+| Parameters   | `walletID?`, `paymail?`, `businessId?` |
+| ------------ | -------------------------------------- |
+| **Response** | `WalletInfoPayload`                    |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "walletID": "wallet_1",
-  "paymail": "payments@neucron.io"
+    "businessId": "biz_123",
+    "walletID": "wallet_1",
+    "paymail": "payments@neucron.io"
 }
 ```
 
@@ -590,31 +587,31 @@ await sdk.invoice.checkPaymentSession({
 
 ### `createWalletPaymentCollectionCustomization` / `updateWalletPaymentCollectionCustomization`
 
-| Parameters | `walletID`, `payload: { display_name, logo_url }`, `businessId?` |
-| --- | --- |
-| **Response** | `WalletInfoPayload` |
+| Parameters   | `walletID`, `payload: { display_name, logo_url }`, `businessId?` |
+| ------------ | ---------------------------------------------------------------- |
+| **Response** | `WalletInfoPayload`                                              |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "walletID": "wallet_1",
-  "payload": {
-    "display_name": "Acme Payments",
-    "logo_url": "https://cdn.example.com/logo.png"
-  }
+    "businessId": "biz_123",
+    "walletID": "wallet_1",
+    "payload": {
+        "display_name": "Acme Payments",
+        "logo_url": "https://cdn.example.com/logo.png"
+    }
 }
 ```
 
 ```typescript
 await sdk.invoice.createWalletPaymentCollectionCustomization({
-  businessId: 'biz_123',
-  walletID: 'wallet_1',
-  payload: {
-    display_name: 'Acme Payments',
-    logo_url: 'https://cdn.example.com/logo.png',
-  },
+    businessId: 'biz_123',
+    walletID: 'wallet_1',
+    payload: {
+        display_name: 'Acme Payments',
+        logo_url: 'https://cdn.example.com/logo.png',
+    },
 });
 ```
 
@@ -624,28 +621,28 @@ await sdk.invoice.createWalletPaymentCollectionCustomization({
 
 ### `getRevenueGraph`
 
-| Parameters | `businessId?`, `from?`, `to?`, `currency?`, `customerID?`, `period?: 'weekly' \| 'monthly' \| 'quarterly' \| 'yearly'` |
-| --- | --- |
-| **Response** | Analytics payload |
+| Parameters   | `businessId?`, `from?`, `to?`, `currency?`, `customerID?`, `period?: 'weekly' \| 'monthly' \| 'quarterly' \| 'yearly'` |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| **Response** | Analytics payload                                                                                                      |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "from": "2026-01-01",
-  "to": "2026-07-01",
-  "currency": "USD",
-  "customerID": "cust_1",
-  "period": "monthly"
+    "businessId": "biz_123",
+    "from": "2026-01-01",
+    "to": "2026-07-01",
+    "currency": "USD",
+    "customerID": "cust_1",
+    "period": "monthly"
 }
 ```
 
 ```typescript
 const { data } = await sdk.invoice.getRevenueGraph({
-  businessId: 'biz_123',
-  period: 'monthly',
-  currency: 'USD',
+    businessId: 'biz_123',
+    period: 'monthly',
+    currency: 'USD',
 });
 ```
 
@@ -657,10 +654,10 @@ const { data } = await sdk.invoice.getRevenueGraph({
 
 ```json
 {
-  "businessId": "biz_123",
-  "from": "2026-01-01",
-  "to": "2026-07-01",
-  "currency": "USD",
-  "customerID": "cust_1"
+    "businessId": "biz_123",
+    "from": "2026-01-01",
+    "to": "2026-07-01",
+    "currency": "USD",
+    "customerID": "cust_1"
 }
 ```

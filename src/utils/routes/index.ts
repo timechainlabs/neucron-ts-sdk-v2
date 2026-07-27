@@ -82,16 +82,6 @@ export const Routes = {
         UPDATE_DEFAULT: '/paymail/default',
         DELETE: '/paymail/delete',
     },
-    TEAM: {
-        ACCEPT: '/team/accept',
-        INVITES_LIST: '/team/invites',
-        CREATE_INVITE: '/team/invites',
-        PENDING_INVITES: '/team/invites/pending',
-        LIST: '/team/list',
-        MEMBERS_LIST: '/team/members',
-        UPDATE_ROLE: '/team/members/role',
-        REMOVE_MEMBER: '/team/remove',
-    },
     BUSINESS: {
         CREATE: '/business',
         DETAILS: '/business',

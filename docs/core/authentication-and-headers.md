@@ -20,34 +20,33 @@ The SDK uses a **shared authentication model**. The `Authentication` service own
 
 ## Auth Helpers
 
-| Method | Description |
-|--------|-------------|
-| `getToken()` | Read the current token |
-| `setToken(token)` | Manually set a token |
-| `validate()` | Throws if no token (used internally by services) |
-| `logout()` | Clears the stored token locally |
+| Method            | Description                                      |
+| ----------------- | ------------------------------------------------ |
+| `getToken()`      | Read the current token                           |
+| `setToken(token)` | Manually set a token                             |
+| `validate()`      | Throws if no token (used internally by services) |
+| `logout()`        | Clears the stored token locally                  |
 
 ## Request Headers
 
 Most services build headers via `buildAuthHeaders()`:
 
-| Header | Value | When |
-|--------|-------|------|
-| `Authorization` | Token from `auth.getToken()` | All authenticated calls |
-| `X-Identifier` | `NEUCRON` (default) | Most authenticated calls |
-| `X-Neucron-Business-ID` | Business ID string | When `businessId` is passed |
-| `X-Neucron-Team-ID` | Team ID string | When `teamId` is passed |
-| `X-App-Secret` | App secret string | Data integrity / app-authenticated payouts |
-| `Content-Type` | `application/json` | JSON bodies (automatic) |
+| Header                  | Value                        | When                                       |
+| ----------------------- | ---------------------------- | ------------------------------------------ |
+| `Authorization`         | Token from `auth.getToken()` | All authenticated calls                    |
+| `X-Identifier`          | `NEUCRON` (default)          | Most authenticated calls                   |
+| `X-Neucron-Business-ID` | Business ID string           | When `businessId` is passed                |
+| `X-App-Secret`          | App secret string            | Data integrity / app-authenticated payouts |
+| `Content-Type`          | `application/json`           | JSON bodies (automatic)                    |
 
 ### Example: business-scoped call
 
 ```typescript
 await sdk.customer.createCustomer({
-  businessId: 'biz_abc123',
-  customerData: {
-    // ...
-  },
+    businessId: 'biz_abc123',
+    customerData: {
+        // ...
+    },
 });
 ```
 
@@ -89,15 +88,15 @@ type Identifier = 'NEUCRON' | 'ASSETYZER';
 
 ```typescript
 async function withRetry<T>(fn: () => Promise<T>): Promise<T> {
-  try {
-    return await fn();
-  } catch (err) {
-    if (err instanceof NeucronError && err.status === 401) {
-      await sdk.auth.login({ email, password });
-      return await fn();
+    try {
+        return await fn();
+    } catch (err) {
+        if (err instanceof NeucronError && err.status === 401) {
+            await sdk.auth.login({ email, password });
+            return await fn();
+        }
+        throw err;
     }
-    throw err;
-  }
 }
 
 await withRetry(() => sdk.wallet.walletList());
@@ -115,13 +114,12 @@ These methods work without calling `login()` first:
 
 All other SDK methods require a valid token.
 
-## Personal vs Business vs Team Context
+## Personal vs Business Context
 
-| Context | How to use |
-|---------|------------|
-| **Personal** | Omit `businessId` on method options |
+| Context      | How to use                                       |
+| ------------ | ------------------------------------------------ |
+| **Personal** | Omit `businessId` on method options              |
 | **Business** | Pass `businessId` → sets `X-Neucron-Business-ID` |
-| **Team** | Pass `teamId` or `'X-Neucron-Team-ID'` → sets team header |
 
 ```typescript
 // Personal
@@ -129,9 +127,4 @@ await sdk.wallet.walletList();
 
 // Business
 await sdk.wallet.walletList({ businessId: 'biz_123' });
-
-// Team
-await sdk.team.getMemberList({
-  'X-Neucron-Team-ID': 'team_456',
-});
 ```

@@ -23,7 +23,6 @@ export class McpFlows {
             auth: sdk.auth,
             oauth: sdk.oauth,
             wallet: sdk.wallet,
-            team: sdk.team,
             business: sdk.business,
             assets: sdk.assets,
             apps: sdk.apps,

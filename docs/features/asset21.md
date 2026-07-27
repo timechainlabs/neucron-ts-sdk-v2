@@ -13,27 +13,27 @@
 
 ### Governance request states
 
-| State | Purpose |
-| --- | --- |
-| `CUSTOMER` | Onboard a customer / holder |
-| `MINT` | Mint new supply |
-| `REDEEM` | Redeem / burn |
-| `PAUSE` / `RESUME` | Pause or resume transfers |
-| `FREEZE` / `UNFREEZE` | Freeze or unfreeze an address |
-| `BLACKLIST` / `UNBLACKLIST` | Blacklist or clear blacklist |
+| State                       | Purpose                       |
+| --------------------------- | ----------------------------- |
+| `CUSTOMER`                  | Onboard a customer / holder   |
+| `MINT`                      | Mint new supply               |
+| `REDEEM`                    | Redeem / burn                 |
+| `PAUSE` / `RESUME`          | Pause or resume transfers     |
+| `FREEZE` / `UNFREEZE`       | Freeze or unfreeze an address |
+| `BLACKLIST` / `UNBLACKLIST` | Blacklist or clear blacklist  |
 
 ### Request statuses & actions
 
-| Status | Meaning |
-| --- | --- |
-| `PENDING` | Awaiting votes |
-| `APPROVED` | Approved |
-| `REJECTED` | Rejected |
-| `CANCELLED` | Cancelled |
+| Status      | Meaning        |
+| ----------- | -------------- |
+| `PENDING`   | Awaiting votes |
+| `APPROVED`  | Approved       |
+| `REJECTED`  | Rejected       |
+| `CANCELLED` | Cancelled      |
 
 Actions when updating a request: `APPROVE` | `REJECT`.
 
-Most Asset21 methods accept optional `businessId` and `teamId` (sent as headers).
+Most Asset21 methods accept an optional `businessId` (sent as the `X-Neucron-Business-ID` header).
 
 Access via `sdk.asset21`.
 
@@ -45,68 +45,66 @@ Register a new security token (off-chain registration before deploy).
 
 ### Parameters (body + context headers)
 
-| Name | Type | Required | Description |
-| --- | --- | --- | --- |
-| `asset_name` | `string` | Yes | Token name |
-| `symbol` | `string` | Yes | Symbol |
-| `decimals` | `number` | Yes | Decimals |
-| `image_url` | `string` | Yes | Image URL |
-| `legal_term` | `string` | Yes | Legal terms |
-| `wallet_id` | `string` | Yes | Issuer wallet |
-| `network` | `'MAIN' \| 'TEST'` | Yes | Network |
-| `token_detail` | `object` | Yes | Icon, fees, holder identity, `request_config` |
-| `asset_type` | `string` | No | Type label |
-| `currency` | `string` | No | Currency |
-| `price` | `number` | No | Price |
-| `total_supply` | `number` | No | Supply |
-| `businessId` / `teamId` | `string` | No | Context headers |
+| Name           | Type               | Required | Description                                   |
+| -------------- | ------------------ | -------- | --------------------------------------------- |
+| `asset_name`   | `string`           | Yes      | Token name                                    |
+| `symbol`       | `string`           | Yes      | Symbol                                        |
+| `decimals`     | `number`           | Yes      | Decimals                                      |
+| `image_url`    | `string`           | Yes      | Image URL                                     |
+| `legal_term`   | `string`           | Yes      | Legal terms                                   |
+| `wallet_id`    | `string`           | Yes      | Issuer wallet                                 |
+| `network`      | `'MAIN' \| 'TEST'` | Yes      | Network                                       |
+| `token_detail` | `object`           | Yes      | Icon, fees, holder identity, `request_config` |
+| `asset_type`   | `string`           | No       | Type label                                    |
+| `currency`     | `string`           | No       | Currency                                      |
+| `price`        | `number`           | No       | Price                                         |
+| `total_supply` | `number`           | No       | Supply                                        |
+| `businessId`   | `string`           | No       | Context headers                               |
 
 ### Request Payload
 
 ```json
 {
-  "asset_name": "Series A Token",
-  "symbol": "SAT",
-  "decimals": 2,
-  "image_url": "https://cdn.example.com/sat.png",
-  "legal_term": "See offering memorandum",
-  "wallet_id": "wallet_1",
-  "network": "MAIN",
-  "token_detail": {
-    "icon": "https://cdn.example.com/sat-icon.png",
-    "decimal": 2,
-    "feeStructure": [{ "fee": "0.1", "min": "0", "max": "100" }],
-    "request_config": { "min_approval": 2, "min_rejection": 1 }
-  },
-  "asset_type": "SECURITY",
-  "currency": "USD",
-  "price": 10,
-  "total_supply": 1000000,
-  "businessId": "biz_123",
-  "teamId": "team_1"
+    "asset_name": "Series A Token",
+    "symbol": "SAT",
+    "decimals": 2,
+    "image_url": "https://cdn.example.com/sat.png",
+    "legal_term": "See offering memorandum",
+    "wallet_id": "wallet_1",
+    "network": "MAIN",
+    "token_detail": {
+        "icon": "https://cdn.example.com/sat-icon.png",
+        "decimal": 2,
+        "feeStructure": [{ "fee": "0.1", "min": "0", "max": "100" }],
+        "request_config": { "min_approval": 2, "min_rejection": 1 }
+    },
+    "asset_type": "SECURITY",
+    "currency": "USD",
+    "price": 10,
+    "total_supply": 1000000,
+    "businessId": "biz_123"
 }
 ```
 
 ### Response (`data`)
 
-| Field | Type |
-| --- | --- |
+| Field     | Type     |
+| --------- | -------- |
 | `assetID` | `string` |
 
 ```typescript
 const { data } = await sdk.asset21.register({
-  asset_name: 'Series A Token',
-  symbol: 'SAT',
-  decimals: 2,
-  image_url: 'https://cdn.example.com/sat.png',
-  legal_term: 'See offering memorandum',
-  wallet_id: 'wallet_1',
-  network: 'MAIN',
-  token_detail: {
-    request_config: { min_approval: 2, min_rejection: 1 },
-  },
-  businessId: 'biz_123',
-  teamId: 'team_1',
+    asset_name: 'Series A Token',
+    symbol: 'SAT',
+    decimals: 2,
+    image_url: 'https://cdn.example.com/sat.png',
+    legal_term: 'See offering memorandum',
+    wallet_id: 'wallet_1',
+    network: 'MAIN',
+    token_detail: {
+        request_config: { min_approval: 2, min_rejection: 1 },
+    },
+    businessId: 'biz_123',
 });
 ```
 
@@ -118,25 +116,24 @@ Deploy a registered Asset21 token on-chain.
 
 ### Parameters
 
-| Name | Type | Required | Sent as |
-| --- | --- | --- | --- |
-| `assetID` | `string` | Yes | Query |
-| `businessId` / `teamId` | `string` | No | Headers |
+| Name         | Type     | Required | Sent as |
+| ------------ | -------- | -------- | ------- |
+| `assetID`    | `string` | Yes      | Query   |
+| `businessId` | `string` | No       | Headers |
 
 ### Request Payload
 
 ```json
 {
-  "assetID": "asset_abc",
-  "businessId": "biz_123",
-  "teamId": "team_1"
+    "assetID": "asset_abc",
+    "businessId": "biz_123"
 }
 ```
 
 ### Response (`data`)
 
-| Field | Type |
-| --- | --- |
+| Field  | Type     |
+| ------ | -------- |
 | `txid` | `string` |
 
 ```typescript
@@ -151,21 +148,21 @@ List deployed Asset21 assets by status with pagination.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `status` | `string` | Yes | Query | Deployment status filter |
-| `pageNumber` | `number` | No | Query | Page |
-| `pageSize` | `number` | No | Query | Size |
-| `businessId` / `teamId` | `string` | No | Headers | Context |
+| Name         | Type     | Required | Sent as | Description              |
+| ------------ | -------- | -------- | ------- | ------------------------ |
+| `status`     | `string` | Yes      | Query   | Deployment status filter |
+| `pageNumber` | `number` | No       | Query   | Page                     |
+| `pageSize`   | `number` | No       | Query   | Size                     |
+| `businessId` | `string` | No       | Headers | Context                  |
 
 ### Request Payload
 
 ```json
 {
-  "status": "DEPLOYED",
-  "pageNumber": 1,
-  "pageSize": 20,
-  "businessId": "biz_123"
+    "status": "DEPLOYED",
+    "pageNumber": 1,
+    "pageSize": 20,
+    "businessId": "biz_123"
 }
 ```
 
@@ -175,9 +172,9 @@ Paginated deployed-asset list.
 
 ```typescript
 const { data } = await sdk.asset21.listDeployedAssets({
-  status: 'DEPLOYED',
-  pageNumber: 1,
-  pageSize: 20,
+    status: 'DEPLOYED',
+    pageNumber: 1,
+    pageSize: 20,
 });
 ```
 
@@ -189,36 +186,36 @@ Get balance / freeze / blacklist state for an address on an asset.
 
 ### Parameters
 
-| Name | Type | Required | Sent as |
-| --- | --- | --- | --- |
-| `address` | `string` | Yes | Query |
-| `assetID` | `string` | Yes | Query |
-| `businessId` / `teamId` | `string` | No | Headers |
+| Name         | Type     | Required | Sent as |
+| ------------ | -------- | -------- | ------- |
+| `address`    | `string` | Yes      | Query   |
+| `assetID`    | `string` | Yes      | Query   |
+| `businessId` | `string` | No       | Headers |
 
 ### Request Payload
 
 ```json
 {
-  "address": "1ABC...",
-  "assetID": "asset_abc",
-  "businessId": "biz_123"
+    "address": "1ABC...",
+    "assetID": "asset_abc",
+    "businessId": "biz_123"
 }
 ```
 
 ### Response (`data`)
 
-| Field | Type |
-| --- | --- |
-| `address` | `string` |
-| `assetId` | `string` |
-| `balance` | `string \| number` |
-| `frozen` | `boolean` |
-| `blacklisted` | `boolean` |
+| Field         | Type               |
+| ------------- | ------------------ |
+| `address`     | `string`           |
+| `assetId`     | `string`           |
+| `balance`     | `string \| number` |
+| `frozen`      | `boolean`          |
+| `blacklisted` | `boolean`          |
 
 ```typescript
 const { data } = await sdk.asset21.getAddressState({
-  address: '1ABC...',
-  assetID: 'asset_abc',
+    address: '1ABC...',
+    assetID: 'asset_abc',
 });
 ```
 
@@ -230,12 +227,12 @@ Fetch balance for one address or a batch of addresses.
 
 ### Parameters
 
-| Name | Type | Required | Description |
-| --- | --- | --- | --- |
-| `address` | `string` | One of address/addresses | Single address |
-| `addresses` | `string[]` | One of address/addresses | Batch |
-| `assetID` | `string` | No | Asset filter |
-| `businessId` / `teamId` | `string` | No | Headers |
+| Name         | Type       | Required                 | Description    |
+| ------------ | ---------- | ------------------------ | -------------- |
+| `address`    | `string`   | One of address/addresses | Single address |
+| `addresses`  | `string[]` | One of address/addresses | Batch          |
+| `assetID`    | `string`   | No                       | Asset filter   |
+| `businessId` | `string`   | No                       | Headers        |
 
 Single-address calls use query params; batch uses a request body `{ addresses }`.
 
@@ -243,9 +240,9 @@ Single-address calls use query params; batch uses a request body `{ addresses }`
 
 ```json
 {
-  "assetID": "asset_abc",
-  "address": "1ABC...",
-  "businessId": "biz_123"
+    "assetID": "asset_abc",
+    "address": "1ABC...",
+    "businessId": "biz_123"
 }
 ```
 
@@ -253,9 +250,9 @@ Single-address calls use query params; batch uses a request body `{ addresses }`
 
 ```json
 {
-  "assetID": "asset_abc",
-  "addresses": ["1ABC...", "1DEF..."],
-  "businessId": "biz_123"
+    "assetID": "asset_abc",
+    "addresses": ["1ABC...", "1DEF..."],
+    "businessId": "biz_123"
 }
 ```
 
@@ -265,8 +262,8 @@ Includes optional `success` and `data.balances[]` with `address`, `balance`, `co
 
 ```typescript
 const { data } = await sdk.asset21.fetchBalance({
-  assetID: 'asset_abc',
-  addresses: ['1ABC...', '1DEF...'],
+    assetID: 'asset_abc',
+    addresses: ['1ABC...', '1DEF...'],
 });
 ```
 
@@ -278,17 +275,17 @@ Read token system configuration (fees, approval thresholds, mint/burn addresses)
 
 ### Parameters
 
-| Name | Type | Required | Sent as |
-| --- | --- | --- | --- |
-| `assetID` | `string` | Yes | Query |
-| `businessId` / `teamId` | `string` | No | Headers |
+| Name         | Type     | Required | Sent as |
+| ------------ | -------- | -------- | ------- |
+| `assetID`    | `string` | Yes      | Query   |
+| `businessId` | `string` | No       | Headers |
 
 ### Request Payload
 
 ```json
 {
-  "assetID": "asset_abc",
-  "businessId": "biz_123"
+    "assetID": "asset_abc",
+    "businessId": "biz_123"
 }
 ```
 
@@ -304,37 +301,37 @@ Update token system configuration.
 
 ### Parameters
 
-| Name | Type | Required | Sent as |
-| --- | --- | --- | --- |
-| `assetID` | `string` | Yes | Query |
-| `fees` | `Array<{ fee, min, max }>` | No | Body |
-| `request_config` | `{ min_approval, min_rejection }` | No | Body |
-| `businessId` / `teamId` | `string` | No | Headers |
+| Name             | Type                              | Required | Sent as |
+| ---------------- | --------------------------------- | -------- | ------- |
+| `assetID`        | `string`                          | Yes      | Query   |
+| `fees`           | `Array<{ fee, min, max }>`        | No       | Body    |
+| `request_config` | `{ min_approval, min_rejection }` | No       | Body    |
+| `businessId`     | `string`                          | No       | Headers |
 
 ### Request Payload
 
 ```json
 {
-  "assetID": "asset_abc",
-  "fees": [{ "fee": "0.1", "min": "0", "max": "100" }],
-  "request_config": {
-    "min_approval": 2,
-    "min_rejection": 1
-  },
-  "businessId": "biz_123"
+    "assetID": "asset_abc",
+    "fees": [{ "fee": "0.1", "min": "0", "max": "100" }],
+    "request_config": {
+        "min_approval": 2,
+        "min_rejection": 1
+    },
+    "businessId": "biz_123"
 }
 ```
 
 ### Response (`data`)
 
-| Field | Type |
-| --- | --- |
+| Field     | Type     |
+| --------- | -------- |
 | `message` | `string` |
 
 ```typescript
 await sdk.asset21.updateSystemConfig({
-  assetID: 'asset_abc',
-  request_config: { min_approval: 2, min_rejection: 1 },
+    assetID: 'asset_abc',
+    request_config: { min_approval: 2, min_rejection: 1 },
 });
 ```
 
@@ -346,17 +343,17 @@ List onboarded customers/holders for an Asset21 token.
 
 ### Parameters
 
-| Name | Type | Required | Sent as |
-| --- | --- | --- | --- |
-| `assetID` | `string` | Yes | Query |
-| `businessId` / `teamId` | `string` | No | Headers |
+| Name         | Type     | Required | Sent as |
+| ------------ | -------- | -------- | ------- |
+| `assetID`    | `string` | Yes      | Query   |
+| `businessId` | `string` | No       | Headers |
 
 ### Request Payload
 
 ```json
 {
-  "assetID": "asset_abc",
-  "businessId": "biz_123"
+    "assetID": "asset_abc",
+    "businessId": "biz_123"
 }
 ```
 
@@ -376,32 +373,31 @@ Create a governance request (mint, customer onboarding, freeze, etc.).
 
 ### Parameters (body)
 
-| Name | Type | Required | Description |
-| --- | --- | --- | --- |
-| `assetId` | `string` | Yes | Token |
-| `state` | Request state enum | Yes | Operation type |
-| `requestDetails` | `object` | Yes | `address`, `amount`, `email`, `name`, `paymail`, `UtxoId`, … |
-| `approvalsRequired` | `number` | No | Override approvals |
-| `rejectionsRequired` | `number` | No | Override rejections |
-| `businessId` / `teamId` | `string` | No | Headers |
+| Name                 | Type               | Required | Description                                                  |
+| -------------------- | ------------------ | -------- | ------------------------------------------------------------ |
+| `assetId`            | `string`           | Yes      | Token                                                        |
+| `state`              | Request state enum | Yes      | Operation type                                               |
+| `requestDetails`     | `object`           | Yes      | `address`, `amount`, `email`, `name`, `paymail`, `UtxoId`, … |
+| `approvalsRequired`  | `number`           | No       | Override approvals                                           |
+| `rejectionsRequired` | `number`           | No       | Override rejections                                          |
+| `businessId`         | `string`           | No       | Headers                                                      |
 
 ### Request Payload
 
 ```json
 {
-  "assetId": "asset_abc",
-  "state": "MINT",
-  "requestDetails": {
-    "amount": 1000,
-    "address": "1ABC...",
-    "email": "holder@example.com",
-    "name": "Holder Name",
-    "paymail": "holder@neucron.io"
-  },
-  "approvalsRequired": 2,
-  "rejectionsRequired": 1,
-  "businessId": "biz_123",
-  "teamId": "team_1"
+    "assetId": "asset_abc",
+    "state": "MINT",
+    "requestDetails": {
+        "amount": 1000,
+        "address": "1ABC...",
+        "email": "holder@example.com",
+        "name": "Holder Name",
+        "paymail": "holder@neucron.io"
+    },
+    "approvalsRequired": 2,
+    "rejectionsRequired": 1,
+    "businessId": "biz_123"
 }
 ```
 
@@ -411,10 +407,10 @@ Created request object (includes request identifiers and status fields).
 
 ```typescript
 await sdk.asset21.createRequest({
-  assetId: 'asset_abc',
-  state: 'MINT',
-  requestDetails: { amount: 1000, address: '1ABC...' },
-  approvalsRequired: 2,
+    assetId: 'asset_abc',
+    state: 'MINT',
+    requestDetails: { amount: 1000, address: '1ABC...' },
+    approvalsRequired: 2,
 });
 ```
 
@@ -426,25 +422,25 @@ List governance requests with filters.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `assetID` | `string` | Yes | Query | Token |
-| `state` | Request state | No | Query | Filter by state |
-| `status` | Request status | No | Query | Filter by status |
-| `page` | `number` | Yes | Query | Page |
-| `size` | `number` | Yes | Query | Size |
-| `businessId` / `teamId` | `string` | No | Headers | Context |
+| Name         | Type           | Required | Sent as | Description      |
+| ------------ | -------------- | -------- | ------- | ---------------- |
+| `assetID`    | `string`       | Yes      | Query   | Token            |
+| `state`      | Request state  | No       | Query   | Filter by state  |
+| `status`     | Request status | No       | Query   | Filter by status |
+| `page`       | `number`       | Yes      | Query   | Page             |
+| `size`       | `number`       | Yes      | Query   | Size             |
+| `businessId` | `string`       | No       | Headers | Context          |
 
 ### Request Payload
 
 ```json
 {
-  "assetID": "asset_abc",
-  "state": "MINT",
-  "status": "PENDING",
-  "page": 1,
-  "size": 20,
-  "businessId": "biz_123"
+    "assetID": "asset_abc",
+    "state": "MINT",
+    "status": "PENDING",
+    "page": 1,
+    "size": 20,
+    "businessId": "biz_123"
 }
 ```
 
@@ -454,11 +450,11 @@ Paginated request list.
 
 ```typescript
 const { data } = await sdk.asset21.getRequest({
-  assetID: 'asset_abc',
-  state: 'MINT',
-  status: 'PENDING',
-  page: 1,
-  size: 20,
+    assetID: 'asset_abc',
+    state: 'MINT',
+    status: 'PENDING',
+    page: 1,
+    size: 20,
 });
 ```
 
@@ -470,22 +466,21 @@ Approve or reject a governance request.
 
 ### Parameters (body)
 
-| Name | Type | Required | Description |
-| --- | --- | --- | --- |
-| `action` | `'APPROVE' \| 'REJECT'` | Yes | Vote |
-| `assetId` | `string` | Yes | Token |
-| `requestId` | `string` | Yes | Request ID |
-| `businessId` / `teamId` | `string` | No | Headers |
+| Name         | Type                    | Required | Description |
+| ------------ | ----------------------- | -------- | ----------- |
+| `action`     | `'APPROVE' \| 'REJECT'` | Yes      | Vote        |
+| `assetId`    | `string`                | Yes      | Token       |
+| `requestId`  | `string`                | Yes      | Request ID  |
+| `businessId` | `string`                | No       | Headers     |
 
 ### Request Payload
 
 ```json
 {
-  "action": "APPROVE",
-  "assetId": "asset_abc",
-  "requestId": "req_1",
-  "businessId": "biz_123",
-  "teamId": "team_1"
+    "action": "APPROVE",
+    "assetId": "asset_abc",
+    "requestId": "req_1",
+    "businessId": "biz_123"
 }
 ```
 
@@ -495,9 +490,9 @@ Updated request result.
 
 ```typescript
 await sdk.asset21.updateRequest({
-  action: 'APPROVE',
-  assetId: 'asset_abc',
-  requestId: 'req_1',
+    action: 'APPROVE',
+    assetId: 'asset_abc',
+    requestId: 'req_1',
 });
 ```
 
@@ -509,29 +504,29 @@ Transfer Asset21 tokens.
 
 ### Parameters
 
-| Name | Type | Required | Description |
-| --- | --- | --- | --- |
-| `walletID` | `string` | Yes | Source wallet |
-| `fromAddress` | `string` | Yes | Sender address |
-| `toAddress` | `string` | Yes | Recipient address |
-| `amount` | `string` | Yes | Amount |
-| `assetID` | `string` | No | Query |
-| `tokenAddress` | `string` | No | Token address |
-| `metadata` | `object` | No | Extra metadata |
-| `businessId` / `teamId` | `string` | No | Headers |
+| Name           | Type     | Required | Description       |
+| -------------- | -------- | -------- | ----------------- |
+| `walletID`     | `string` | Yes      | Source wallet     |
+| `fromAddress`  | `string` | Yes      | Sender address    |
+| `toAddress`    | `string` | Yes      | Recipient address |
+| `amount`       | `string` | Yes      | Amount            |
+| `assetID`      | `string` | No       | Query             |
+| `tokenAddress` | `string` | No       | Token address     |
+| `metadata`     | `object` | No       | Extra metadata    |
+| `businessId`   | `string` | No       | Headers           |
 
 ### Request Payload
 
 ```json
 {
-  "assetID": "asset_abc",
-  "walletID": "wallet_1",
-  "fromAddress": "1FROM...",
-  "toAddress": "1TO...",
-  "amount": "100",
-  "tokenAddress": "1TOKEN...",
-  "metadata": { "note": "Secondary transfer" },
-  "businessId": "biz_123"
+    "assetID": "asset_abc",
+    "walletID": "wallet_1",
+    "fromAddress": "1FROM...",
+    "toAddress": "1TO...",
+    "amount": "100",
+    "tokenAddress": "1TOKEN...",
+    "metadata": { "note": "Secondary transfer" },
+    "businessId": "biz_123"
 }
 ```
 
@@ -541,12 +536,12 @@ Transfer result payload.
 
 ```typescript
 await sdk.asset21.transfer({
-  assetID: 'asset_abc',
-  walletID: 'wallet_1',
-  fromAddress: '1FROM...',
-  toAddress: '1TO...',
-  amount: '100',
-  businessId: 'biz_123',
+    assetID: 'asset_abc',
+    walletID: 'wallet_1',
+    fromAddress: '1FROM...',
+    toAddress: '1TO...',
+    amount: '100',
+    businessId: 'biz_123',
 });
 ```
 
@@ -556,18 +551,18 @@ await sdk.asset21.transfer({
 
 ### `syncTransaction`
 
-| Parameters | `assetID`, `txid`, optional `businessId` / `teamId` |
-| --- | --- |
-| **Body** | `{ assetID, txid }` |
-| **Response** | Sync result |
+| Parameters   | `assetID`, `txid`, optional `businessId` |
+| ------------ | ---------------------------------------- |
+| **Body**     | `{ assetID, txid }`                      |
+| **Response** | Sync result                              |
 
 ### Request Payload
 
 ```json
 {
-  "assetID": "asset_abc",
-  "txid": "abc123def456...",
-  "businessId": "biz_123"
+    "assetID": "asset_abc",
+    "txid": "abc123def456...",
+    "businessId": "biz_123"
 }
 ```
 
@@ -575,19 +570,19 @@ await sdk.asset21.transfer({
 
 ### `listSyncedTransactions`
 
-| Parameters | `assetID`, optional `from`, `limit`, `action`, context headers |
-| --- | --- |
-| **Response** | List of synced transactions |
+| Parameters   | `assetID`, optional `from`, `limit`, `action`, context headers |
+| ------------ | -------------------------------------------------------------- |
+| **Response** | List of synced transactions                                    |
 
 ### Request Payload
 
 ```json
 {
-  "assetID": "asset_abc",
-  "from": "0",
-  "limit": 50,
-  "action": "TRANSFER",
-  "businessId": "biz_123"
+    "assetID": "asset_abc",
+    "from": "0",
+    "limit": 50,
+    "action": "TRANSFER",
+    "businessId": "biz_123"
 }
 ```
 
@@ -595,18 +590,18 @@ await sdk.asset21.transfer({
 
 ### `triggerSyncForAddresses`
 
-| Parameters | `assetID`, `addresses[]`, context headers |
-| --- | --- |
-| **Body** | `{ assetID, addresses }` |
-| **Response** | Sync trigger result |
+| Parameters   | `assetID`, `addresses[]`, context headers |
+| ------------ | ----------------------------------------- |
+| **Body**     | `{ assetID, addresses }`                  |
+| **Response** | Sync trigger result                       |
 
 ### Request Payload
 
 ```json
 {
-  "assetID": "asset_abc",
-  "addresses": ["1ABC...", "1DEF..."],
-  "businessId": "biz_123"
+    "assetID": "asset_abc",
+    "addresses": ["1ABC...", "1DEF..."],
+    "businessId": "biz_123"
 }
 ```
 
@@ -620,10 +615,10 @@ Query unspent outputs for a single address or a batch of addresses.
 
 ```json
 {
-  "assetID": "asset_abc",
-  "address": "1ABC...",
-  "includeMempool": true,
-  "businessId": "biz_123"
+    "assetID": "asset_abc",
+    "address": "1ABC...",
+    "includeMempool": true,
+    "businessId": "biz_123"
 }
 ```
 
@@ -631,10 +626,10 @@ Query unspent outputs for a single address or a batch of addresses.
 
 ```json
 {
-  "assetID": "asset_abc",
-  "addresses": ["1ABC...", "1DEF..."],
-  "includeMempool": false,
-  "businessId": "biz_123"
+    "assetID": "asset_abc",
+    "addresses": ["1ABC...", "1DEF..."],
+    "includeMempool": false,
+    "businessId": "biz_123"
 }
 ```
 
@@ -642,16 +637,16 @@ Query unspent outputs for a single address or a batch of addresses.
 
 ### `getOutputInfo`
 
-| Parameters | `outpoint`, optional context headers |
-| --- | --- |
-| **Response** | Output detail for the outpoint |
+| Parameters   | `outpoint`, optional context headers |
+| ------------ | ------------------------------------ |
+| **Response** | Output detail for the outpoint       |
 
 ### Request Payload
 
 ```json
 {
-  "outpoint": "txid:0",
-  "businessId": "biz_123"
+    "outpoint": "txid:0",
+    "businessId": "biz_123"
 }
 ```
 
@@ -659,24 +654,24 @@ Query unspent outputs for a single address or a batch of addresses.
 
 ### `getAnalytics`
 
-| Parameters | `assetID`, optional `limit`, `graphRange`, context headers |
-| --- | --- |
-| **Response** | Mint / redeem / transfer analytics |
+| Parameters   | `assetID`, optional `limit`, `graphRange`, context headers |
+| ------------ | ---------------------------------------------------------- |
+| **Response** | Mint / redeem / transfer analytics                         |
 
 ### Request Payload
 
 ```json
 {
-  "assetID": "asset_abc",
-  "limit": 30,
-  "graphRange": "30d",
-  "businessId": "biz_123"
+    "assetID": "asset_abc",
+    "limit": 30,
+    "graphRange": "30d",
+    "businessId": "biz_123"
 }
 ```
 
 ```typescript
 const { data } = await sdk.asset21.getAnalytics({
-  assetID: 'asset_abc',
-  limit: 30,
+    assetID: 'asset_abc',
+    limit: 30,
 });
 ```

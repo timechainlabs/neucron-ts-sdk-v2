@@ -10,7 +10,7 @@ export const getMembersSchema = businessIdSchema.extend({
 export const memberRoleSchema = z.object({
     role_id: z.string(),
     role_name: z.string(),
-    permissions: z.array(z.string()),
+    permissions: z.array(z.string()).optional(),
     description: z.string().optional(),
     business_id: z.string().optional(),
 });

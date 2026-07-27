@@ -6,16 +6,16 @@ The Neucron SDK accepts an optional configuration object when instantiated.
 
 ```typescript
 interface Config {
-  authToken?: string;
-  businessId?: string;
-  baseUrl?: string;
-  sandbox?: boolean;
-  oauth?: {
-    clientId?: string;
-    clientSecret?: string;
-    redirectUri?: string;
-    platform?: string;
-  };
+    authToken?: string;
+    businessId?: string;
+    baseUrl?: string;
+    sandbox?: boolean;
+    oauth?: {
+        clientId?: string;
+        clientSecret?: string;
+        redirectUri?: string;
+        platform?: string;
+    };
 }
 ```
 
@@ -38,7 +38,7 @@ Override the API host explicitly (including `/v1`). Useful for self-hosted or cu
 
 ```typescript
 const sdk = new NeucronSDK({
-  baseUrl: process.env.NEUCRON_API_BASE_URL, // e.g. https://dev.neucron.io/v1
+    baseUrl: process.env.NEUCRON_API_BASE_URL, // e.g. https://dev.neucron.io/v1
 });
 ```
 
@@ -52,7 +52,7 @@ Pre-set an authentication token so you can skip the login step. Useful when:
 
 ```typescript
 const sdk = new NeucronSDK({
-  authToken: 'eyJhbGciOiJIUzI1NiIs...',
+    authToken: 'eyJhbGciOiJIUzI1NiIs...',
 });
 
 // Protected calls work immediately
@@ -74,7 +74,7 @@ const current = sdk.auth.getToken();
 
 ```typescript
 await sdk.invoice.getInvoices({
-  businessId: 'biz_abc123',
+    businessId: 'biz_abc123',
 });
 ```
 
@@ -100,12 +100,12 @@ For Sign in with Neucron, see [Sign in with Neucron (OAuth)](../guides/sign-in-w
 import NeucronSDK from '@neucron/ts-sdk';
 
 const sdk = new NeucronSDK({
-  authToken: process.env.NEUCRON_AUTH_TOKEN,
+    authToken: process.env.NEUCRON_AUTH_TOKEN,
 });
 
 await sdk.auth.login({
-  email: process.env.NEUCRON_EMAIL!,
-  password: process.env.NEUCRON_PASSWORD!,
+    email: process.env.NEUCRON_EMAIL!,
+    password: process.env.NEUCRON_PASSWORD!,
 });
 ```
 

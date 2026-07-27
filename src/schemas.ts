@@ -7,7 +7,6 @@ export * as walletSchemas from './services/wallet/schema.js';
 export * as assetsSchemas from './services/assets/schema.js';
 export * as asset21Schemas from './services/asset21/schema.js';
 export * as assetSwapSchemas from './services/asset-swap/schema.js';
-export * as teamSchemas from './services/team/schema.js';
 export * as utilitySchemas from './services/utility/schema.js';
 export * as dataIntegritySchemas from './services/data-integrity/schema.js';
 export * as paySchemas from './services/pay/schema.js';

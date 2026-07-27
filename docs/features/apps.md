@@ -10,11 +10,11 @@
 
 ### App status
 
-| Status | Meaning |
-| --- | --- |
-| `draft` | Work in progress |
+| Status      | Meaning               |
+| ----------- | --------------------- |
+| `draft`     | Work in progress      |
 | `published` | Live in the app store |
-| `archived` | Retired |
+| `archived`  | Retired               |
 
 Access via `sdk.apps`.
 
@@ -26,20 +26,20 @@ List apps for a business.
 
 ### Parameters
 
-| Name | Type | Required | Sent as |
-| --- | --- | --- | --- |
-| `businessId` | `string` | No | Header |
+| Name         | Type     | Required | Sent as |
+| ------------ | -------- | -------- | ------- |
+| `businessId` | `string` | No       | Header  |
 
-| | |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier`, optional business ID |
+|                   |                                                       |
+| ----------------- | ----------------------------------------------------- |
+| **Auth required** | Yes                                                   |
+| **Headers**       | `Authorization`, `X-Identifier`, optional business ID |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123"
+    "businessId": "biz_123"
 }
 ```
 
@@ -59,27 +59,27 @@ Create a new developer app.
 
 ### Parameters
 
-| Name | Type | Required | Sent as | Description |
-| --- | --- | --- | --- | --- |
-| `appData` | `object` | Yes | Body | App metadata (name, description, icons, etc.) |
-| `businessId` | `string` | No | Header | Business scope |
+| Name         | Type     | Required | Sent as | Description                                   |
+| ------------ | -------- | -------- | ------- | --------------------------------------------- |
+| `appData`    | `object` | Yes      | Body    | App metadata (name, description, icons, etc.) |
+| `businessId` | `string` | No       | Header  | Business scope                                |
 
-| | |
-| --- | --- |
+|                   |     |
+| ----------------- | --- |
 | **Auth required** | Yes |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "appData": {
-    "app_name": "Checkout Bot",
-    "description": "Payment automation for checkout",
-    "type": "integration",
-    "color": "#0F766E",
-    "logo": "https://cdn.example.com/logo.png"
-  }
+    "businessId": "biz_123",
+    "appData": {
+        "app_name": "Checkout Bot",
+        "description": "Payment automation for checkout",
+        "type": "integration",
+        "color": "#0F766E",
+        "logo": "https://cdn.example.com/logo.png"
+    }
 }
 ```
 
@@ -89,11 +89,11 @@ Create a new developer app.
 
 ```typescript
 const { data } = await sdk.apps.createApp({
-  businessId: 'biz_123',
-  appData: {
-    app_name: 'Checkout Bot',
-    description: 'Payment automation for checkout',
-  },
+    businessId: 'biz_123',
+    appData: {
+        app_name: 'Checkout Bot',
+        description: 'Payment automation for checkout',
+    },
 });
 ```
 
@@ -105,17 +105,17 @@ Fetch a single app by ID.
 
 ### Parameters
 
-| Name | Type | Required | Sent as |
-| --- | --- | --- | --- |
-| `appId` | `string` | Yes | Query (`appID`) |
-| `businessId` | `string` | No | Header |
+| Name         | Type     | Required | Sent as         |
+| ------------ | -------- | -------- | --------------- |
+| `appId`      | `string` | Yes      | Query (`appID`) |
+| `businessId` | `string` | No       | Header          |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "appId": "app_1"
+    "businessId": "biz_123",
+    "appId": "app_1"
 }
 ```
 
@@ -125,8 +125,8 @@ Fetch a single app by ID.
 
 ```typescript
 const { data: app } = await sdk.apps.getApp({
-  businessId: 'biz_123',
-  appId: 'app_1',
+    businessId: 'biz_123',
+    appId: 'app_1',
 });
 ```
 
@@ -138,17 +138,17 @@ Retrieve the app secret for server-side authentication.
 
 ### Parameters
 
-| Name | Type | Required | Sent as |
-| --- | --- | --- | --- |
-| `appId` | `string` | Yes | Query (`appID`) |
-| `businessId` | `string` | No | Header |
+| Name         | Type     | Required | Sent as         |
+| ------------ | -------- | -------- | --------------- |
+| `appId`      | `string` | Yes      | Query (`appID`) |
+| `businessId` | `string` | No       | Header          |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "appId": "app_1"
+    "businessId": "biz_123",
+    "appId": "app_1"
 }
 ```
 
@@ -162,8 +162,8 @@ Treat app secrets like passwords. Store them in a secrets manager; never expose 
 
 ```typescript
 const { data } = await sdk.apps.getAppSecret({
-  businessId: 'biz_123',
-  appId: 'app_1',
+    businessId: 'biz_123',
+    appId: 'app_1',
 });
 ```
 
@@ -175,23 +175,23 @@ Update app metadata.
 
 ### Parameters
 
-| Name | Type | Required | Sent as |
-| --- | --- | --- | --- |
-| `appId` | `string` | Yes | Query (`appID`) |
-| `appData` | `object` | Yes | Body |
-| `businessId` | `string` | No | Header |
+| Name         | Type     | Required | Sent as         |
+| ------------ | -------- | -------- | --------------- |
+| `appId`      | `string` | Yes      | Query (`appID`) |
+| `appData`    | `object` | Yes      | Body            |
+| `businessId` | `string` | No       | Header          |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "appId": "app_1",
-  "appData": {
-    "app_name": "Checkout Bot v2",
-    "description": "Updated payment automation",
-    "color": "#115E59"
-  }
+    "businessId": "biz_123",
+    "appId": "app_1",
+    "appData": {
+        "app_name": "Checkout Bot v2",
+        "description": "Updated payment automation",
+        "color": "#115E59"
+    }
 }
 ```
 
@@ -201,12 +201,12 @@ Update app metadata.
 
 ```typescript
 await sdk.apps.updateApp({
-  businessId: 'biz_123',
-  appId: 'app_1',
-  appData: {
-    app_name: 'Checkout Bot v2',
-    description: 'Updated payment automation',
-  },
+    businessId: 'biz_123',
+    appId: 'app_1',
+    appData: {
+        app_name: 'Checkout Bot v2',
+        description: 'Updated payment automation',
+    },
 });
 ```
 
@@ -218,17 +218,17 @@ Publish an app to the app store.
 
 ### Parameters
 
-| Name | Type | Required | Sent as |
-| --- | --- | --- | --- |
-| `appId` | `string` | Yes | Query (`appID`) |
-| `businessId` | `string` | No | Header |
+| Name         | Type     | Required | Sent as         |
+| ------------ | -------- | -------- | --------------- |
+| `appId`      | `string` | Yes      | Query (`appID`) |
+| `businessId` | `string` | No       | Header          |
 
 ### Request Payload
 
 ```json
 {
-  "businessId": "biz_123",
-  "appId": "app_1"
+    "businessId": "biz_123",
+    "appId": "app_1"
 }
 ```
 
@@ -238,7 +238,7 @@ Publish an app to the app store.
 
 ```typescript
 await sdk.apps.publishApp({
-  businessId: 'biz_123',
-  appId: 'app_1',
+    businessId: 'biz_123',
+    appId: 'app_1',
 });
 ```

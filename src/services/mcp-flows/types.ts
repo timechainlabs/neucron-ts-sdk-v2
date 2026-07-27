@@ -1,7 +1,6 @@
 import type { Authentication } from '../authentication/index.js';
 import type { OAuth } from '../oauth/index.js';
 import type { Wallet } from '../wallet/index.js';
-import type { Team } from '../team/index.js';
 import type { Business } from '../business/index.js';
 import type { Assets } from '../assets/index.js';
 import type { Apps } from '../apps/index.js';
@@ -50,7 +49,6 @@ export interface McpFlowServices {
     auth: Authentication;
     oauth: OAuth;
     wallet: Wallet;
-    team: Team;
     business: Business;
     assets: Assets;
     apps: Apps;
@@ -276,29 +274,22 @@ export type NeucronInscribeTextArrayOptions = TextArrayUpload;
 // --- Asset Issuance (Asset21) ---
 
 export type Asset21OperationAction =
-    | 'MINT'
-    | 'BURN'
-    | 'BLACKLIST'
-    | 'UNBLACKLIST'
-    | 'FREEZE'
-    | 'UNFREEZE'
-    | 'PAUSE'
-    | 'RESUME';
+    'MINT' | 'BURN' | 'BLACKLIST' | 'UNBLACKLIST' | 'FREEZE' | 'UNFREEZE' | 'PAUSE' | 'RESUME';
 
 export interface NeucronCreateSecurityTokenOptions {
     businessId?: string;
-    teamId?: string;
+
     walletID?: string;
     /** Skip register and deploy an already-registered asset. */
     assetID?: string;
     /** Deploy on-chain after register (default true). */
     deploy?: boolean;
-    register?: Omit<Register, 'businessId' | 'teamId' | 'wallet_id'> & { wallet_id?: string };
+    register?: Omit<Register, 'businessId' | 'wallet_id'> & { wallet_id?: string };
 }
 
 export interface NeucronCreateAsset21CustomerOptions {
     businessId?: string;
-    teamId?: string;
+
     assetId: string;
     requestDetails: RequestDetails;
     /** Auto-approve the CUSTOMER request (default true). */
@@ -313,7 +304,7 @@ export interface NeucronCreateAsset21CustomerOptions {
 
 export interface NeucronSecurityTokenOperationsOptions {
     businessId?: string;
-    teamId?: string;
+
     assetId: string;
     action: Asset21OperationAction;
     requestDetails: RequestDetails;
@@ -331,11 +322,11 @@ export interface NeucronSecurityTokenOperationsOptions {
 
 export interface NeucronIssueSecurityTokenOptions {
     businessId?: string;
-    teamId?: string;
+
     walletID?: string;
-    register: Omit<Register, 'businessId' | 'teamId'>;
-    governanceRequest?: Omit<CreateRequest, 'businessId' | 'teamId'>;
-    handleRequest?: Omit<UpdateRequest, 'businessId' | 'teamId'>;
-    loadRequest?: Omit<GetRequest, 'businessId' | 'teamId'>;
+    register: Omit<Register, 'businessId'>;
+    governanceRequest?: Omit<CreateRequest, 'businessId'>;
+    handleRequest?: Omit<UpdateRequest, 'businessId'>;
+    loadRequest?: Omit<GetRequest, 'businessId'>;
     mintAssetID?: string;
 }

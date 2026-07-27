@@ -13,7 +13,7 @@ Neucron provides wallets, digital assets, payments, invoicing, security tokens, 
 | **Payments** | Pay by address, email, or paymail; manage paymail aliases |
 | **Assets** | Certificates, utility tokens, tickets, transfers, ledgers |
 | **Security tokens (Asset21)** | Register, deploy, mint, redeem, freeze, blacklist, governance |
-| **Business** | Business profiles, teams, members, RBAC roles |
+| **Business** | Business profiles, members, RBAC roles |
 | **Commerce** | Customers, invoices, payment collections, vendors, bills, payouts |
 | **Developer apps** | Create apps, secrets, publish to the app store, blob uploads |
 | **Data integrity** | Inscribe files and text on-chain for tamper-evident records |
@@ -46,7 +46,6 @@ sdk.utility       // Utility tokens
 sdk.dataIntegrity // On-chain inscriptions
 sdk.assetSwap     // Asset swaps
 sdk.business      // Business profiles
-sdk.team          // Teams & invites
 sdk.members       // Business members
 sdk.rbac          // Roles & permissions
 sdk.apps          // Developer apps

@@ -82,7 +82,6 @@ export const createPayoutRequestPayloadSchema = z.object({
 
 export const createPayoutRequestSchema = z.object({
     businessId: nonEmptyString,
-    teamId: z.string().optional(),
     appSecret: nonEmptyString,
     payload: createPayoutRequestPayloadSchema,
 });

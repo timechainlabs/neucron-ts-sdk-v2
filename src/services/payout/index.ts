@@ -50,7 +50,6 @@ export class Payout {
             this.validator.createPayoutRequest(options);
             const headers = buildAuthHeaders(this.auth, {
                 businessId: options.businessId,
-                teamId: options.teamId,
                 appSecret: options.appSecret,
             });
             const resp = await this.httpClient.post<CreatePayoutResponse>(

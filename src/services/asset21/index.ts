@@ -45,18 +45,16 @@ import { Routes } from '../../utils/routes/index.js';
 
 interface Asset21Context {
     businessId?: string;
-    teamId?: string;
 }
 
 function splitAsset21Context<T extends Asset21Context>(options: T) {
-    const { businessId, teamId, ...rest } = options;
-    return { businessId, teamId, rest };
+    const { businessId, ...rest } = options;
+    return { businessId, rest };
 }
 
 function buildAsset21Headers(auth: Authentication, context: Asset21Context): Headers {
     return buildAuthHeaders(auth, {
         businessId: context.businessId,
-        teamId: context.teamId,
     });
 }
 
@@ -73,8 +71,8 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.getAddressState(options);
-            const { businessId, teamId, rest } = splitAsset21Context(options);
-            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const { businessId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId });
             const params: QueryParams = {
                 address: rest.address,
                 assetID: rest.assetID,
@@ -95,8 +93,8 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.fetchBalance(options);
-            const { businessId, teamId, rest } = splitAsset21Context(options);
-            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const { businessId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId });
             const params: QueryParams = { assetID: rest.assetID };
 
             if (rest.addresses?.length) {
@@ -125,8 +123,8 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.systemConfig(options);
-            const { businessId, teamId, rest } = splitAsset21Context(options);
-            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const { businessId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId });
             const params: QueryParams = { assetID: rest.assetID };
             const response = await this.httpClient.get<SystemConfigResponse>(Routes.ASSET21.CONFIG, headers, params);
             this.validator.systemConfigResponse(response.data);
@@ -140,8 +138,8 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.updateSystemConfig(options);
-            const { businessId, teamId, rest } = splitAsset21Context(options);
-            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const { businessId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId });
             const params: QueryParams = { assetID: rest.assetID };
             const body = {
                 fees: rest.fees,
@@ -164,8 +162,8 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.getCustomers(options);
-            const { businessId, teamId, rest } = splitAsset21Context(options);
-            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const { businessId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId });
             const params: QueryParams = { assetID: rest.assetID };
             const response = await this.httpClient.get<GetCustomersResponse>(Routes.ASSET21.CUSTOMERS, headers, params);
             this.validator.getCustomersResponse(response.data);
@@ -179,8 +177,8 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.register(options);
-            const { businessId, teamId, rest } = splitAsset21Context(options);
-            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const { businessId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId });
             const response = await this.httpClient.post<RegisterResponse>(Routes.ASSET21.REGISTER, rest, headers);
             this.validator.registerResponse(response.data);
             return response;
@@ -193,8 +191,8 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.deploy(options);
-            const { businessId, teamId, rest } = splitAsset21Context(options);
-            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const { businessId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId });
             const params: QueryParams = { assetID: rest.assetID };
             const response = await this.httpClient.post<DeployResponse>(Routes.ASSET21.DEPLOY, null, headers, params);
             this.validator.deployResponse(response.data);
@@ -208,8 +206,8 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.listDeployedAssets(options);
-            const { businessId, teamId, rest } = splitAsset21Context(options);
-            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const { businessId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId });
             const params: QueryParams = {
                 status: rest.status,
                 pageNumber: rest.pageNumber,
@@ -231,8 +229,8 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.createRequest(options);
-            const { businessId, teamId, rest } = splitAsset21Context(options);
-            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const { businessId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId });
             const body = {
                 assetId: rest.assetId,
                 state: rest.state,
@@ -252,8 +250,8 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.getRequest(options);
-            const { businessId, teamId, rest } = splitAsset21Context(options);
-            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const { businessId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId });
             const params: QueryParams = {
                 assetID: rest.assetID,
                 state: rest.state,
@@ -273,8 +271,8 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.updateRequest(options);
-            const { businessId, teamId, rest } = splitAsset21Context(options);
-            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const { businessId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId });
             const body = {
                 action: rest.action,
                 assetId: rest.assetId,
@@ -292,8 +290,8 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.syncTransaction(options);
-            const { businessId, teamId, rest } = splitAsset21Context(options);
-            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const { businessId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId });
             const body = {
                 assetID: rest.assetID,
                 txid: rest.txid,
@@ -312,8 +310,8 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.listSyncedTransactions(options);
-            const { businessId, teamId, rest } = splitAsset21Context(options);
-            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const { businessId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId });
             const params: QueryParams = {
                 assetID: rest.assetID,
                 from: rest.from,
@@ -338,8 +336,8 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.triggerSyncForAddresses(options);
-            const { businessId, teamId, rest } = splitAsset21Context(options);
-            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const { businessId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId });
             const body = {
                 assetID: rest.assetID,
                 addresses: rest.addresses,
@@ -360,8 +358,8 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.transfer(options);
-            const { businessId, teamId, rest } = splitAsset21Context(options);
-            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const { businessId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId });
             const params: QueryParams = { assetID: rest.assetID };
             const body = {
                 walletID: rest.walletID,
@@ -388,8 +386,8 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.getUnspentUTXOs(options);
-            const { businessId, teamId, rest } = splitAsset21Context(options);
-            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const { businessId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId });
             const params: QueryParams = { assetID: rest.assetID };
 
             if (rest.addresses?.length) {
@@ -421,8 +419,8 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.getOutputInfo(options);
-            const { businessId, teamId, rest } = splitAsset21Context(options);
-            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const { businessId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId });
             const response = await this.httpClient.get<GetOutputInfoResponse>(
                 `${Routes.ASSET21.OUTPOINT}/${rest.outpoint}`,
                 headers
@@ -438,8 +436,8 @@ export class Assets21 {
         try {
             this.auth.validate();
             this.validator.getAnalytics(options);
-            const { businessId, teamId, rest } = splitAsset21Context(options);
-            const headers = buildAsset21Headers(this.auth, { businessId, teamId });
+            const { businessId, rest } = splitAsset21Context(options);
+            const headers = buildAsset21Headers(this.auth, { businessId });
             const params: QueryParams = {
                 assetID: rest.assetID,
                 limit: rest.limit,

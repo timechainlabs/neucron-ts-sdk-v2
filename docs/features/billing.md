@@ -13,10 +13,10 @@
 
 ### Subscription status
 
-| Status | Meaning |
-| --- | --- |
-| `ACTIVE` | Plan is active |
-| `CANCELLED` | Cancelled |
+| Status            | Meaning          |
+| ----------------- | ---------------- |
+| `ACTIVE`          | Plan is active   |
+| `CANCELLED`       | Cancelled        |
 | `PENDING_PAYMENT` | Awaiting payment |
 
 ### Credit top-up providers
@@ -31,11 +31,11 @@ Access via `sdk.billing`.
 
 ### `getBillingInfo`
 
-| Parameters | None |
-| --- | --- |
-| **Auth required** | Yes |
-| **Headers** | `Authorization`, `X-Identifier` |
-| **Response** | `BillingInfoResponse` |
+| Parameters        | None                            |
+| ----------------- | ------------------------------- |
+| **Auth required** | Yes                             |
+| **Headers**       | `Authorization`, `X-Identifier` |
+| **Response**      | `BillingInfoResponse`           |
 
 ### Request Payload
 
@@ -51,8 +51,8 @@ const { data } = await sdk.billing.getBillingInfo();
 
 ### `getCreditBalance`
 
-| Parameters | None |
-| --- | --- |
+| Parameters   | None                                   |
+| ------------ | -------------------------------------- |
 | **Response** | `{ plan_balance, purchased_balance? }` |
 
 ### Request Payload
@@ -69,16 +69,16 @@ const { data } = await sdk.billing.getCreditBalance();
 
 ### `getBillingHistory`
 
-| Parameters | `pageNumber?`, `pageSize?` (query) |
-| --- | --- |
-| **Response** | `BillingHistoryResponse` |
+| Parameters   | `pageNumber?`, `pageSize?` (query) |
+| ------------ | ---------------------------------- |
+| **Response** | `BillingHistoryResponse`           |
 
 ### Request Payload
 
 ```json
 {
-  "pageNumber": 1,
-  "pageSize": 20
+    "pageNumber": 1,
+    "pageSize": 20
 }
 ```
 
@@ -92,15 +92,15 @@ const { data } = await sdk.billing.getBillingHistory(1, 20);
 
 Credit usage over time.
 
-| Parameters | `granularity: string` (query) |
-| --- | --- |
-| **Response** | `GraphDataResponse` |
+| Parameters   | `granularity: string` (query) |
+| ------------ | ----------------------------- |
+| **Response** | `GraphDataResponse`           |
 
 ### Request Payload
 
 ```json
 {
-  "granularity": "monthly"
+    "granularity": "monthly"
 }
 ```
 
@@ -114,8 +114,8 @@ const { data } = await sdk.billing.getGraph('monthly');
 
 ### `getPricingPlans`
 
-| Parameters | None |
-| --- | --- |
+| Parameters   | None                   |
+| ------------ | ---------------------- |
 | **Response** | `PricingPlansResponse` |
 
 ### Request Payload
@@ -128,26 +128,26 @@ null
 
 ### `requestPlan`
 
-| Parameters | Plan request body (`RequestPlan`) |
-| --- | --- |
-| **Request body** | Plan selection payload |
-| **Response** | `SubscriptionInfo` |
+| Parameters       | Plan request body (`RequestPlan`) |
+| ---------------- | --------------------------------- |
+| **Request body** | Plan selection payload            |
+| **Response**     | `SubscriptionInfo`                |
 
 ### Request Payload
 
 ```json
 {
-  "plan_id": "plan_pro",
-  "auto_pay": true,
-  "provider": "MANUAL"
+    "plan_id": "plan_pro",
+    "auto_pay": true,
+    "provider": "MANUAL"
 }
 ```
 
 ```typescript
 const { data } = await sdk.billing.requestPlan({
-  plan_id: 'plan_pro',
-  auto_pay: true,
-  provider: 'MANUAL',
+    plan_id: 'plan_pro',
+    auto_pay: true,
+    provider: 'MANUAL',
 });
 ```
 
@@ -155,8 +155,8 @@ const { data } = await sdk.billing.requestPlan({
 
 ### `getPlanStatus`
 
-| Parameters | None |
-| --- | --- |
+| Parameters   | None               |
+| ------------ | ------------------ |
 | **Response** | `SubscriptionInfo` |
 
 ### Request Payload
@@ -169,23 +169,23 @@ null
 
 ### `upgradePlan`
 
-| Parameters | `subscriptionID`, `newPlanID` (query) |
-| --- | --- |
-| **Response** | `SubscriptionInfo` |
+| Parameters   | `subscriptionID`, `newPlanID` (query) |
+| ------------ | ------------------------------------- |
+| **Response** | `SubscriptionInfo`                    |
 
 ### Request Payload
 
 ```json
 {
-  "subscriptionID": "sub_1",
-  "newPlanID": "plan_pro"
+    "subscriptionID": "sub_1",
+    "newPlanID": "plan_pro"
 }
 ```
 
 ```typescript
 await sdk.billing.upgradePlan({
-  subscriptionID: 'sub_1',
-  newPlanID: 'plan_pro',
+    subscriptionID: 'sub_1',
+    newPlanID: 'plan_pro',
 });
 ```
 
@@ -193,15 +193,15 @@ await sdk.billing.upgradePlan({
 
 ### `cancelPlan`
 
-| Parameters | `subscriptionId` (query `subscriptionID`) |
-| --- | --- |
-| **Response** | `SubscriptionInfo` |
+| Parameters   | `subscriptionId` (query `subscriptionID`) |
+| ------------ | ----------------------------------------- |
+| **Response** | `SubscriptionInfo`                        |
 
 ### Request Payload
 
 ```json
 {
-  "subscriptionId": "sub_1"
+    "subscriptionId": "sub_1"
 }
 ```
 
@@ -213,23 +213,23 @@ await sdk.billing.cancelPlan({ subscriptionId: 'sub_1' });
 
 ### `creditsTopUp`
 
-| Parameters | Body `{ amount, provider: 'MANUAL' \| 'STRIPE' \| 'PAYPAL' }` |
-| --- | --- |
-| **Response** | `SubscriptionInfo` |
+| Parameters   | Body `{ amount, provider: 'MANUAL' \| 'STRIPE' \| 'PAYPAL' }` |
+| ------------ | ------------------------------------------------------------- |
+| **Response** | `SubscriptionInfo`                                            |
 
 ### Request Payload
 
 ```json
 {
-  "amount": 100,
-  "provider": "STRIPE"
+    "amount": 100,
+    "provider": "STRIPE"
 }
 ```
 
 ```typescript
 await sdk.billing.creditsTopUp({
-  amount: 100,
-  provider: 'STRIPE',
+    amount: 100,
+    provider: 'STRIPE',
 });
 ```
 
@@ -239,16 +239,16 @@ await sdk.billing.creditsTopUp({
 
 ### `getInvoiceList`
 
-| Parameters | `page?`, `size?` → query `pageNumber`, `pageSize` |
-| --- | --- |
-| **Response** | `InvoiceListResponse` |
+| Parameters   | `page?`, `size?` → query `pageNumber`, `pageSize` |
+| ------------ | ------------------------------------------------- |
+| **Response** | `InvoiceListResponse`                             |
 
 ### Request Payload
 
 ```json
 {
-  "page": 1,
-  "size": 20
+    "page": 1,
+    "size": 20
 }
 ```
 
@@ -256,15 +256,15 @@ await sdk.billing.creditsTopUp({
 
 ### `raisePaymentForInvoice`
 
-| Parameters | `invoiceId` (query `invoiceID`) |
-| --- | --- |
-| **Response** | `SubscriptionInfo` |
+| Parameters   | `invoiceId` (query `invoiceID`) |
+| ------------ | ------------------------------- |
+| **Response** | `SubscriptionInfo`              |
 
 ### Request Payload
 
 ```json
 {
-  "invoiceId": "plat_inv_1"
+    "invoiceId": "plat_inv_1"
 }
 ```
 
@@ -276,18 +276,18 @@ await sdk.billing.raisePaymentForInvoice({ invoiceId: 'plat_inv_1' });
 
 ### `getPaymentHistory`
 
-| Parameters | `subscriptionId`, `page?`, `size?` |
-| --- | --- |
-| **Query** | `subscription_id`, `page`, `size` |
-| **Response** | `PaymentHistoryResponse` |
+| Parameters   | `subscriptionId`, `page?`, `size?` |
+| ------------ | ---------------------------------- |
+| **Query**    | `subscription_id`, `page`, `size`  |
+| **Response** | `PaymentHistoryResponse`           |
 
 ### Request Payload
 
 ```json
 {
-  "subscriptionId": "sub_1",
-  "page": 1,
-  "size": 20
+    "subscriptionId": "sub_1",
+    "page": 1,
+    "size": 20
 }
 ```
 
@@ -295,15 +295,15 @@ await sdk.billing.raisePaymentForInvoice({ invoiceId: 'plat_inv_1' });
 
 ### `downloadInvoice`
 
-| Parameters | `paymentId: string` |
-| --- | --- |
+| Parameters   | `paymentId: string`                      |
+| ------------ | ---------------------------------------- |
 | **Response** | Download payload (PDF / binary metadata) |
 
 ### Request Payload
 
 ```json
 {
-  "paymentId": "pay_1"
+    "paymentId": "pay_1"
 }
 ```
 
@@ -317,8 +317,8 @@ const { data } = await sdk.billing.downloadInvoice('pay_1');
 
 ### `getPaymentMethods`
 
-| Parameters | None |
-| --- | --- |
+| Parameters   | None                     |
+| ------------ | ------------------------ |
 | **Response** | `PaymentMethodsResponse` |
 
 ### Request Payload
@@ -331,28 +331,28 @@ null
 
 ### `addPaymentMethod`
 
-| Parameters | `paymentData: Record<string, unknown>` (body) |
-| --- | --- |
-| **Response** | `PaymentMethodsResponse` |
+| Parameters   | `paymentData: Record<string, unknown>` (body) |
+| ------------ | --------------------------------------------- |
+| **Response** | `PaymentMethodsResponse`                      |
 
 ### Request Payload
 
 ```json
 {
-  "paymentData": {
-    "type": "card",
-    "token": "tok_visa_4242",
-    "isDefault": true
-  }
+    "paymentData": {
+        "type": "card",
+        "token": "tok_visa_4242",
+        "isDefault": true
+    }
 }
 ```
 
 ```typescript
 await sdk.billing.addPaymentMethod({
-  paymentData: {
-    type: 'card',
-    token: 'tok_visa_4242',
-    isDefault: true,
-  },
+    paymentData: {
+        type: 'card',
+        token: 'tok_visa_4242',
+        isDefault: true,
+    },
 });
 ```

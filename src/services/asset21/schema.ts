@@ -23,7 +23,6 @@ export const requestActionEnum = z.enum(['APPROVE', 'REJECT']);
 
 const asset21ContextSchema = z.object({
     businessId: z.string().optional(),
-    teamId: z.string().optional(),
 });
 
 const feeStructureSchema = z.object({
