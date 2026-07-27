@@ -1,86 +1,100 @@
 {
-  "name": "@timechainlabs/neucron-ts-sdk",
-  "version": "2.0.0",
-  "description": "TypeScript SDK providing type-safe access to Neucron APIs for seamless integration",
-  "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "react-native": "./dist/index.js",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "react-native": "./dist/index.js",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "default": "./dist/index.js"
+    "name": "@timechainlabs/neucron-ts-sdk",
+    "version": "2.0.0",
+    "description": "Official TypeScript SDK for the Neucron platform: wallets, payments, digital assets, invoicing, and business operations on BSV. Fully typed, works in Node, browsers, and React Native.",
+    "keywords": [
+        "neucron",
+        "typescript",
+        "sdk",
+        "typescript-sdk",
+        "api-client",
+        "bsv",
+        "bitcoin-sv",
+        "blockchain",
+        "wallet",
+        "payments",
+        "paymail",
+        "digital-assets",
+        "tokens",
+        "stas",
+        "invoicing",
+        "payouts",
+        "fintech"
+    ],
+    "homepage": "https://timechain.gitbook.io/neucron-javascript-sdk/",
+    "bugs": {
+        "url": "https://github.com/timechainlabs/neucron-ts-sdk-v2/issues"
     },
-    "./schemas": {
-      "types": "./dist/schemas.d.ts",
-      "import": "./dist/schemas.js",
-      "require": "./dist/schemas.cjs",
-      "default": "./dist/schemas.js"
-    }
-  },
-  "files": [
-    "dist",
-    "LICENSE",
-    "README.md",
-    "CHANGELOG.md"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/timechainlabs/neucron-ts-sdk-v2.git"
-  },
-  "homepage": "https://github.com/timechainlabs/neucron-ts-sdk-v2#readme",
-  "bugs": {
-    "url": "https://github.com/timechainlabs/neucron-ts-sdk-v2/issues"
-  },
-  "scripts": {
-    "build": "tsdown --config-loader native",
-    "prepublishOnly": "npm run build",
-    "typecheck": "tsc --noEmit",
-    "dev": "ts-node src/index.ts",
-    "test": "vitest",
-    "test:unit": "vitest run --dir=tests/unit",
-    "test:integration": "vitest run --dir=tests/integration",
-    "test:run": "npm run test:unit && npm run test:integration",
-    "test:coverage": "vitest run --coverage",
-    "test:watch": "vitest --watch",
-    "test:ui": "vitest --ui",
-    "lint": "eslint . --ext .js,.ts,.jsx,.tsx",
-    "lint:fix": "eslint . --ext .js,.ts,.jsx,.tsx --fix",
-    "format": "prettier . --write",
-    "format:check": "prettier . --check",
-    "prepare": "husky"
-  },
-  "keywords": [
-    "neucron",
-    "typescript",
-    "sdk"
-  ],
-  "engines": {
-    "node": ">=20.19.0"
-  },
-  "author": "codeshaine",
-  "license": "MIT",
-  "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@types/node": "^26.1.1",
-    "@vitest/coverage-v8": "^4.1.10",
-    "eslint": "^10.7.0",
-    "husky": "^9.1.7",
-    "lint-staged": "^17.0.8",
-    "prettier": "^3.9.5",
-    "ts-node": "^10.9.2",
-    "tsdown": "^0.22.5",
-    "typescript": "~6.0.3",
-    "typescript-eslint": "^8.63.0",
-    "vitest": "^4.1.10"
-  },
-  "dependencies": {
-    "axios": "^1.18.1",
-    "zod": "^4.4.3"
-  },
-  "sideEffects": false
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/timechainlabs/neucron-ts-sdk-v2.git"
+    },
+    "license": "MIT",
+    "author": "Timechain Labs <rohan@timechainlabs.io> (https://timechainlabs.io)",
+    "type": "module",
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "react-native": "./dist/index.js",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs",
+            "default": "./dist/index.js"
+        },
+        "./schemas": {
+            "types": "./dist/schemas.d.ts",
+            "import": "./dist/schemas.js",
+            "require": "./dist/schemas.cjs",
+            "default": "./dist/schemas.js"
+        }
+    },
+    "files": [
+        "dist",
+        "LICENSE",
+        "README.md",
+        "CHANGELOG.md"
+    ],
+    "sideEffects": false,
+    "engines": {
+        "node": ">=20.19.0"
+    },
+    "scripts": {
+        "build": "tsdown --config-loader native",
+        "prepublishOnly": "npm run build",
+        "typecheck": "tsc --noEmit",
+        "dev": "ts-node src/index.ts",
+        "test": "vitest",
+        "test:unit": "vitest run --dir=tests/unit",
+        "test:integration": "vitest run --dir=tests/integration",
+        "test:run": "npm run test:unit && npm run test:integration",
+        "test:coverage": "vitest run --coverage",
+        "test:watch": "vitest --watch",
+        "test:ui": "vitest --ui",
+        "lint": "eslint . --ext .js,.ts,.jsx,.tsx",
+        "lint:fix": "eslint . --ext .js,.ts,.jsx,.tsx --fix",
+        "format": "prettier . --write",
+        "format:check": "prettier . --check",
+        "prepare": "husky"
+    },
+    "dependencies": {
+        "axios": "^1.18.1",
+        "zod": "^4.4.3"
+    },
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "@types/node": "^26.1.1",
+        "@vitest/coverage-v8": "^4.1.10",
+        "eslint": "^10.7.0",
+        "husky": "^9.1.7",
+        "lint-staged": "^17.0.8",
+        "prettier": "^3.9.5",
+        "ts-node": "^10.9.2",
+        "tsdown": "^0.22.5",
+        "typescript": "~6.0.3",
+        "typescript-eslint": "^8.63.0",
+        "vitest": "^4.1.10"
+    },
+    "react-native": "./dist/index.js"
 }
