@@ -18,8 +18,8 @@ jobs:
               with:
                   node-version: '22'
                   registry-url: 'https://registry.npmjs.org'
-                  # Never cache dependencies in a release build.
-                  package-manager-cache: false
+                  # Dependency caching is deliberately not enabled here: release
+                  # builds should always resolve from the lockfile.
             # Trusted publishing needs npm >= 11.5.1; Node 22 still bundles
             # npm 10.x, which silently falls back to token auth and fails.
             - name: Upgrade npm for trusted publishing

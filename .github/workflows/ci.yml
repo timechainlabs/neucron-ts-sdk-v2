@@ -24,6 +24,12 @@ jobs:
                   cache: 'npm'
 
             # Install dependencies
+            # Uses the same npm major as the publish workflow so that lockfile
+            # strictness regressions surface here rather than at release time.
+            - name: Upgrade npm
+              run: |
+                  npm install -g npm@latest
+                  npm -v
             - name: Install dependencies
               run: npm ci
 
