@@ -13,21 +13,25 @@ let mockHttpClient: ReturnType<typeof createMockHttpClient>;
 let mockValidator: Record<string, ReturnType<typeof vi.fn>>;
 
 vi.mock('../../src/utils/http/http-client.js', () => ({
-    HttpClient: vi.fn().mockImplementation(() => createMockHttpClient()),
+    HttpClient: vi.fn().mockImplementation(function () {
+        return createMockHttpClient();
+    }),
 }));
 
 vi.mock('../../src/services/members/validator.js', () => ({
-    default: vi.fn().mockImplementation(() => ({
-        getMembers: vi.fn(),
-        membersListResponse: vi.fn(),
-        createInvites: vi.fn(),
-        createInvitesResponse: vi.fn(),
-        invitesListResponse: vi.fn(),
-        assignRoles: vi.fn(),
-        assignRolesResponse: vi.fn(),
-        removeMember: vi.fn(),
-        removeMemberResponse: vi.fn(),
-    })),
+    default: vi.fn().mockImplementation(function () {
+        return {
+            getMembers: vi.fn(),
+            membersListResponse: vi.fn(),
+            createInvites: vi.fn(),
+            createInvitesResponse: vi.fn(),
+            invitesListResponse: vi.fn(),
+            assignRoles: vi.fn(),
+            assignRolesResponse: vi.fn(),
+            removeMember: vi.fn(),
+            removeMemberResponse: vi.fn(),
+        };
+    }),
 }));
 
 vi.mock('../../src/utils/errors/helper.js', () => ({

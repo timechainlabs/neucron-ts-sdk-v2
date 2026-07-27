@@ -37,10 +37,10 @@ jobs:
 
       # Run unit tests
       - name: Run unit tests
-        run: npm run test:unit --coverage
+        run: npm run test:unit -- --coverage
       # Run integration tests
       - name: Run integration tests
-        run: npm run test:integration --coverage
+        run: npm run test:integration -- --coverage
         env:
           TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
           TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}

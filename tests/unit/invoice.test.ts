@@ -31,33 +31,37 @@ const invoiceData = {
 };
 
 vi.mock('../../src/utils/http/http-client.js', () => ({
-    HttpClient: vi.fn().mockImplementation(() => createMockHttpClient()),
+    HttpClient: vi.fn().mockImplementation(function () {
+        return createMockHttpClient();
+    }),
 }));
 
 vi.mock('../../src/services/invoice/validator.js', () => ({
-    default: vi.fn().mockImplementation(() => ({
-        createInvoice: vi.fn(),
-        listInvoices: vi.fn(),
-        invoiceId: vi.fn(),
-        updateInvoice: vi.fn(),
-        markInvoiceAsPaid: vi.fn(),
-        shareInvoice: vi.fn(),
-        emailPayload: vi.fn(),
-        mapCollection: vi.fn(),
-        submitCollection: vi.fn(),
-        paymentCollection: vi.fn(),
-        paymentSession: vi.fn(),
-        sessionId: vi.fn(),
-        checkPayment: vi.fn(),
-        checkSession: vi.fn(),
-        paymentCollectionList: vi.fn(),
-        collectionId: vi.fn(),
-        walletPaymentCollectionInfo: vi.fn(),
-        walletCustomization: vi.fn(),
-        revenueGraphFilters: vi.fn(),
-        invoicesListResponse: vi.fn(),
-        messageResponse: vi.fn(),
-    })),
+    default: vi.fn().mockImplementation(function () {
+        return {
+            createInvoice: vi.fn(),
+            listInvoices: vi.fn(),
+            invoiceId: vi.fn(),
+            updateInvoice: vi.fn(),
+            markInvoiceAsPaid: vi.fn(),
+            shareInvoice: vi.fn(),
+            emailPayload: vi.fn(),
+            mapCollection: vi.fn(),
+            submitCollection: vi.fn(),
+            paymentCollection: vi.fn(),
+            paymentSession: vi.fn(),
+            sessionId: vi.fn(),
+            checkPayment: vi.fn(),
+            checkSession: vi.fn(),
+            paymentCollectionList: vi.fn(),
+            collectionId: vi.fn(),
+            walletPaymentCollectionInfo: vi.fn(),
+            walletCustomization: vi.fn(),
+            revenueGraphFilters: vi.fn(),
+            invoicesListResponse: vi.fn(),
+            messageResponse: vi.fn(),
+        };
+    }),
 }));
 
 vi.mock('../../src/utils/errors/helper.js', () => ({

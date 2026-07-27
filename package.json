@@ -36,7 +36,8 @@
     "url": "https://github.com/rustybuddha/neucron-ts-sdk-v2.git/issues"
   },
   "scripts": {
-    "build": "tsdown build src/index.ts src/schemas.ts --format cjs,esm --dts --clean",
+    "build": "tsdown --config-loader native",
+    "prepublishOnly": "npm run build",
     "typecheck": "tsc --noEmit",
     "dev": "ts-node src/index.ts",
     "test": "vitest",

@@ -13,23 +13,27 @@ let mockHttpClient: ReturnType<typeof createMockHttpClient>;
 let mockValidator: Record<string, ReturnType<typeof vi.fn>>;
 
 vi.mock('../../src/utils/http/http-client.js', () => ({
-    HttpClient: vi.fn().mockImplementation(() => createMockHttpClient()),
+    HttpClient: vi.fn().mockImplementation(function () {
+        return createMockHttpClient();
+    }),
 }));
 
 vi.mock('../../src/services/payout/validator.js', () => ({
-    default: vi.fn().mockImplementation(() => ({
-        createPayout: vi.fn(),
-        createPayoutRequest: vi.fn(),
-        payoutId: vi.fn(),
-        updatePayout: vi.fn(),
-        listPayouts: vi.fn(),
-        confirmPayout: vi.fn(),
-        createPayoutResponse: vi.fn(),
-        triggerPayoutResponse: vi.fn(),
-        confirmPayoutResponse: vi.fn(),
-        payoutListResponse: vi.fn(),
-        payoutResponse: vi.fn(),
-    })),
+    default: vi.fn().mockImplementation(function () {
+        return {
+            createPayout: vi.fn(),
+            createPayoutRequest: vi.fn(),
+            payoutId: vi.fn(),
+            updatePayout: vi.fn(),
+            listPayouts: vi.fn(),
+            confirmPayout: vi.fn(),
+            createPayoutResponse: vi.fn(),
+            triggerPayoutResponse: vi.fn(),
+            confirmPayoutResponse: vi.fn(),
+            payoutListResponse: vi.fn(),
+            payoutResponse: vi.fn(),
+        };
+    }),
 }));
 
 vi.mock('../../src/utils/errors/helper.js', () => ({

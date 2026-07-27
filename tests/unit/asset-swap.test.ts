@@ -13,17 +13,21 @@ let mockHttpClient: ReturnType<typeof createMockHttpClient>;
 let mockValidator: Record<string, ReturnType<typeof vi.fn>>;
 
 vi.mock('../../src/utils/http/http-client.js', () => ({
-    HttpClient: vi.fn().mockImplementation(() => createMockHttpClient()),
+    HttpClient: vi.fn().mockImplementation(function () {
+        return createMockHttpClient();
+    }),
 }));
 
 vi.mock('../../src/services/asset-swap/validator.js', () => ({
-    default: vi.fn().mockImplementation(() => ({
-        swappableAssetsResponse: vi.fn(),
-        swapAssets: vi.fn(),
-        swapAssetsResponse: vi.fn(),
-        swapRate: vi.fn(),
-        swapRateResponse: vi.fn(),
-    })),
+    default: vi.fn().mockImplementation(function () {
+        return {
+            swappableAssetsResponse: vi.fn(),
+            swapAssets: vi.fn(),
+            swapAssetsResponse: vi.fn(),
+            swapRate: vi.fn(),
+            swapRateResponse: vi.fn(),
+        };
+    }),
 }));
 
 vi.mock('../../src/utils/errors/helper.js', () => ({

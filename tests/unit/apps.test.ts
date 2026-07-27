@@ -13,17 +13,21 @@ let mockHttpClient: ReturnType<typeof createMockHttpClient>;
 let mockValidator: Record<string, ReturnType<typeof vi.fn>>;
 
 vi.mock('../../src/utils/http/http-client.js', () => ({
-    HttpClient: vi.fn().mockImplementation(() => createMockHttpClient()),
+    HttpClient: vi.fn().mockImplementation(function () {
+        return createMockHttpClient();
+    }),
 }));
 
 vi.mock('../../src/services/apps/validator.js', () => ({
-    default: vi.fn().mockImplementation(() => ({
-        appsListResponse: vi.fn(),
-        createApp: vi.fn(),
-        createAppResponse: vi.fn(),
-        getAppSecret: vi.fn(),
-        appSecretResponse: vi.fn(),
-    })),
+    default: vi.fn().mockImplementation(function () {
+        return {
+            appsListResponse: vi.fn(),
+            createApp: vi.fn(),
+            createAppResponse: vi.fn(),
+            getAppSecret: vi.fn(),
+            appSecretResponse: vi.fn(),
+        };
+    }),
 }));
 
 vi.mock('../../src/utils/errors/helper.js', () => ({

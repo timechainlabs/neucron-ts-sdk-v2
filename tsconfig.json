@@ -12,6 +12,7 @@
         "resolveJsonModule": true,
         "moduleDetection": "force",
         "strict": true,
+        "types": ["node"],
         "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true
     },

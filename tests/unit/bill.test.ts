@@ -43,23 +43,27 @@ const billPayload = {
 };
 
 vi.mock('../../src/utils/http/http-client.js', () => ({
-    HttpClient: vi.fn().mockImplementation(() => createMockHttpClient()),
+    HttpClient: vi.fn().mockImplementation(function () {
+        return createMockHttpClient();
+    }),
 }));
 
 vi.mock('../../src/services/bill/validator.js', () => ({
-    default: vi.fn().mockImplementation(() => ({
-        createBill: vi.fn(),
-        updateBill: vi.fn(),
-        billId: vi.fn(),
-        listBills: vi.fn(),
-        reviewBill: vi.fn(),
-        payBill: vi.fn(),
-        mapBillToPayout: vi.fn(),
-        acceptVendorInvitation: vi.fn(),
-        createBillResponse: vi.fn(),
-        updateBillResponse: vi.fn(),
-        payBillResponse: vi.fn(),
-    })),
+    default: vi.fn().mockImplementation(function () {
+        return {
+            createBill: vi.fn(),
+            updateBill: vi.fn(),
+            billId: vi.fn(),
+            listBills: vi.fn(),
+            reviewBill: vi.fn(),
+            payBill: vi.fn(),
+            mapBillToPayout: vi.fn(),
+            acceptVendorInvitation: vi.fn(),
+            createBillResponse: vi.fn(),
+            updateBillResponse: vi.fn(),
+            payBillResponse: vi.fn(),
+        };
+    }),
 }));
 
 vi.mock('../../src/utils/errors/helper.js', () => ({

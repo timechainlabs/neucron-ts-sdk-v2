@@ -20,7 +20,9 @@ vi.mock('../../src/utils/http/http-client.js', () => {
     });
 
     return {
-        HttpClient: vi.fn().mockImplementation(mockImplementation),
+        HttpClient: vi.fn().mockImplementation(function () {
+            return mockImplementation();
+        }),
     };
 });
 
@@ -34,7 +36,9 @@ vi.mock('../../src/services/pay/validator.js', () => {
     });
 
     return {
-        default: vi.fn().mockImplementation(mockImplementation),
+        default: vi.fn().mockImplementation(function () {
+            return mockImplementation();
+        }),
     };
 });
 

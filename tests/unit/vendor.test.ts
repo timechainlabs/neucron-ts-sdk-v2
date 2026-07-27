@@ -39,21 +39,25 @@ const vendorPayload = {
 };
 
 vi.mock('../../src/utils/http/http-client.js', () => ({
-    HttpClient: vi.fn().mockImplementation(() => createMockHttpClient()),
+    HttpClient: vi.fn().mockImplementation(function () {
+        return createMockHttpClient();
+    }),
 }));
 
 vi.mock('../../src/services/vendor/validator.js', () => ({
-    default: vi.fn().mockImplementation(() => ({
-        listVendors: vi.fn(),
-        vendorId: vi.fn(),
-        createVendor: vi.fn(),
-        updateVendor: vi.fn(),
-        setVendorSuspension: vi.fn(),
-        acceptVendor: vi.fn(),
-        expenseGraphFilters: vi.fn(),
-        payVendor: vi.fn(),
-        messageResponse: vi.fn(),
-    })),
+    default: vi.fn().mockImplementation(function () {
+        return {
+            listVendors: vi.fn(),
+            vendorId: vi.fn(),
+            createVendor: vi.fn(),
+            updateVendor: vi.fn(),
+            setVendorSuspension: vi.fn(),
+            acceptVendor: vi.fn(),
+            expenseGraphFilters: vi.fn(),
+            payVendor: vi.fn(),
+            messageResponse: vi.fn(),
+        };
+    }),
 }));
 
 vi.mock('../../src/utils/errors/helper.js', () => ({
