@@ -58,6 +58,9 @@
     "typescript",
     "sdk"
   ],
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "author": "codeshaine",
   "license": "MIT",
   "devDependencies": {
