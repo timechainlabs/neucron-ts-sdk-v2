@@ -134,3 +134,19 @@ dist
 .yarn/install-state.gz
 .pnp.*
 .envrc
+
+# Alternative package managers. npm is the single source of truth for this
+# package: package-lock.json is what CI installs from and what the publish
+# pipeline verifies. A second lockfile only drifts and confuses contributors.
+bun.lock
+bun.lockb
+yarn.lock
+pnpm-lock.yaml
+
+# AI assistant scaffolding is developer-local, not part of the published SDK.
+CLAUDE.md
+AGENTS.md
+GEMINI.md
+.claude/
+.gitnexus/
+.cursor/
