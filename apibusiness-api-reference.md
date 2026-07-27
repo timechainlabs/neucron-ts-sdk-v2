@@ -47,7 +47,6 @@ Configured via environment variable `import.meta.env.VITE_API_BASE_URL`.
 | `Authorization` | `{token}` | From `localStorage.getItem("token")` |
 | `X-Neucron-Business-ID` | Business ID | From param or `localStorage.getItem("selectedBusiness")` (skipped if `"personal"`) |
 | `X-Identifier` | `NEUCRON` | Required for token validation on non-auth endpoints |
-| `X-Neucron-Team-ID` | Team ID | Used on some member/role endpoints when `teamId` is provided |
 
 ### Helper
 
@@ -927,7 +926,7 @@ Array<{
 
 **Query Parameters:** `memberID`, optional `teamID`
 
-**Headers:** `X-Neucron-Business-ID`, optional `X-Neucron-Team-ID`
+**Headers:** `X-Neucron-Business-ID`
 
 **Request Body:** `string[]` (role IDs)
 
