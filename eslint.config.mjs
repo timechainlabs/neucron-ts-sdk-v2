@@ -10,6 +10,22 @@ export default tseslint.config(
     ignores: ['dist', 'jest.config.cjs'], //files that you want to ignore
   },
   {
+    // Maintenance scripts run in Node, not in the browser or the SDK bundle,
+    // so they may use Node globals. Declared inline rather than pulling in the
+    // `globals` package for a handful of names.
+    files: ['scripts/**/*.mjs', 'scripts/**/*.js'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        fetch: 'readonly',
+        process: 'readonly',
+      },
+    },
+    rules: {
+      'no-console': 'off',
+    },
+  },
+  {
     // relaxed linting for tests
     files: ['tests/**/*.ts', 'tests/**/*.tsx'],
     rules: {
