@@ -5,14 +5,36 @@ The SDK normalizes all errors into a single `NeucronError` class.
 ## NeucronError
 
 ```typescript
-import { NeucronError } from '@neucron/ts-sdk';
+import { NeucronError, isNeucronError } from '@timechainlabs/neucron-ts-sdk';
 
 class NeucronError extends Error {
     type: 'network' | 'validation' | 'internal';
     status?: number; // Status code (network errors)
     data?: unknown; // Error body (network errors)
     headers?: Record<string, string>;
+    request?: { method?: string; url?: string }; // failed call context
     issues?: Array<{ path: string; message: string }>; // validation errors
+
+    // convenience getters
+    get isAuthError(): boolean; // 401 or 403
+    get isRateLimit(): boolean; // 429
+    get isRetryable(): boolean; // 408/429/5xx or connection failure
+}
+```
+
+## Detecting SDK errors
+
+Prefer the `isNeucronError()` type guard over `instanceof`. It stays reliable even when multiple copies of the SDK end up in one dependency tree:
+
+```typescript
+import { isNeucronError } from '@timechainlabs/neucron-ts-sdk';
+
+try {
+    await sdk.wallet.walletList();
+} catch (err) {
+    if (isNeucronError(err)) {
+        console.log(err.type, err.status, err.request);
+    }
 }
 ```
 
@@ -55,6 +77,13 @@ try {
 | ------------ | ------------------------------------------- |
 | 500+ or 0    | Message: `"Network error"`                  |
 | 4xx          | Message from `data.message` or `data.error` |
+| timeout      | Message: `"Request timed out"`, no `status` |
+
+Timeouts and connection failures also produce `type: 'network'` errors; they carry no `status` but do include `request` context.
+
+### Retries
+
+Idempotent (GET) requests are retried automatically up to `maxRetries` times (default 2) on `408`, `429`, `502`, `503`, `504`, and network errors, with exponential backoff and `Retry-After` support. An error you catch from a GET call means retries were already exhausted. Mutating requests are never retried automatically; use `err.isRetryable` to decide whether your own retry is safe.
 
 ### `internal`
 
@@ -74,7 +103,7 @@ try {
 ## Recommended Error Handler
 
 ```typescript
-import { NeucronError } from '@neucron/ts-sdk';
+import { NeucronError } from '@timechainlabs/neucron-ts-sdk';
 
 function handleNeucronError(err: unknown): void {
     if (!(err instanceof NeucronError)) {

@@ -5,7 +5,7 @@ This guide walks you through authenticating and making your first calls with the
 ## 1. Initialize the SDK
 
 ```typescript
-import NeucronSDK from '@neucron/ts-sdk';
+import NeucronSDK from '@timechainlabs/neucron-ts-sdk';
 
 const sdk = new NeucronSDK();
 ```
@@ -96,7 +96,7 @@ const invoices = await sdk.invoice.getInvoices({
 ## Complete Example
 
 ```typescript
-import NeucronSDK, { NeucronError } from '@neucron/ts-sdk';
+import NeucronSDK, { NeucronError } from '@timechainlabs/neucron-ts-sdk';
 
 async function main() {
   const sdk = new NeucronSDK();

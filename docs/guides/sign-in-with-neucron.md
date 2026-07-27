@@ -1,6 +1,6 @@
 # Sign in with Neucron (OAuth 2.0 Authorization Code)
 
-This guide shows how to add **Sign in with Neucron** to any application using the `@neucron/ts-sdk`. The flow is stack-agnostic — adapt the route names and session storage to your framework (Express, Next.js, NestJS, Django, etc.).
+This guide shows how to add **Sign in with Neucron** to any application using the `@timechainlabs/neucron-ts-sdk`. The flow is stack-agnostic — adapt the route names and session storage to your framework (Express, Next.js, NestJS, Django, etc.).
 
 ---
 
@@ -75,7 +75,7 @@ sequenceDiagram
 Install the SDK:
 
 ```bash
-npm install @neucron/ts-sdk
+npm install @timechainlabs/neucron-ts-sdk
 ```
 
 Store credentials in environment variables (never expose `client_secret` to the browser):
@@ -91,7 +91,7 @@ PLATFORM_NAME=YourApp
 Create a shared SDK instance with OAuth defaults:
 
 ```typescript
-import NeucronSDK, { generateOAuthState } from '@neucron/ts-sdk';
+import NeucronSDK, { generateOAuthState } from '@timechainlabs/neucron-ts-sdk';
 
 export const sdk = new NeucronSDK({
     baseUrl: process.env.NEUCRON_API_BASE_URL,

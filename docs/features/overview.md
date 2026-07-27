@@ -75,8 +75,8 @@ network?: 'MAIN' | 'TEST'
 
 ### Types
 
-Request and response types are exported from `@neucron/ts-sdk`:
+Request and response types are exported from `@timechainlabs/neucron-ts-sdk`:
 
 ```typescript
-import type { CreateWalletBody, CreateWalletReponse, LoginBody, LoginResponse } from '@neucron/ts-sdk';
+import type { CreateWalletBody, CreateWalletReponse, LoginBody, LoginResponse } from '@timechainlabs/neucron-ts-sdk';
 ```

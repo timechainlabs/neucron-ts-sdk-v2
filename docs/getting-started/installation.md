@@ -3,19 +3,19 @@
 ## npm
 
 ```bash
-npm install @neucron/ts-sdk
+npm install @timechainlabs/neucron-ts-sdk
 ```
 
 ## yarn
 
 ```bash
-yarn add @neucron/ts-sdk
+yarn add @timechainlabs/neucron-ts-sdk
 ```
 
 ## pnpm
 
 ```bash
-pnpm add @neucron/ts-sdk
+pnpm add @timechainlabs/neucron-ts-sdk
 ```
 
 ## Import Styles
@@ -23,16 +23,16 @@ pnpm add @neucron/ts-sdk
 ### ES Modules (recommended)
 
 ```typescript
-import NeucronSDK from '@neucron/ts-sdk';
-import { NeucronError } from '@neucron/ts-sdk';
-import type { LoginBody, LoginResponse } from '@neucron/ts-sdk';
+import NeucronSDK from '@timechainlabs/neucron-ts-sdk';
+import { NeucronError } from '@timechainlabs/neucron-ts-sdk';
+import type { LoginBody, LoginResponse } from '@timechainlabs/neucron-ts-sdk';
 ```
 
 ### CommonJS
 
 ```javascript
-const NeucronSDK = require('@neucron/ts-sdk').default;
-const { NeucronError } = require('@neucron/ts-sdk');
+const NeucronSDK = require('@timechainlabs/neucron-ts-sdk').default;
+const { NeucronError } = require('@timechainlabs/neucron-ts-sdk');
 ```
 
 ### Zod Schemas (optional)
@@ -40,7 +40,7 @@ const { NeucronError } = require('@neucron/ts-sdk');
 Runtime validation schemas are available as a separate export:
 
 ```typescript
-import { walletSchemas, commonSchemas } from '@neucron/ts-sdk/schemas';
+import { walletSchemas, commonSchemas } from '@timechainlabs/neucron-ts-sdk/schemas';
 ```
 
 ## TypeScript Configuration
@@ -75,7 +75,7 @@ The SDK is compatible with modern bundlers (Vite, Webpack, esbuild) and React Na
 ## Verify Installation
 
 ```typescript
-import NeucronSDK from '@neucron/ts-sdk';
+import NeucronSDK from '@timechainlabs/neucron-ts-sdk';
 
 const sdk = new NeucronSDK();
 console.log(typeof sdk.auth.login); // "function"

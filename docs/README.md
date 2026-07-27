@@ -1,6 +1,6 @@
 # Neucron TypeScript SDK
 
-Welcome to the official documentation for **@neucron/ts-sdk** — a type-safe TypeScript SDK for building applications on the Neucron platform.
+Welcome to the official documentation for **@timechainlabs/neucron-ts-sdk** — a type-safe TypeScript SDK for building applications on the Neucron platform.
 
 Neucron provides wallets, digital assets, payments, invoicing, security tokens, and business tooling on Bitcoin SV. This SDK exposes those capabilities as typed methods so you can build products without wiring low-level requests yourself.
 
@@ -22,11 +22,11 @@ Neucron provides wallets, digital assets, payments, invoicing, security tokens, 
 ## Package
 
 ```bash
-npm install @neucron/ts-sdk
+npm install @timechainlabs/neucron-ts-sdk
 ```
 
 ```typescript
-import NeucronSDK from '@neucron/ts-sdk';
+import NeucronSDK from '@timechainlabs/neucron-ts-sdk';
 
 const sdk = new NeucronSDK();
 ```

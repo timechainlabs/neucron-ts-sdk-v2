@@ -10,6 +10,8 @@ interface Config {
     businessId?: string;
     baseUrl?: string;
     sandbox?: boolean;
+    timeoutMs?: number;
+    maxRetries?: number;
     oauth?: {
         clientId?: string;
         clientSecret?: string;
@@ -78,6 +80,22 @@ await sdk.invoice.getInvoices({
 });
 ```
 
+### `timeoutMs`
+
+Per-request timeout in milliseconds. Defaults to `30000` (30 seconds). A request that exceeds it throws a `NeucronError` with `type: 'network'` and the message `Request timed out`.
+
+```typescript
+const sdk = new NeucronSDK({ timeoutMs: 10_000 });
+```
+
+### `maxRetries`
+
+Maximum automatic retries for **idempotent (GET) requests** that fail with `408`, `429`, `502`, `503`, `504`, or a network error. Defaults to `2`. Retries use exponential backoff and honor the `Retry-After` response header. Mutating requests (POST/PUT/PATCH/DELETE) are **never retried automatically**, so a payment can never be sent twice by the transport layer.
+
+```typescript
+const sdk = new NeucronSDK({ maxRetries: 0 }); // disable retries
+```
+
 ## Environment Variables (recommended pattern)
 
 Store credentials outside your codebase:
@@ -97,7 +115,7 @@ PLATFORM_NAME=YourApp
 For Sign in with Neucron, see [Sign in with Neucron (OAuth)](../guides/sign-in-with-neucron.md).
 
 ```typescript
-import NeucronSDK from '@neucron/ts-sdk';
+import NeucronSDK from '@timechainlabs/neucron-ts-sdk';
 
 const sdk = new NeucronSDK({
     authToken: process.env.NEUCRON_AUTH_TOKEN,
@@ -119,7 +137,7 @@ Never commit `.env` files or hardcode credentials in source code.
 
 ```typescript
 // services/neucron.ts
-import NeucronSDK from '@neucron/ts-sdk';
+import NeucronSDK from '@timechainlabs/neucron-ts-sdk';
 
 export const sdk = new NeucronSDK();
 ```
