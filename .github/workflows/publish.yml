@@ -26,6 +26,10 @@ jobs:
               run: npm run lint
             - name: Unit tests
               run: npm run test:unit
+            # Build before publishing so a broken build fails here rather than
+            # halfway through `npm publish`'s prepublishOnly hook.
+            - name: Build
+              run: npm run build
             - name: Verify release tag matches package version
               run: |
                   PKG_VERSION=$(node -p "require('./package.json').version")

@@ -38,6 +38,14 @@ jobs:
             # Run unit tests
             - name: Run unit tests
               run: npm run test:unit -- --coverage
+
+            # Build the distributable. This runs on every push because the
+            # publish workflow builds via `prepublishOnly`, so a build that only
+            # works on a maintainer's machine would otherwise fail at release
+            # time. It also catches missing platform-specific native bindings in
+            # package-lock.json (see scripts/patch-lockfile-bindings.mjs).
+            - name: Build
+              run: npm run build
             # Run integration tests against the live API. Non-blocking: these have
             # failed since mid-July because the TEST_USER_EMAIL account returns
             # "record not found" (test account missing on the API, not a code bug).
