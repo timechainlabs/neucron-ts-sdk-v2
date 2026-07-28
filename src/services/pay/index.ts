@@ -22,9 +22,12 @@ export class Pay {
         try {
             this.auth.validate();
 
-            const asset_id = ASSET_IDS[options.assetName];
+            const asset_id = options.asset_id ?? (options.assetName ? ASSET_IDS[options.assetName] : undefined);
             if (!asset_id) {
-                throw new Error(`Unsupported asset: ${options.assetName}`);
+                if (options.assetName) {
+                    throw new Error(`Unsupported asset: ${options.assetName}`);
+                }
+                throw new Error('Provide asset_id (or a supported assetName).');
             }
 
             const normalizedOptions: PayRequest = {

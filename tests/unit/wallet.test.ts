@@ -60,6 +60,10 @@ vi.mock('../../src/services/wallet/validator.js', () => {
         transactionDetailsResponse: vi.fn(),
         importAsset: vi.fn(),
         importAssetResponse: vi.fn(),
+        notificationList: vi.fn(),
+        notificationListResponse: vi.fn(),
+        markNotificationsRead: vi.fn(),
+        markNotificationsReadResponse: vi.fn(),
     });
 
     return {
@@ -114,6 +118,10 @@ describe('Wallet Service', () => {
             transactionDetailsResponse: vi.fn(),
             importAsset: vi.fn(),
             importAssetResponse: vi.fn(),
+            notificationList: vi.fn(),
+            notificationListResponse: vi.fn(),
+            markNotificationsRead: vi.fn(),
+            markNotificationsReadResponse: vi.fn(),
         };
 
         // Create mock authentication instance
@@ -524,6 +532,41 @@ describe('Wallet Service', () => {
                 network: 'MAIN',
                 walletID: 'wallet-1',
             });
+            expect(result.data).toEqual(response);
+        });
+
+        it('should get notifications', async () => {
+            const response = { notifications: [{ notification_id: 'n1', message: 'hi' }] };
+            mockValidator.notificationListResponse.mockReturnValue(response);
+            mockHttpClient.get.mockResolvedValue({ data: response, status: 200, statusText: 'OK' });
+
+            const result = await wallet.getNotifications({
+                businessId: 'biz-123',
+                state: 'UNREAD',
+                pageNumber: 1,
+                pageSize: 20,
+            });
+
+            expect(mockHttpClient.get).toHaveBeenCalledWith('/notification/all', businessHeaders, {
+                state: 'UNREAD',
+                pageNumber: 1,
+                pageSize: 20,
+            });
+            expect(result.data).toEqual(response);
+        });
+
+        it('should mark notifications as read', async () => {
+            const response = { message: 'ok' };
+            mockValidator.markNotificationsReadResponse.mockReturnValue(response);
+            mockHttpClient.post.mockResolvedValue({ data: response, status: 200, statusText: 'OK' });
+
+            const result = await wallet.markNotificationsAsRead({ notificationIds: ['n1', 'n2'] });
+
+            expect(mockHttpClient.post).toHaveBeenCalledWith(
+                '/notification/read',
+                { notification_ids: ['n1', 'n2'] },
+                authHeaders
+            );
             expect(result.data).toEqual(response);
         });
 

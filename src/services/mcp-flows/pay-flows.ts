@@ -9,6 +9,9 @@ import type {
     NeucronGetExpensesOptions,
 } from './types.js';
 import { toIsoDateTime } from '../../utils/schema/normalize.js';
+import { resolveFlowUpload } from './file.js';
+import type { ListVendors } from '../vendor/types.js';
+import type { ListBills } from '../bill/types.js';
 
 /**
  * Create, update, delete, invite, suspend, or accept a vendor.
@@ -63,7 +66,11 @@ export async function neucron_manage_bill(services: McpFlowServices, options: Ne
     const steps: Record<string, unknown> = {};
 
     if (options.vendorList) {
-        const vendors = await services.vendor.listVendors(options.vendorList);
+        const { businessId: vendorBusinessId, ...vendorFilters } = options.vendorList;
+        const vendors = await services.vendor.listVendors({
+            ...vendorFilters,
+            businessId: vendorBusinessId ?? businessId,
+        } as ListVendors);
         steps.vendors = vendors.data;
     }
 
@@ -73,7 +80,7 @@ export async function neucron_manage_bill(services: McpFlowServices, options: Ne
     }
 
     if (options.attachment) {
-        const uploaded = await services.blob.uploadDocument(options.attachment);
+        const uploaded = await services.blob.uploadDocument(resolveFlowUpload(options.attachment));
         steps.attachment = uploaded.data;
     }
 
@@ -154,12 +161,20 @@ export async function neucron_schedule_payment(services: McpFlowServices, option
     const steps: Record<string, unknown> = {};
 
     if (options.vendorList) {
-        const vendors = await services.vendor.listVendors(options.vendorList);
+        const { businessId: vendorBusinessId, ...vendorFilters } = options.vendorList;
+        const vendors = await services.vendor.listVendors({
+            ...vendorFilters,
+            businessId: vendorBusinessId ?? businessId,
+        } as ListVendors);
         steps.vendors = vendors.data;
     }
 
     if (options.billList) {
-        const bills = await services.bill.listBills(options.billList);
+        const { businessId: billBusinessId, ...billFilters } = options.billList;
+        const bills = await services.bill.listBills({
+            ...billFilters,
+            businessId: billBusinessId ?? businessId,
+        } as ListBills);
         steps.bills = bills.data;
     }
 

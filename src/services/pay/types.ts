@@ -7,7 +7,10 @@ export type PayResponse = z.infer<typeof payResponseSchema>;
 
 export interface PayRequestInput {
     walletID?: string;
-    assetName: AssetName;
+    /** Asset UUID to transfer. Preferred; matches the wire payload. */
+    asset_id?: string;
+    /** Legacy asset name alias (mapped to an asset_id internally via ASSET_IDS). */
+    assetName?: AssetName;
     transfer_destinations: PayRequest['transfer_destinations'];
 }
 

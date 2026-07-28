@@ -86,6 +86,40 @@ export const importAssetSchema = businessIdSchema.extend({
     decimals: z.number(),
 });
 
+export const notificationListSchema = businessIdSchema.extend({
+    state: z.string().optional(),
+    pageNumber: z.number().int().min(1).optional(),
+    pageSize: z.number().int().min(1).optional(),
+});
+
+export const markNotificationsReadSchema = z.object({
+    notificationIds: z.array(id).min(1),
+});
+
+export const notificationSchema = z
+    .object({
+        notification_id: z.string().optional(),
+        title: z.string().optional(),
+        message: z.string().optional(),
+        type: z.string().optional(),
+        state: z.string().optional(),
+        created_at: z.string().optional(),
+    })
+    .passthrough();
+
+export const notificationListResponseSchema = z
+    .object({
+        notifications: z.array(notificationSchema).optional(),
+        list: z.array(notificationSchema).optional(),
+    })
+    .passthrough();
+
+export const markNotificationsReadResponseSchema = z
+    .object({
+        message: z.string().optional(),
+    })
+    .passthrough();
+
 export const createWalletResponseSchema = z.object({
     wallet_id: id.optional(),
     paymail_id: id.optional(),

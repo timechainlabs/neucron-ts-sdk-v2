@@ -20,6 +20,10 @@ import {
     transactionDetailsResponseSchema,
     syncAssetResponseSchema,
     importAssetResponseSchema,
+    notificationListSchema,
+    markNotificationsReadSchema,
+    notificationListResponseSchema,
+    markNotificationsReadResponseSchema,
 } from './schema.js';
 import { normalizeTransactionsResponse } from '../../utils/schema/normalize.js';
 import type {
@@ -44,6 +48,10 @@ import type {
     TransactionDetailsResponse,
     ImportAsset,
     ImportAssetResponse,
+    NotificationList,
+    MarkNotificationsRead,
+    NotificationListResponse,
+    MarkNotificationsReadResponse,
 } from './types.js';
 
 export default class Validator {
@@ -129,5 +137,21 @@ export default class Validator {
 
     importAssetResponse(options: ImportAssetResponse) {
         return importAssetResponseSchema.parse(options);
+    }
+
+    notificationList(options: NotificationList) {
+        return notificationListSchema.parse(options);
+    }
+
+    notificationListResponse(options: NotificationListResponse) {
+        return notificationListResponseSchema.parse(options);
+    }
+
+    markNotificationsRead(options: MarkNotificationsRead) {
+        return markNotificationsReadSchema.parse(options);
+    }
+
+    markNotificationsReadResponse(options: MarkNotificationsReadResponse) {
+        return markNotificationsReadResponseSchema.parse(options);
     }
 }

@@ -34,6 +34,7 @@ import type { PayRequestInput } from '../pay/types.js';
 import type { FileUpload, TextUpload, TextArrayUpload } from '../data-integrity/types.js';
 import type { Register, CreateRequest, UpdateRequest, GetRequest, RequestDetails } from '../asset21/types.js';
 import type { UploadDocument, UploadImage } from '../blob/types.js';
+import type { FlowFile } from './file.js';
 import type {
     WalletCustomization,
     SubmitCollection,
@@ -62,6 +63,10 @@ export interface McpFlowServices {
     dataIntegrity: DataIntegrity;
     asset21: Assets21;
 }
+
+/** Upload options where the file may be a native file object or base64 content (MCP/JSON clients). */
+export type FlowUploadDocument = Omit<UploadDocument, 'file'> & { file: FlowFile };
+export type FlowUploadImage = Omit<UploadImage, 'file'> & { file: FlowFile };
 
 export type EntityType = 'personal' | 'business';
 
@@ -116,16 +121,20 @@ export interface NeucronCreateWalletOptions extends CreateWalletBody {
 export interface NeucronGetBalancesOptions {
     businessId?: string;
     walletID?: string;
-    ledger?: Omit<LedgerList, 'businessId'>;
-    balances: Omit<Balances, 'businessId'>;
+    ledger?: Omit<LedgerList, 'businessId' | 'walletID'>;
+    balances?: Omit<Balances, 'businessId' | 'walletID'>;
 }
 
-export interface NeucronGetTransactionHistoryOptions extends Transactions {
+export interface NeucronGetTransactionHistoryOptions extends Omit<Transactions, 'page' | 'limit'> {
+    page?: number;
+    limit?: number;
     includeDetails?: boolean;
     txid?: string;
 }
 
-export interface NeucronExportTransactionHistoryOptions extends Transactions {
+export interface NeucronExportTransactionHistoryOptions extends Omit<Transactions, 'page' | 'limit'> {
+    page?: number;
+    limit?: number;
     format?: 'csv' | 'json';
     fetchAllPages?: boolean;
 }
@@ -141,14 +150,14 @@ export interface NeucronGetNotificationLogsOptions {
 
 export interface NeucronCreateAppOptions extends CreateApp {
     fetchSecret?: boolean;
-    uploadDocument?: UploadDocument;
+    uploadDocument?: FlowUploadDocument;
 }
 
 export interface NeucronPublishAppOptions {
     businessId?: string;
     appId: string;
     finalUpdate?: Record<string, unknown>;
-    uploadIcon?: UploadImage;
+    uploadIcon?: FlowUploadImage;
     skipPublish?: boolean;
 }
 
@@ -185,11 +194,11 @@ export type NeucronManageCustomerAction = NeucronCustomerManageAction;
 
 export interface NeucronCreateInvoiceOptions {
     businessId?: string;
-    customerList?: ListCustomers;
+    customerList?: Omit<ListCustomers, 'businessId'> & { businessId?: string };
     invoiceData: CreateInvoice['invoiceData'];
     invoiceID?: string;
     updateData?: UpdateInvoice['invoiceData'];
-    attachment?: UploadDocument;
+    attachment?: FlowUploadDocument;
     share?: ShareInvoice;
     finalise?: boolean;
 }
@@ -230,8 +239,8 @@ export interface NeucronPayBillOptions {
 
 export interface NeucronSchedulePaymentOptions {
     businessId: string;
-    vendorList?: ListVendors;
-    billList?: ListBills;
+    vendorList?: Omit<ListVendors, 'businessId'> & { businessId?: string };
+    billList?: Omit<ListBills, 'businessId'> & { businessId?: string };
     billID: string;
     payoutPayload: CreatePayout['payload'];
 }
@@ -239,12 +248,12 @@ export interface NeucronSchedulePaymentOptions {
 export interface NeucronManageBillOptions {
     businessId: string;
     mode: 'create' | 'update' | 'review';
-    vendorList?: ListVendors;
+    vendorList?: Omit<ListVendors, 'businessId'> & { businessId?: string };
     billID?: string;
     createPayload?: CreateBill['payload'];
     updatePayload?: UpdateBill['payload'];
     review?: ReviewBill;
-    attachment?: UploadDocument;
+    attachment?: FlowUploadDocument;
 }
 
 export type NeucronCreatePayoutOptions =
@@ -265,7 +274,7 @@ export type NeucronGetExpensesOptions = ExpenseGraphFilters;
 
 // --- Data Integrity ---
 
-export type NeucronInscribeDocumentOptions = FileUpload;
+export type NeucronInscribeDocumentOptions = Omit<FileUpload, 'file'> & { file: FlowFile };
 
 export type NeucronInscribeTextOptions = TextUpload;
 

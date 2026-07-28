@@ -14,11 +14,46 @@ export const pageMetaSchema = z.object({
     total_pages: z.number(),
 });
 
+/**
+ * Optional business ID that tolerates empty strings from MCP/LLM clients.
+ * An empty or whitespace-only string is normalized to `undefined` instead of
+ * failing a `min(1)` check, since business context is genuinely optional on
+ * most endpoints (the personal account is used instead).
+ */
+export const optionalBusinessId = z.preprocess(
+    (value) => (typeof value === 'string' && value.trim() === '' ? undefined : value),
+    z.string().min(1).optional()
+);
+
 export const businessIdSchema = z.object({
-    businessId: nonEmptyString.optional(),
+    businessId: optionalBusinessId,
 });
 
 export const networkEnum = z.enum(['MAIN', 'TEST']);
+
+/** JSON-friendly file content for clients (e.g. MCP tools) that cannot send File/Blob objects. */
+export const base64FileSchema = z.object({
+    fileBase64: z.string().min(1).describe('Base64-encoded file content.'),
+    fileName: z.string().optional().describe('File name to use (defaults to "upload.bin").'),
+    mimeType: z.string().optional().describe('MIME type of the file (defaults to application/octet-stream).'),
+});
+
+/** Free-form key/value metadata with primitive values (JSON-schema friendly; no z.unknown()). */
+export const metadataSchema = z.record(z.string(), z.union([z.string(), z.number(), z.boolean()]));
+
+/** React Native file descriptor ({ uri, name, type }) — JSON-schema representable. */
+export const reactNativeFileSchema = z.object({
+    uri: z.string().min(1),
+    name: z.string().min(1),
+    type: z.string().min(1),
+});
+
+/**
+ * JSON-schema-safe file input for MCP tool definitions: base64 content or a
+ * React Native file descriptor. (Native File/Blob objects are also accepted by
+ * the flow implementations at runtime, but cannot be expressed in JSON Schema.)
+ */
+export const jsonFileSchema = z.union([base64FileSchema, reactNativeFileSchema]);
 
 /** React Native file object from DocumentPicker / ImagePicker */
 export interface ReactNativeUploadFile {
@@ -54,3 +89,9 @@ export const uploadableFileSchema = z.custom<Blob | File | ReactNativeUploadFile
     },
     { message: 'Expected a File, Blob, or React Native file object { uri, name, type }' }
 );
+
+/**
+ * File accepted by compound MCP flows: a native File/Blob/React Native file
+ * object, or base64-encoded content for JSON-only clients (MCP tools).
+ */
+export const flowFileSchema = z.union([uploadableFileSchema, base64FileSchema]);

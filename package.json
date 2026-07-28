@@ -1,6 +1,6 @@
 {
     "name": "@timechainlabs/neucron-ts-sdk",
-    "version": "2.1.1",
+    "version": "2.2.0",
     "description": "Wallet infrastructure SDK for fintechs: MPC wallets, smart accounts, stablecoin payments (USDC/USDT), mass payouts, invoicing, subscriptions, policy controls, KYC/KYB, approval workflows, and 50+ blockchain rails. Non-custodial or custodial. Sign up at console.neucron.io.",
     "keywords": [
         "neucron",

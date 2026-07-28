@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { optionalBusinessId } from '../../utils/schema/common.js';
 
 const AssetTypeEnum = z.enum(['CERTIFICATE', 'UTILITY', 'SECURITY', 'STABLECOIN', 'MNEE', 'TICKET']);
 
@@ -177,7 +178,7 @@ export const ledgerListSchema = z.object({
     walletID: z.string().optional(),
     pageNumber: z.number().int().min(1).optional(),
     pageSize: z.number().int().min(1).optional(),
-    businessId: z.string().optional(),
+    businessId: optionalBusinessId,
 });
 
 export const ledgerListResponseSchema = z.any();
@@ -189,7 +190,7 @@ export const assetListSchema = z.object({
     walletID: z.string().optional(),
     pageNumber: z.number().int().min(1).optional(),
     pageSize: z.number().int().min(1).optional(),
-    businessId: z.string().optional(),
+    businessId: optionalBusinessId,
 });
 
 export const assetListResponseSchema = z.any();
@@ -211,7 +212,7 @@ export const balancesSchema = z.object({
     walletID: z.string(),
     network: z.enum(['MAIN', 'TEST']).optional(),
     currency: z.string().optional(),
-    businessId: z.string().optional(),
+    businessId: optionalBusinessId,
 });
 
 export const balancesResponseSchema = z.object({
@@ -226,7 +227,7 @@ export const publicAssetListSchema = z.object({
     pageNumber: z.number().optional(),
     network: z.string().optional(),
     chain: z.string().optional(),
-    businessId: z.string().optional(),
+    businessId: optionalBusinessId,
 });
 
 export const publicAssetListResponseSchema = z.record(z.string(), z.unknown());
@@ -234,14 +235,14 @@ export const publicAssetListResponseSchema = z.record(z.string(), z.unknown());
 export const ownedAssetDetailsSchema = z.object({
     assetID: z.string().min(1),
     walletID: z.string().min(1),
-    businessId: z.string().optional(),
+    businessId: optionalBusinessId,
 });
 
 export const ownedAssetDetailsResponseSchema = z.record(z.string(), z.unknown());
 
 export const eventDetailsSchema = z.object({
     eventId: z.string().min(1),
-    businessId: z.string().optional(),
+    businessId: optionalBusinessId,
 });
 
 export const eventDetailsResponseSchema = z.record(z.string(), z.unknown());

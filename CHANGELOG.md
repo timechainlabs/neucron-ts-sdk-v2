@@ -1,4 +1,40 @@
 # Changelog
+## [2.2.0] - 2026-07-28
+
+### Added
+
+- **Compound MCP flow schemas**: complete zod input schemas for every
+  `sdk.flows.*` compound workflow, exported as `mcpFlowSchemas` from
+  `@timechainlabs/neucron-ts-sdk/schemas`. The MCP server imports these
+  instead of re-declaring tool input schemas. No `z.unknown()`/`z.any()`
+  in flow-reachable input schemas.
+- **Notification APIs on the Wallet service**: `getNotifications`
+  (`GET /notification/all`) and `markNotificationsAsRead`
+  (`POST /notification/read`), wired into the `neucron_get_notification_logs`
+  flow (previously threw "not yet exposed").
+- **Base64 file inputs for flows**: compound flows that upload files
+  (`neucron_inscribe_document`, `neucron_create_app`, `neucron_publish_app`,
+  `neucron_create_invoice`, `neucron_manage_bill`) now accept
+  `{ fileBase64, fileName?, mimeType? }` in addition to File/Blob, so
+  JSON-only clients (MCP tools) can upload files.
+- `metadataSchema`, `optionalBusinessId`, `base64FileSchema`, and
+  `flowFileSchema` helpers in common schemas.
+- Unit tests for all compound flow schemas and the notification endpoints.
+
+### Fixed
+
+- **businessId validation**: `businessId` is optional on most endpoints, but
+  an empty string from MCP/LLM clients failed `min(1)` validation (e.g.
+  `neucron_get_asset_list`). Empty/whitespace strings are now normalized to
+  `undefined` (`optionalBusinessId`).
+- Flow option types relaxed where implementations already resolve defaults:
+  nested list filters (`customerList`, `vendorList`, `billList`) inherit the
+  flow-level `businessId`; transaction history pagination has defaults.
+- Completed previously `z.record(z.unknown())` input fields: customer
+  `contact_persons`/`individual_details`/`payment_details`/`tax_payer_info`,
+  invoice collection `metadata`, vendor `payDTO.meta`, bill `payDTO.meta`,
+  and Asset21 `holder_identity_config`.
+
 ## [2.1.1] - 2026-07-28
 
 ### Changed

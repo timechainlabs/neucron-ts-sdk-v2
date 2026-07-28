@@ -1,5 +1,6 @@
 import type { McpFlowServices } from './types.js';
 import type { NeucronCreateAppOptions, NeucronPublishAppOptions, NeucronBrowseAppstoreOptions } from './types.js';
+import { resolveFlowUpload } from './file.js';
 
 /**
  * Create a developer application, retrieve credentials, and optionally upload supporting documents.
@@ -26,7 +27,7 @@ export async function neucron_create_app(services: McpFlowServices, options: Neu
 
     let documentUpload: unknown;
     if (uploadDocument) {
-        const uploadResponse = await services.blob.uploadDocument(uploadDocument);
+        const uploadResponse = await services.blob.uploadDocument(resolveFlowUpload(uploadDocument));
         documentUpload = uploadResponse.data;
     }
 
@@ -50,7 +51,7 @@ export async function neucron_publish_app(services: McpFlowServices, options: Ne
     const appData: Record<string, unknown> = { ...(options.finalUpdate ?? {}) };
 
     if (options.uploadIcon) {
-        const uploaded = await services.blob.uploadImage(options.uploadIcon);
+        const uploaded = await services.blob.uploadImage(resolveFlowUpload(options.uploadIcon));
         iconUpload = uploaded.data;
         const iconUrl =
             (uploaded.data as Record<string, unknown>).url ??

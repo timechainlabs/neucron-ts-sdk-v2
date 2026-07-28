@@ -21,6 +21,10 @@ import {
     transactionDetailsResponseSchema,
     syncAssetResponseSchema,
     importAssetResponseSchema,
+    notificationListSchema,
+    markNotificationsReadSchema,
+    notificationListResponseSchema,
+    markNotificationsReadResponseSchema,
 } from './schema.js';
 
 export type CreateWalletBody = z.infer<typeof createWalletSchema>;
@@ -43,4 +47,8 @@ export type TransactionsResponse = z.infer<typeof transactionsResponseSchema>;
 export type TransactionDetails = z.infer<typeof transactionDetailsSchema>;
 export type TransactionDetailsResponse = z.infer<typeof transactionDetailsResponseSchema>;
 export type ImportAsset = z.infer<typeof importAssetSchema>;
+export type NotificationList = z.infer<typeof notificationListSchema>;
+export type MarkNotificationsRead = z.infer<typeof markNotificationsReadSchema>;
+export type NotificationListResponse = z.infer<typeof notificationListResponseSchema>;
+export type MarkNotificationsReadResponse = z.infer<typeof markNotificationsReadResponseSchema>;
 export type ImportAssetResponse = z.infer<typeof importAssetResponseSchema>;
