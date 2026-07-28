@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import axios from 'axios';
 import { HttpClient } from '../../src/utils/http/http-client.js';
 import { SDK_NAME, SDK_VERSION } from '../../src/utils/version.js';
 import pkg from '../../package.json' with { type: 'json' };
@@ -11,78 +10,148 @@ describe('SDK version constant', () => {
 });
 
 describe('HttpClient transport behavior', () => {
-    let requestMock: ReturnType<typeof vi.fn>;
+    let fetchMock: ReturnType<typeof vi.fn>;
 
     beforeEach(() => {
-        requestMock = vi.fn();
-        vi.spyOn(axios, 'create').mockReturnValue({ request: requestMock } as never);
+        fetchMock = vi.fn();
+        vi.stubGlobal('fetch', fetchMock);
     });
 
     afterEach(() => {
+        vi.useRealTimers();
+        vi.unstubAllGlobals();
         vi.restoreAllMocks();
     });
 
-    it('sets a default timeout and SDK identification header', () => {
-        new HttpClient('https://example.test/v1');
-        expect(axios.create).toHaveBeenCalledWith({
-            timeout: 30_000,
-            headers: { 'X-Neucron-SDK': `${SDK_NAME}/${SDK_VERSION}` },
+    function jsonResponse(data: unknown, init: ResponseInit = {}) {
+        return new Response(JSON.stringify(data), {
+            status: init.status ?? 200,
+            headers: {
+                'content-type': 'application/json',
+                ...(init.headers as Record<string, string> | undefined),
+            },
         });
+    }
+
+    it('sets SDK identification and JSON headers on JSON requests', async () => {
+        fetchMock.mockResolvedValueOnce(jsonResponse({ ok: true }));
+
+        const client = new HttpClient('https://example.test/v1');
+        await client.post('/pay', { amount: 1 }, { authorization: 'Bearer token' });
+
+        expect(fetchMock).toHaveBeenCalledWith(
+            'https://example.test/v1/pay',
+            expect.objectContaining({
+                method: 'POST',
+                body: JSON.stringify({ amount: 1 }),
+                headers: expect.objectContaining({
+                    'Content-Type': 'application/json',
+                    'X-Neucron-SDK': `${SDK_NAME}/${SDK_VERSION}`,
+                    authorization: 'Bearer token',
+                }),
+            })
+        );
     });
 
-    it('honors a custom timeout', () => {
-        new HttpClient('https://example.test/v1', { timeoutMs: 5000 });
-        expect(axios.create).toHaveBeenCalledWith(expect.objectContaining({ timeout: 5000 }));
+    it('does not set JSON content type for FormData requests', async () => {
+        fetchMock.mockResolvedValueOnce(jsonResponse({ ok: true }));
+        const form = new FormData();
+        form.append('file', new Blob(['hello']), 'hello.txt');
+
+        const client = new HttpClient('https://example.test/v1');
+        await client.post('/upload', form, {});
+
+        expect(fetchMock).toHaveBeenCalledWith(
+            'https://example.test/v1/upload',
+            expect.objectContaining({
+                body: form,
+                headers: expect.not.objectContaining({ 'Content-Type': 'application/json' }),
+            })
+        );
+    });
+
+    it('appends query params and parses JSON responses', async () => {
+        fetchMock.mockResolvedValueOnce(jsonResponse({ ok: true }, { headers: { 'x-request-id': 'req_1' } }));
+
+        const client = new HttpClient('https://example.test/v1');
+        const res = await client.get('/ping', { authorization: 'Bearer token' }, { page: 1, limit: undefined });
+
+        expect(fetchMock).toHaveBeenCalledWith(
+            'https://example.test/v1/ping?page=1',
+            expect.objectContaining({ method: 'GET' })
+        );
+        expect(res).toEqual({
+            data: { ok: true },
+            headers: expect.objectContaining({ 'x-request-id': 'req_1' }),
+            status: 200,
+        });
     });
 
     it('retries GET on 503 and succeeds', async () => {
-        const failure = Object.assign(new Error('Service Unavailable'), {
-            isAxiosError: true,
-            response: { status: 503, headers: {} },
-        });
-        requestMock
-            .mockRejectedValueOnce(failure)
-            .mockResolvedValueOnce({ data: { ok: true }, headers: {}, status: 200 });
+        fetchMock
+            .mockResolvedValueOnce(jsonResponse({ error: 'temporarily unavailable' }, { status: 503 }))
+            .mockResolvedValueOnce(jsonResponse({ ok: true }));
 
         const client = new HttpClient('https://example.test/v1', { retryDelayMs: 1 });
         const res = await client.get('/ping', {});
+
         expect(res.status).toBe(200);
-        expect(requestMock).toHaveBeenCalledTimes(2);
+        expect(fetchMock).toHaveBeenCalledTimes(2);
     });
 
     it('does not retry GET on 400', async () => {
-        const failure = Object.assign(new Error('Bad Request'), {
-            isAxiosError: true,
-            response: { status: 400, headers: {} },
-        });
-        requestMock.mockRejectedValue(failure);
+        fetchMock.mockResolvedValue(jsonResponse({ error: 'Bad Request' }, { status: 400 }));
 
         const client = new HttpClient('https://example.test/v1', { retryDelayMs: 1 });
-        await expect(client.get('/ping', {})).rejects.toThrow('Bad Request');
-        expect(requestMock).toHaveBeenCalledTimes(1);
+        await expect(client.get('/ping', {})).rejects.toMatchObject({
+            name: 'HttpTransportError',
+            status: 400,
+            data: { error: 'Bad Request' },
+        });
+        expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 
     it('never retries POST even on 503', async () => {
-        const failure = Object.assign(new Error('Service Unavailable'), {
-            isAxiosError: true,
-            response: { status: 503, headers: {} },
-        });
-        requestMock.mockRejectedValue(failure);
+        fetchMock.mockResolvedValue(jsonResponse({ error: 'Service Unavailable' }, { status: 503 }));
 
         const client = new HttpClient('https://example.test/v1', { retryDelayMs: 1 });
-        await expect(client.post('/pay', {}, {})).rejects.toThrow('Service Unavailable');
-        expect(requestMock).toHaveBeenCalledTimes(1);
+        await expect(client.post('/pay', {}, {})).rejects.toMatchObject({
+            name: 'HttpTransportError',
+            status: 503,
+        });
+        expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 
     it('gives up after maxRetries attempts', async () => {
-        const failure = Object.assign(new Error('Bad Gateway'), {
-            isAxiosError: true,
-            response: { status: 502, headers: {} },
-        });
-        requestMock.mockRejectedValue(failure);
+        fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({ error: 'Bad Gateway' }, { status: 502 })));
 
         const client = new HttpClient('https://example.test/v1', { maxRetries: 3, retryDelayMs: 1 });
-        await expect(client.get('/ping', {})).rejects.toThrow('Bad Gateway');
-        expect(requestMock).toHaveBeenCalledTimes(4); // initial + 3 retries
+        await expect(client.get('/ping', {})).rejects.toMatchObject({
+            name: 'HttpTransportError',
+            status: 502,
+        });
+        expect(fetchMock).toHaveBeenCalledTimes(4); // initial + 3 retries
+    });
+
+    it('reports timeouts as transport errors without retrying', async () => {
+        vi.useFakeTimers();
+        fetchMock.mockImplementation((_url: string, init: RequestInit) => {
+            return new Promise((_resolve, reject) => {
+                init.signal?.addEventListener('abort', () => {
+                    reject(new DOMException('The operation was aborted.', 'AbortError'));
+                });
+            });
+        });
+
+        const client = new HttpClient('https://example.test/v1', { timeoutMs: 5, retryDelayMs: 1 });
+        const request = client.get('/slow', {});
+        const assertion = expect(request).rejects.toMatchObject({
+            name: 'HttpTransportError',
+            code: 'ETIMEDOUT',
+        });
+        await vi.advanceTimersByTimeAsync(5);
+
+        await assertion;
+        expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 });

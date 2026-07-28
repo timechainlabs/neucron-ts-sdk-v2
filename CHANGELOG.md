@@ -1,4 +1,10 @@
 # Changelog
+## [2.2.3] - 2026-07-28
+
+### Changed
+
+- Replaced the axios-based HTTP transport with a native `fetch` implementation. This preserves SDK retry, timeout, JSON, FormData, and error-normalization behavior while removing axios and its transitive runtime dependency tree from the published package.
+
 ## [2.2.2] - 2026-07-28
 
 ### Fixed

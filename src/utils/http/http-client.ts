@@ -1,5 +1,5 @@
-import axios, { isAxiosError, type AxiosInstance, type AxiosRequestConfig } from 'axios';
 import type { Headers, HttpResponse, IHttpClient, QueryParams } from './types.js';
+import { HttpTransportError } from './types.js';
 import { BASE_URL } from '../../config.js';
 import { SDK_NAME, SDK_VERSION } from '../version.js';
 
@@ -27,6 +27,16 @@ const DEFAULT_RETRY_DELAY_MS = 300;
 
 const RETRYABLE_STATUS = new Set([408, 429, 502, 503, 504]);
 
+type RequestMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
+
+interface RequestConfig {
+    method: RequestMethod;
+    url: string;
+    data?: unknown;
+    headers: Headers;
+    params?: QueryParams;
+}
+
 function sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -41,12 +51,48 @@ function retryAfterMs(headerValue: string | undefined): number | undefined {
     return undefined;
 }
 
-//http client with axios
+function appendQueryParams(url: string, params?: QueryParams): string {
+    if (!params) return url;
+    const parsed = new URL(url);
+    for (const [key, value] of Object.entries(params)) {
+        if (value !== undefined) parsed.searchParams.set(key, String(value));
+    }
+    return parsed.toString();
+}
+
+function responseHeaders(headers: globalThis.Headers): Headers {
+    const result: Headers = {};
+    headers.forEach((value, key) => {
+        result[key] = value;
+    });
+    return result;
+}
+
+async function parseResponseBody(response: Response): Promise<unknown> {
+    if (response.status === 204 || response.status === 205) return undefined;
+    const text = await response.text();
+    if (!text) return undefined;
+    const contentType = response.headers.get('content-type') ?? '';
+    if (contentType.includes('application/json')) {
+        try {
+            return JSON.parse(text);
+        } catch {
+            return text;
+        }
+    }
+    return text;
+}
+
+function isAbortError(err: unknown): boolean {
+    return err instanceof DOMException && err.name === 'AbortError';
+}
+
+// HTTP client implemented with platform-native fetch to keep the SDK runtime dependency surface small.
 export class HttpClient implements IHttpClient {
-    private globalHeader: Record<string, string>;
-    private readonly axios: AxiosInstance;
+    private globalHeader: Headers;
     private readonly maxRetries: number;
     private readonly retryDelayMs: number;
+    private readonly timeoutMs: number;
 
     constructor(
         private readonly baseUrl: string = BASE_URL,
@@ -57,35 +103,85 @@ export class HttpClient implements IHttpClient {
         };
         this.maxRetries = options.maxRetries ?? DEFAULT_MAX_RETRIES;
         this.retryDelayMs = options.retryDelayMs ?? DEFAULT_RETRY_DELAY_MS;
-        this.axios = axios.create({
-            timeout: options.timeoutMs ?? DEFAULT_TIMEOUT_MS,
-            // Custom header (not User-Agent) so it also works in browsers and
-            // React Native, where User-Agent is immutable.
-            headers: { 'X-Neucron-SDK': `${SDK_NAME}/${SDK_VERSION}` },
-        });
+        this.timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
     }
 
-    private async requestWithRetry<T>(config: AxiosRequestConfig, retryable: boolean): Promise<HttpResponse<T>> {
+    private async executeRequest<T>(config: RequestConfig): Promise<HttpResponse<T>> {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
+        const url = appendQueryParams(config.url, config.params);
+        const request = { method: config.method.toUpperCase(), url };
+
+        try {
+            const init: RequestInit = {
+                method: request.method,
+                headers: {
+                    'X-Neucron-SDK': `${SDK_NAME}/${SDK_VERSION}`,
+                    ...config.headers,
+                },
+                signal: controller.signal,
+            };
+
+            if (config.data !== undefined) {
+                if (config.data instanceof FormData) {
+                    init.body = config.data;
+                } else {
+                    init.body = JSON.stringify(config.data);
+                }
+            }
+
+            const response = await fetch(url, init);
+            const headers = responseHeaders(response.headers);
+            const data = await parseResponseBody(response);
+
+            if (!response.ok) {
+                throw new HttpTransportError('Request failed', {
+                    status: response.status,
+                    data,
+                    headers,
+                    request,
+                });
+            }
+
+            return {
+                data: data as T,
+                headers,
+                status: response.status,
+            };
+        } catch (err) {
+            if (err instanceof HttpTransportError) throw err;
+            if (isAbortError(err)) {
+                throw new HttpTransportError('Request timed out', {
+                    code: 'ETIMEDOUT',
+                    request,
+                    cause: err,
+                });
+            }
+            throw new HttpTransportError('Network error', {
+                code: 'ENETWORK',
+                request,
+                cause: err,
+            });
+        } finally {
+            clearTimeout(timeout);
+        }
+    }
+
+    private async requestWithRetry<T>(config: RequestConfig, retryable: boolean): Promise<HttpResponse<T>> {
         let attempt = 0;
         while (true) {
             try {
-                const response = await this.axios.request<T>(config);
-                return {
-                    data: response.data,
-                    headers: response.headers as Headers,
-                    status: response.status,
-                };
+                return await this.executeRequest<T>(config);
             } catch (err) {
-                const status = isAxiosError(err) ? err.response?.status : undefined;
-                const isNetworkError = isAxiosError(err) && !err.response && err.code !== 'ECONNABORTED';
+                const isTransportError = err instanceof HttpTransportError;
+                const status = isTransportError ? err.status : undefined;
+                const isNetworkError = isTransportError && status === undefined && err.code !== 'ETIMEDOUT';
                 const shouldRetry =
                     retryable &&
                     attempt < this.maxRetries &&
                     (isNetworkError || (status !== undefined && RETRYABLE_STATUS.has(status)));
                 if (!shouldRetry) throw err;
-                const headerDelay = isAxiosError(err)
-                    ? retryAfterMs(err.response?.headers?.['retry-after'] as string | undefined)
-                    : undefined;
+                const headerDelay = isTransportError ? retryAfterMs(err.headers?.['retry-after']) : undefined;
                 const backoff = headerDelay ?? this.retryDelayMs * 2 ** attempt;
                 attempt += 1;
                 await sleep(backoff);
@@ -93,7 +189,12 @@ export class HttpClient implements IHttpClient {
         }
     }
 
-    async post<T>(reqPath: string, data: unknown, headers: Headers, params?: QueryParams): Promise<HttpResponse<T>> {
+    async post<T>(
+        reqPath: string,
+        data: unknown,
+        headers: Headers = {},
+        params?: QueryParams
+    ): Promise<HttpResponse<T>> {
         return this.requestWithRetry<T>(
             {
                 method: 'post',
@@ -121,7 +222,12 @@ export class HttpClient implements IHttpClient {
         );
     }
 
-    async put<T>(reqPath: string, data: unknown, headers: Headers, params?: QueryParams): Promise<HttpResponse<T>> {
+    async put<T>(
+        reqPath: string,
+        data: unknown,
+        headers: Headers = {},
+        params?: QueryParams
+    ): Promise<HttpResponse<T>> {
         return this.requestWithRetry<T>(
             {
                 method: 'put',
@@ -137,7 +243,12 @@ export class HttpClient implements IHttpClient {
         );
     }
 
-    async patch<T>(reqPath: string, data: unknown, headers: Headers, params?: QueryParams): Promise<HttpResponse<T>> {
+    async patch<T>(
+        reqPath: string,
+        data: unknown,
+        headers: Headers = {},
+        params?: QueryParams
+    ): Promise<HttpResponse<T>> {
         return this.requestWithRetry<T>(
             {
                 method: 'patch',
@@ -153,7 +264,7 @@ export class HttpClient implements IHttpClient {
         );
     }
 
-    async delete<T>(reqPath: string, headers: Headers, params: QueryParams): Promise<HttpResponse<T>> {
+    async delete<T>(reqPath: string, headers: Headers, params?: QueryParams): Promise<HttpResponse<T>> {
         return this.requestWithRetry<T>(
             {
                 method: 'delete',

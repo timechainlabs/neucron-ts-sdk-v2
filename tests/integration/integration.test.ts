@@ -2,7 +2,6 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { NeucronSDK } from '../../src/neucron-sdk.js';
 import type { LoginBody } from '../../src/services/authentication/types.js';
 import type { CreateWalletBody } from '../../src/services/wallet/types.js';
-import { vi } from 'vitest';
 import path from 'path';
 import fs from 'fs';
 
@@ -17,14 +16,6 @@ if (fs.existsSync(envPath) && typeof process.loadEnvFile === 'function') {
 } else {
     console.log('ℹ️ Skipping .env load (probably running in CI)');
 }
-
-vi.mock('axios', async (importOriginal) => {
-    const actual = await importOriginal<typeof import('axios')>();
-    return {
-        ...actual,
-        isAxiosError: actual.isAxiosError, // keep the real implementation
-    };
-});
 
 // Test configuration interface
 interface TestConfig {
