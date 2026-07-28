@@ -4,20 +4,31 @@
 [![CI](https://github.com/timechainlabs/neucron-ts-sdk-v2/actions/workflows/ci.yml/badge.svg)](https://github.com/timechainlabs/neucron-ts-sdk-v2/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-Type-safe TypeScript SDK for the [Neucron](https://neucron.io) platform: multi-asset wallets, stablecoin payments, cross-chain asset swaps, tokenized asset issuance (Asset21 security tokens, utility tokens), invoicing, payouts, business and member management, RBAC, data integrity, and Sign in with Neucron OAuth.
+**Wallet infrastructure for fintechs.** Build stablecoin payments, payouts, invoicing, and subscriptions on 50+ blockchain rails with one API.
 
-Neucron is chain-agnostic. It spans 50+ blockchain rails and 450+ assets, including stablecoins such as USDC and USDT across EVM networks, Tron, Polygon, and Bitcoin SV. The SDK exposes `chain` and `network` as first-class parameters, so the same typed methods work across every supported rail.
+[Sign up at console.neucron.io →](https://console.neucron.io)
 
-Works in Node.js (>= 20.19), modern browsers, and React Native. Ships ESM and CJS builds with full type declarations.
+## Why Neucron
+
+Neucron is the go-to wallet infrastructure platform for fintechs building on blockchain rails. One SDK gives you:
+
+- **MPC Wallets** — Non-custodial or custodial, with threshold signing and key sharding
+- **Smart Accounts** — Paymaster support, gas sponsorship, programmable transaction rules
+- **Stablecoin Payments** — USDC, USDT, and 450+ assets across EVM, Tron, Polygon, and more
+- **Mass Payouts** — Batch transfers with approval workflows and policy controls
+- **Invoicing & Billing** — Create invoices, collect payments, usage-based billing on stablecoins
+- **Subscriptions** — Enable stablecoin subscriptions for your customers
+- **Privacy** — Unique one-time addresses for each transaction
+- **Compliance** — Built-in KYC/KYB tiers, address sanction checks, RBAC
+- **Agentic Wallets** — Server wallets with fine-grained policy controls for AI agents
+- **Security Tokens** — Issue, deploy, and govern regulated tokenized assets (Asset21)
+
+Works in Node.js (>= 20.19), browsers, and React Native. Ships ESM + CJS with full TypeScript declarations.
 
 ## Installation
 
 ```bash
 npm install @timechainlabs/neucron-ts-sdk
-# or
-pnpm add @timechainlabs/neucron-ts-sdk
-# or
-bun add @timechainlabs/neucron-ts-sdk
 ```
 
 ## Quickstart
@@ -30,19 +41,27 @@ const sdk = new NeucronSDK();
 // Authenticate
 await sdk.auth.login({ email: 'you@example.com', password: '...' });
 
-// List wallets
-const wallets = await sdk.wallet.walletList();
-console.log(wallets.data);
+// Create a wallet
+const wallet = await sdk.wallet.createWallet({ walletName: 'Treasury' });
 
-// Pay to a paymail. `assetName` selects the asset: a stablecoin such as
-// USDC or USDT, or any other asset supported on the target network.
+// Send USDC
 await sdk.pay.payWithPaymail({
   assetName: 'USDC',
-  transfer_destinations: [{ paymail: 'someone@neucron.me', amount: 1000 }],
+  transfer_destinations: [{ paymail: 'vendor@neucron.me', amount: 10000 }],
+});
+
+// Create an invoice
+await sdk.invoice.createInvoice({
+  businessId: 'biz_...',
+  invoiceData: {
+    currency: 'USD',
+    customer_id: 'cust_123',
+    items: [{ name: 'API Usage', quantity: 1000, cost_per_unit: 0.01 }],
+  },
 });
 ```
 
-Already have a token (e.g. server-side)?
+Server-side with existing token:
 
 ```typescript
 const sdk = new NeucronSDK({ authToken: process.env.NEUCRON_TOKEN });
@@ -54,7 +73,7 @@ const sdk = new NeucronSDK({ authToken: process.env.NEUCRON_TOKEN });
 | --- | --- | --- |
 | Production | `https://api.neucron.io/v1` | default |
 | Sandbox | `https://dev.neucron.io/v1` | `new NeucronSDK({ sandbox: true })` |
-| Self-hosted | your URL incl. `/v1` | `new NeucronSDK({ baseUrl: 'https://api.example.com/v1' })` |
+| Self-hosted | your URL | `new NeucronSDK({ baseUrl: '...' })` |
 
 ## Configuration
 
@@ -64,8 +83,8 @@ const sdk = new NeucronSDK({
   sandbox: true,         // use the sandbox API
   baseUrl: '...',        // custom API base URL (overrides sandbox)
   timeoutMs: 15_000,     // per-request timeout (default 30s)
-  maxRetries: 2,         // automatic retries for idempotent requests (default 2)
-  oauth: {               // defaults for Sign in with Neucron
+  maxRetries: 2,         // automatic retries for idempotent requests
+  oauth: {               // Sign in with Neucron
     clientId: '...',
     redirectUri: 'https://yourapp.com/callback',
   },
@@ -74,41 +93,39 @@ const sdk = new NeucronSDK({
 
 ### Business context
 
-Neucron scopes most resources to a business. Pass `businessId` in method options and the SDK sends the `X-Neucron-Business-ID` header:
+Neucron scopes most resources to a business. Pass `businessId` and the SDK sends the `X-Neucron-Business-ID` header:
 
 ```typescript
 const members = await sdk.members.getMembers({ businessId: 'biz_...' });
 ```
 
-## Services
+## SDK Surface
 
-| Accessor | Purpose |
+| Module | Capabilities |
 | --- | --- |
 | `sdk.auth` | Signup, login, profile, password |
-| `sdk.oauth` | Sign in with Neucron (authorization code + PKCE) |
-| `sdk.wallet` | Wallets, addresses, transactions, asset sync |
-| `sdk.pay` | Send assets by address, email, or paymail across supported chains |
+| `sdk.oauth` | Sign in with Neucron (PKCE) |
+| `sdk.wallet` | MPC wallets, addresses, transactions, asset sync |
+| `sdk.pay` | Stablecoin payments by address, email, or paymail |
 | `sdk.paymail` | Paymail alias management |
 | `sdk.assets` | Asset ledger, balances, transfers |
 | `sdk.asset21` | Security token lifecycle (register, deploy, govern) |
-| `sdk.utility` | Utility token register, mint, redeem |
+| `sdk.utility` | Utility token mint, redeem |
 | `sdk.assetSwap` | Cross-asset swaps and rates |
-| `sdk.business` | Business profiles and listing |
-| `sdk.members` | Business members, invites, role assignment |
-| `sdk.rbac` | Roles and permissions |
-| `sdk.apps` | Developer apps and secrets |
-| `sdk.blob` | Document and image upload |
-| `sdk.invoice` | Invoices and collections |
+| `sdk.invoice` | Invoices and payment collections |
+| `sdk.payout` | Mass payouts with approval workflows |
+| `sdk.billing` | Usage-based billing, subscriptions |
+| `sdk.business` | Business profiles |
+| `sdk.members` | Team members, invites, role assignment |
+| `sdk.rbac` | Roles, permissions, policy controls |
 | `sdk.customer` / `sdk.vendor` | Counterparty management |
-| `sdk.bill` / `sdk.payout` / `sdk.billing` | Bills, payouts, billing |
+| `sdk.apps` | Developer apps and secrets |
 | `sdk.dataIntegrity` | On-chain file and text inscriptions |
 | `sdk.flows` | High-level MCP flow orchestrations |
 
-Full per-method reference lives in [`docs/`](./docs/README.md).
+Full API reference: [`docs/`](./docs/README.md)
 
-## Error handling
-
-Every SDK error is a `NeucronError` with a machine-readable `type`:
+## Error Handling
 
 ```typescript
 import { isNeucronError } from '@timechainlabs/neucron-ts-sdk';
@@ -117,33 +134,34 @@ try {
   await sdk.pay.payWithPaymail({ ... });
 } catch (err) {
   if (isNeucronError(err)) {
-    err.type;        // 'network' | 'validation' | 'internal'
-    err.status;      // HTTP status (network errors)
-    err.data;        // raw API error body
-    err.request;     // { method, url } of the failed call
-    err.issues;      // zod issues (validation errors)
+    err.type;          // 'network' | 'validation' | 'internal'
+    err.status;        // HTTP status
     err.isAuthError;   // 401/403
     err.isRateLimit;   // 429
-    err.isRetryable;   // transient failure worth retrying
+    err.isRetryable;   // transient failure
   }
 }
 ```
 
-Request/response payloads are validated with [Zod](https://zod.dev). Validation failures throw before any network call is made.
-
 ## Reliability
 
-- Every request has a timeout (default 30s, configurable via `timeoutMs`).
-- Idempotent (GET) requests are retried automatically on 408/429/5xx and network errors with exponential backoff, honoring `Retry-After`. Mutating requests are never retried automatically, so a payment is never sent twice.
-- The SDK identifies itself with an `X-Neucron-SDK: neucron-ts-sdk/<version>` header.
+- **Timeouts**: Every request has a timeout (default 30s, configurable)
+- **Retries**: GET requests retry automatically on 408/429/5xx with exponential backoff
+- **Safety**: Mutating requests never retry automatically — a payment is never sent twice
 
-## Schemas subpath
+## Schemas
 
-Zod schemas for all request/response shapes are exported separately so you can reuse them for your own validation:
+Zod schemas for all request/response shapes are exported separately:
 
 ```typescript
 import { walletSchemas, paySchemas } from '@timechainlabs/neucron-ts-sdk/schemas';
 ```
+
+## Get Started
+
+1. **Sign up** at [console.neucron.io](https://console.neucron.io)
+2. **Create a business** and get your API credentials
+3. **Install the SDK** and start building
 
 ## Development
 
@@ -151,15 +169,9 @@ import { walletSchemas, paySchemas } from '@timechainlabs/neucron-ts-sdk/schemas
 npm ci
 npm run typecheck   # tsc --noEmit
 npm run lint        # eslint
-npm run test:unit   # vitest unit suite (no network)
-npm run build       # tsdown -> dist/ (ESM + CJS + d.ts)
+npm run test:unit   # vitest
+npm run build       # tsdown -> dist/
 ```
-
-Integration tests hit the live API and need credentials; see [`tests/README.md`](./tests/README.md).
-
-## Versioning
-
-This package follows [semver](https://semver.org). Breaking API changes only land in major versions and are documented in [CHANGELOG.md](./CHANGELOG.md).
 
 ## License
 

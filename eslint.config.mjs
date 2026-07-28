@@ -7,7 +7,7 @@ export default tseslint.config(
   eslint.configs.recommended,
   tseslint.configs.recommended,
   {
-    ignores: ['dist', 'jest.config.cjs'], //files that you want to ignore
+    ignores: ['dist'],
   },
   {
     // Maintenance scripts run in Node, not in the browser or the SDK bundle,
