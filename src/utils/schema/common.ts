@@ -41,6 +41,20 @@ export const base64FileSchema = z.object({
 /** Free-form key/value metadata with primitive values (JSON-schema friendly; no z.unknown()). */
 export const metadataSchema = z.record(z.string(), z.union([z.string(), z.number(), z.boolean()]));
 
+/** React Native file descriptor ({ uri, name, type }) — JSON-schema representable. */
+export const reactNativeFileSchema = z.object({
+    uri: z.string().min(1),
+    name: z.string().min(1),
+    type: z.string().min(1),
+});
+
+/**
+ * JSON-schema-safe file input for MCP tool definitions: base64 content or a
+ * React Native file descriptor. (Native File/Blob objects are also accepted by
+ * the flow implementations at runtime, but cannot be expressed in JSON Schema.)
+ */
+export const jsonFileSchema = z.union([base64FileSchema, reactNativeFileSchema]);
+
 /** React Native file object from DocumentPicker / ImagePicker */
 export interface ReactNativeUploadFile {
     uri: string;
