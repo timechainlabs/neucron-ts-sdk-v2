@@ -43,7 +43,7 @@ import {
 import { payRequestSchema } from '../pay/schema.js';
 import { fileUploadSchema, textArrayUploadSchema, textUploadSchema } from '../data-integrity/schema.js';
 import { registerBodySchema, requestDetailsSchema } from '../asset21/schema.js';
-import { flowFileSchema, nonEmptyString, optionalBusinessId } from '../../utils/schema/common.js';
+import { jsonFileSchema, nonEmptyString, optionalBusinessId } from '../../utils/schema/common.js';
 
 /**
  * Complete input schemas for every compound MCP flow (`sdk.flows.*`).
@@ -60,7 +60,9 @@ import { flowFileSchema, nonEmptyString, optionalBusinessId } from '../../utils/
 /** Upload wrapper used by flows that attach a document/image to a step. */
 export const flowUploadSchema = z.object({
     businessId: optionalBusinessId,
-    file: flowFileSchema.describe('File to upload: a File/Blob object, or { fileBase64, fileName?, mimeType? }.'),
+    file: jsonFileSchema.describe(
+        'File to upload: { fileBase64, fileName?, mimeType? } or a React Native { uri, name, type } object.'
+    ),
 });
 
 /** Vendor list filter for nested flow steps; businessId falls back to the flow-level one. */
@@ -212,18 +214,34 @@ export const neucronCreateCollectionLinkSchema = z.object({
         .describe('Universal wallet payment collection (POST /payment-collection).'),
 });
 
-export const neucronCustomerManageSchema = z.discriminatedUnion('action', [
-    z.object({
-        action: z.literal('create'),
-        invite: z.boolean().optional().describe('Send invite email after create.'),
-        options: createCustomerSchema,
-    }),
-    z.object({ action: z.literal('update'), options: updateCustomerSchema }),
-    z.object({ action: z.literal('delete'), options: deleteCustomerSchema }),
-    z.object({ action: z.literal('invite'), options: inviteCustomerSchema }),
-    z.object({ action: z.literal('list'), options: listCustomersSchema }),
-    z.object({ action: z.literal('get'), options: getCustomerSchema }),
-]);
+const customerActionOptions = {
+    create: createCustomerSchema,
+    update: updateCustomerSchema,
+    delete: deleteCustomerSchema,
+    invite: inviteCustomerSchema,
+    list: listCustomersSchema,
+    get: getCustomerSchema,
+} as const;
+
+export const customerActionSchema = z.enum(['create', 'update', 'delete', 'invite', 'list', 'get']);
+
+export const neucronCustomerManageSchema = z
+    .object({
+        action: customerActionSchema,
+        invite: z.boolean().optional().describe('Send invite email after create (create action only).'),
+        options: z.union([
+            createCustomerSchema.describe('action=create'),
+            updateCustomerSchema.describe('action=update'),
+            deleteCustomerSchema.describe('action=delete'),
+            inviteCustomerSchema.describe('action=invite'),
+            listCustomersSchema.describe('action=list'),
+            getCustomerSchema.describe('action=get'),
+        ]),
+    })
+    .refine((value) => customerActionOptions[value.action].safeParse(value.options).success, {
+        message: 'options must match the schema for the given action',
+        path: ['options'],
+    });
 
 export const neucronCreateInvoiceSchema = z.object({
     businessId: optionalBusinessId,
@@ -285,24 +303,31 @@ export const neucronSchedulePaymentSchema = z.object({
     payoutPayload: payoutUpsertPayloadSchema,
 });
 
+const payoutModeOptions = {
+    transfer: payRequestSchema,
+    payout: createPayoutSchema,
+    pay_vendor: payVendorSchema,
+} as const;
+
 export const payoutModeSchema = z.enum(['transfer', 'payout', 'pay_vendor']);
 
-export const neucronCreatePayoutSchema = z.discriminatedUnion('mode', [
-    z.object({
-        mode: z.literal('transfer'),
-        options: payRequestSchema.describe('Direct wallet transfer (paymail, email, or address).'),
-    }),
-    z.object({
-        mode: z.literal('payout'),
-        trigger: z.boolean().optional().describe('Trigger the payout after creation.'),
-        options: createPayoutSchema,
-        updateBeforeTrigger: updatePayoutSchema.optional(),
-    }),
-    z.object({
-        mode: z.literal('pay_vendor'),
-        options: payVendorSchema,
-    }),
-]);
+export const neucronCreatePayoutSchema = z
+    .object({
+        mode: payoutModeSchema,
+        trigger: z.boolean().optional().describe('Trigger the payout after creation (payout mode only).'),
+        options: z.union([
+            payRequestSchema.describe('mode=transfer: direct wallet transfer (paymail, email, or address).'),
+            createPayoutSchema.describe('mode=payout: create (and optionally trigger) a payout.'),
+            payVendorSchema.describe('mode=pay_vendor: direct vendor payment.'),
+        ]),
+        updateBeforeTrigger: updatePayoutSchema
+            .optional()
+            .describe('Update the payout before triggering (payout mode only).'),
+    })
+    .refine((value) => payoutModeOptions[value.mode].safeParse(value.options).success, {
+        message: 'options must match the schema for the given mode',
+        path: ['options'],
+    });
 
 export const neucronGetPayoutHistorySchema = listPayoutsSchema.extend({
     payoutID: z.string().optional().describe('Fetch a single payout by ID.'),
@@ -310,23 +335,44 @@ export const neucronGetPayoutHistorySchema = listPayoutsSchema.extend({
 
 export const neucronGetExpensesSchema = expenseGraphFiltersSchema;
 
-export const neucronVendorManageSchema = z.discriminatedUnion('action', [
-    z.object({ action: z.literal('create'), options: createVendorSchema }),
-    z.object({ action: z.literal('update'), options: updateVendorSchema }),
-    z.object({ action: z.literal('list'), options: listVendorsSchema }),
-    z.object({ action: z.literal('get'), options: vendorIdSchema }),
-    z.object({ action: z.literal('delete'), options: vendorIdSchema }),
-    z.object({ action: z.literal('invite'), options: vendorIdSchema }),
-    z.object({ action: z.literal('suspend'), options: setVendorSuspensionSchema }),
-    z.object({ action: z.literal('accept'), options: acceptVendorSchema }),
-]);
+const vendorActionOptions = {
+    create: createVendorSchema,
+    update: updateVendorSchema,
+    list: listVendorsSchema,
+    get: vendorIdSchema,
+    delete: vendorIdSchema,
+    invite: vendorIdSchema,
+    suspend: setVendorSuspensionSchema,
+    accept: acceptVendorSchema,
+} as const;
+
+export const vendorActionSchema = z.enum(['create', 'update', 'list', 'get', 'delete', 'invite', 'suspend', 'accept']);
+
+export const neucronVendorManageSchema = z
+    .object({
+        action: vendorActionSchema,
+        options: z.union([
+            createVendorSchema.describe('action=create'),
+            updateVendorSchema.describe('action=update'),
+            listVendorsSchema.describe('action=list'),
+            vendorIdSchema.describe('action=get/delete/invite'),
+            setVendorSuspensionSchema.describe('action=suspend'),
+            acceptVendorSchema.describe('action=accept'),
+        ]),
+    })
+    .refine((value) => vendorActionOptions[value.action].safeParse(value.options).success, {
+        message: 'options must match the schema for the given action',
+        path: ['options'],
+    });
 
 // ---------------------------------------------------------------------------
 // Data integrity
 // ---------------------------------------------------------------------------
 
 export const neucronInscribeDocumentSchema = fileUploadSchema.extend({
-    file: flowFileSchema.describe('File to inscribe: a File/Blob object, or { fileBase64, fileName?, mimeType? }.'),
+    file: jsonFileSchema.describe(
+        'File to inscribe: { fileBase64, fileName?, mimeType? } or a React Native { uri, name, type } object.'
+    ),
 });
 
 export const neucronInscribeTextSchema = textUploadSchema;
