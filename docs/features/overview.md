@@ -37,7 +37,7 @@ result.headers; // response headers
 | [Authentication](authentication.md)     | `sdk.auth`          | Sign up, login, profile, password        |
 | [Wallet](wallet.md)                     | `sdk.wallet`        | Wallets, addresses, assets, transactions |
 | [Paymail](paymail.md)                   | `sdk.paymail`       | Human-readable payment aliases           |
-| [Pay](pay.md)                           | `sdk.pay`           | Send BSV by address, email, or Paymail   |
+| [Pay](pay.md)                           | `sdk.pay`           | Send assets by address, email, or Paymail |
 | [Assets](assets.md)                     | `sdk.assets`        | Asset ledger, balances, transfers        |
 | [Asset21](asset21.md)                   | `sdk.asset21`       | Security / regulated token lifecycle     |
 | [Utility Tokens](utility.md)            | `sdk.utility`       | Register, mint, and redeem utilities     |

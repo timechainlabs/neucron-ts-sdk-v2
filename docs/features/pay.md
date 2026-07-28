@@ -2,11 +2,11 @@
 
 ## What is Pay in Neucron?
 
-The **Pay** service sends **BSV** from a wallet to one or more destinations. Destinations can be:
+The **Pay** service sends assets from a wallet to one or more destinations. The asset is selected with `assetName`, so the same methods send stablecoins such as USDC and USDT, or any other asset supported on the target network. Destinations can be:
 
 | Method           | Destination type       | When to use                                                  |
 | ---------------- | ---------------------- | ------------------------------------------------------------ |
-| `payWithAddress` | Raw blockchain address | You already have a BSV address                               |
+| `payWithAddress` | Raw blockchain address | You already have an on-chain address                               |
 | `payWithEmail`   | Email                  | Recipient is identified by email (Neucron resolves delivery) |
 | `payWithPaymail` | Paymail                | Preferred human-readable payment address                     |
 
@@ -27,7 +27,7 @@ Access via `sdk.pay`.
 | Name                    | Type     | Required | Sent as                   | Description                               |
 | ----------------------- | -------- | -------- | ------------------------- | ----------------------------------------- |
 | `walletID`              | `string` | No       | Query                     | Source wallet (default wallet if omitted) |
-| `assetName`             | `'BSV'`  | Yes      | Mapped to body `asset_id` | Asset to send                             |
+| `assetName`             | `string` | Yes      | Mapped to body `asset_id` | Asset to send, e.g. `'USDC'`, `'USDT'`    |
 | `transfer_destinations` | `Array`  | Yes      | Body                      | One or more destinations                  |
 
 ### Destination variants
@@ -54,7 +54,7 @@ Access via `sdk.pay`.
 
 ## `payWithAddress`
 
-Pay BSV to blockchain address(es).
+Pay to blockchain address(es).
 
 ### Request Payload
 
@@ -89,7 +89,7 @@ const { data: txIds } = await sdk.pay.payWithAddress({
 
 ## `payWithEmail`
 
-Pay BSV to email destination(s).
+Pay to email destination(s).
 
 ### Request Payload
 
@@ -124,7 +124,7 @@ const { data: txIds } = await sdk.pay.payWithEmail({
 
 ## `payWithPaymail`
 
-Pay BSV to paymail destination(s).
+Pay to paymail destination(s).
 
 ### Request Payload
 

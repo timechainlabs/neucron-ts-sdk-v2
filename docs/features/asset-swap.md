@@ -2,7 +2,7 @@
 
 ## What is Asset Swap?
 
-**Asset Swap** lets you exchange one supported asset for another at a quoted rate (for example BSV ↔ MNEE). Typical flow:
+**Asset Swap** lets you exchange one supported asset for another at a quoted rate, including across chains (for example USDC on one network to USDT on another). Each side of a swap names both the asset and its network, so cross-chain routes use the same call shape as same-chain ones. Typical flow:
 
 1. `getSwappableAssets` — see which from/to pairs are available
 2. `getSwapRate` — quote amount, min/max, and expected output

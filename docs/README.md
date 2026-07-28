@@ -2,7 +2,9 @@
 
 Welcome to the official documentation for **@timechainlabs/neucron-ts-sdk** — a type-safe TypeScript SDK for building applications on the Neucron platform.
 
-Neucron provides wallets, digital assets, payments, invoicing, security tokens, and business tooling on Bitcoin SV. This SDK exposes those capabilities as typed methods so you can build products without wiring low-level requests yourself.
+Neucron provides multi-asset wallets, stablecoin payments, cross-chain swaps, tokenized assets, invoicing, security tokens, and business tooling across 50+ blockchain rails and 450+ assets. This SDK exposes those capabilities as typed methods so you can build products without wiring low-level requests yourself.
+
+The platform is chain-agnostic: stablecoins such as USDC and USDT on EVM networks, Tron, and Polygon sit alongside Bitcoin SV and other rails. Methods that touch a chain take `chain` and `network` parameters, so the same call shape works everywhere.
 
 ## What you can build
 
@@ -39,7 +41,7 @@ Every feature is exposed as a property on the main client:
 sdk.auth          // Authentication
 sdk.wallet        // Wallets & transactions
 sdk.paymail       // Paymail aliases
-sdk.pay           // BSV payments
+sdk.pay           // Payments (stablecoins & other assets)
 sdk.assets        // Digital assets
 sdk.asset21       // Security / regulated tokens
 sdk.utility       // Utility tokens

@@ -4,7 +4,9 @@
 [![CI](https://github.com/timechainlabs/neucron-ts-sdk-v2/actions/workflows/ci.yml/badge.svg)](https://github.com/timechainlabs/neucron-ts-sdk-v2/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-Type-safe TypeScript SDK for the [Neucron](https://neucron.io) platform: wallets, payments, paymail, asset issuance (Asset21 security tokens, utility tokens), invoicing, payouts, business and member management, RBAC, data integrity, and Sign in with Neucron OAuth.
+Type-safe TypeScript SDK for the [Neucron](https://neucron.io) platform: multi-asset wallets, stablecoin payments, cross-chain asset swaps, tokenized asset issuance (Asset21 security tokens, utility tokens), invoicing, payouts, business and member management, RBAC, data integrity, and Sign in with Neucron OAuth.
+
+Neucron is chain-agnostic. It spans 50+ blockchain rails and 450+ assets, including stablecoins such as USDC and USDT across EVM networks, Tron, Polygon, and Bitcoin SV. The SDK exposes `chain` and `network` as first-class parameters, so the same typed methods work across every supported rail.
 
 Works in Node.js (>= 20.19), modern browsers, and React Native. Ships ESM and CJS builds with full type declarations.
 
@@ -32,9 +34,10 @@ await sdk.auth.login({ email: 'you@example.com', password: '...' });
 const wallets = await sdk.wallet.walletList();
 console.log(wallets.data);
 
-// Pay to a paymail
+// Pay to a paymail. `assetName` selects the asset: a stablecoin such as
+// USDC or USDT, or any other asset supported on the target network.
 await sdk.pay.payWithPaymail({
-  assetName: 'BSV',
+  assetName: 'USDC',
   transfer_destinations: [{ paymail: 'someone@neucron.me', amount: 1000 }],
 });
 ```
@@ -84,7 +87,7 @@ const members = await sdk.members.getMembers({ businessId: 'biz_...' });
 | `sdk.auth` | Signup, login, profile, password |
 | `sdk.oauth` | Sign in with Neucron (authorization code + PKCE) |
 | `sdk.wallet` | Wallets, addresses, transactions, asset sync |
-| `sdk.pay` | Send BSV by address, email, or paymail |
+| `sdk.pay` | Send assets by address, email, or paymail across supported chains |
 | `sdk.paymail` | Paymail alias management |
 | `sdk.assets` | Asset ledger, balances, transfers |
 | `sdk.asset21` | Security token lifecycle (register, deploy, govern) |
