@@ -1,81 +1,158 @@
-# Neucron TypeScript SDK
+# Neucron TypeScript SDK Documentation
 
-Welcome to the official documentation for **@timechainlabs/neucron-ts-sdk** — a type-safe TypeScript SDK for building applications on the Neucron platform.
+Welcome to the official documentation for **@timechainlabs/neucron-ts-sdk** — the wallet infrastructure SDK that fintechs use to build on blockchain rails.
 
-Neucron provides multi-asset wallets, stablecoin payments, cross-chain swaps, tokenized assets, invoicing, security tokens, and business tooling across 50+ blockchain rails and 450+ assets. This SDK exposes those capabilities as typed methods so you can build products without wiring low-level requests yourself.
+## What is Neucron?
 
-The platform is chain-agnostic: stablecoins such as USDC and USDT on EVM networks, Tron, and Polygon sit alongside Bitcoin SV and other rails. Methods that touch a chain take `chain` and `network` parameters, so the same call shape works everywhere.
+Neucron is the complete blockchain wallet infrastructure platform. Instead of integrating multiple providers for wallets, payments, compliance, and blockchain access, you get one API that handles everything.
 
-## What you can build
+**Built for fintechs. Ready for production.**
 
-| Domain | Capabilities |
+- **MPC Wallets** — Non-custodial or custodial with threshold signing
+- **Stablecoin Payments** — USDC, USDT, and 450+ assets on 50+ chains
+- **Mass Payouts** — Batch transfers with approval workflows
+- **Invoicing & Billing** — Native blockchain commerce and subscriptions
+- **Compliance** — KYC/KYB, sanctions screening, RBAC, audit trails
+- **Security Tokens** — Issue and govern regulated tokenized assets
+
+## Who uses Neucron?
+
+| Industry | Use case |
 | --- | --- |
-| **Identity** | Sign up, login, profile management, password recovery |
-| **Wallets** | Create wallets, addresses, balances, transaction history |
-| **Payments** | Pay by address, email, or paymail; manage paymail aliases |
-| **Assets** | Certificates, utility tokens, tickets, transfers, ledgers |
-| **Security tokens (Asset21)** | Register, deploy, mint, redeem, freeze, blacklist, governance |
-| **Business** | Business profiles, members, RBAC roles |
-| **Commerce** | Customers, invoices, payment collections, vendors, bills, payouts |
-| **Developer apps** | Create apps, secrets, publish to the app store, blob uploads |
-| **Data integrity** | Inscribe files and text on-chain for tamper-evident records |
-| **Billing** | Plans, credits, subscriptions, platform invoices |
+| **Neobanks** | Stablecoin accounts, cross-border payments |
+| **Payroll platforms** | Crypto payroll, global contractor payments |
+| **Marketplaces** | Escrow, instant settlements, seller payouts |
+| **Creator platforms** | Subscriptions, tipping, royalty splits |
+| **SaaS** | Usage-based billing on stablecoins |
+| **Trading desks** | Custody, settlements, OTC operations |
+| **AI applications** | Agentic wallets with policy controls |
 
-## Package
+## Getting Started
+
+### 1. Sign up
+
+Create your business account at **[console.neucron.io](https://console.neucron.io)** and get your API credentials.
+
+### 2. Install the SDK
 
 ```bash
 npm install @timechainlabs/neucron-ts-sdk
 ```
 
+### 3. Initialize
+
 ```typescript
 import NeucronSDK from '@timechainlabs/neucron-ts-sdk';
 
+const sdk = new NeucronSDK({ authToken: process.env.NEUCRON_TOKEN });
+```
+
+### 4. Start building
+
+```typescript
+// Create a wallet
+const wallet = await sdk.wallet.createWallet({ walletName: 'Treasury' });
+
+// Send USDC
+await sdk.pay.payWithPaymail({
+  assetName: 'USDC',
+  transfer_destinations: [{ paymail: 'vendor@neucron.me', amount: 10000 }],
+});
+
+// Create an invoice
+await sdk.invoice.createInvoice({
+  businessId: 'biz_...',
+  invoiceData: {
+    currency: 'USD',
+    customer_id: 'cust_123',
+    items: [{ name: 'API Usage', quantity: 1000, cost_per_unit: 0.01 }],
+  },
+});
+```
+
+## SDK Modules
+
+| Module | Purpose |
+| --- | --- |
+| `sdk.auth` | Authentication, signup, profile management |
+| `sdk.oauth` | Sign in with Neucron (OAuth 2.0 + PKCE) |
+| `sdk.wallet` | MPC wallets, addresses, transactions, asset sync |
+| `sdk.pay` | Stablecoin payments by address, email, or paymail |
+| `sdk.paymail` | Human-readable payment addresses |
+| `sdk.assets` | Asset balances, transfers, ledger views |
+| `sdk.asset21` | Security token lifecycle (register, deploy, govern) |
+| `sdk.utility` | Utility token minting and redemption |
+| `sdk.assetSwap` | Cross-asset swaps and rate quotes |
+| `sdk.invoice` | Invoices, payment collections, billing |
+| `sdk.payout` | Mass payouts with approval workflows |
+| `sdk.billing` | Usage-based billing, subscriptions, credits |
+| `sdk.business` | Business profiles and settings |
+| `sdk.members` | Team management, invites, roles |
+| `sdk.rbac` | Permissions and policy controls |
+| `sdk.customer` | Customer records |
+| `sdk.vendor` | Vendor management |
+| `sdk.apps` | Developer app credentials |
+| `sdk.dataIntegrity` | On-chain attestations |
+| `sdk.flows` | High-level orchestration helpers |
+
+## Documentation Structure
+
+### Getting Started
+- **[Quick Start](getting-started/quick-start.md)** — Install, authenticate, first API call
+- **[Overview](getting-started/overview.md)** — Configuration, environments, headers
+
+### Core Concepts
+- **[Configuration](core/configuration.md)** — SDK options, environments, business context
+- **[Error Handling](core/error-handling.md)** — Error types, retries, debugging
+
+### Features
+Each feature page documents every SDK method with parameters, request/response shapes, and TypeScript examples:
+
+- **[Authentication](features/authentication.md)** — Signup, login, profile, password
+- **[OAuth](features/oauth.md)** — Sign in with Neucron
+- **[Wallet](features/wallet.md)** — Create wallets, addresses, transactions
+- **[Pay](features/pay.md)** — Send stablecoins and assets
+- **[Paymail](features/paymail.md)** — Payment address aliases
+- **[Assets](features/assets.md)** — Balances, transfers, ledgers
+- **[Asset21](features/asset21.md)** — Security tokens
+- **[Utility Tokens](features/utility.md)** — Mint and redeem
+- **[Asset Swap](features/asset-swap.md)** — Cross-asset swaps
+- **[Invoicing](features/invoicing.md)** — Invoices and collections
+- **[Business](features/business.md)** — Business profiles
+- **[Members](features/members.md)** — Team management
+- **[RBAC](features/rbac.md)** — Roles and permissions
+- **[Apps](features/apps.md)** — Developer apps
+- **[Blob](features/blob.md)** — File uploads
+- **[Data Integrity](features/data-integrity.md)** — On-chain attestations
+- **[Billing](features/billing.md)** — Subscriptions and credits
+- **[Customer](features/customer.md)** — Customer records
+- **[Vendor](features/vendor.md)** — Vendor management
+- **[Bill](features/bill.md)** — Vendor bills
+- **[Payout](features/payout.md)** — Mass payouts
+
+## Environments
+
+| Environment | Base URL | Use case |
+| --- | --- | --- |
+| **Sandbox** | `https://dev.neucron.io/v1` | Development, testing |
+| **Production** | `https://api.neucron.io/v1` | Live transactions |
+
+```typescript
+// Sandbox
+const sdk = new NeucronSDK({ sandbox: true });
+
+// Production (default)
 const sdk = new NeucronSDK();
 ```
 
-## SDK surface
-
-Every feature is exposed as a property on the main client:
-
-```typescript
-sdk.auth          // Authentication
-sdk.wallet        // Wallets & transactions
-sdk.paymail       // Paymail aliases
-sdk.pay           // Payments (stablecoins & other assets)
-sdk.assets        // Digital assets
-sdk.asset21       // Security / regulated tokens
-sdk.utility       // Utility tokens
-sdk.dataIntegrity // On-chain inscriptions
-sdk.assetSwap     // Asset swaps
-sdk.business      // Business profiles
-sdk.members       // Business members
-sdk.rbac          // Roles & permissions
-sdk.apps          // Developer apps
-sdk.blob          // File / image uploads
-sdk.customer      // Customers
-sdk.invoice       // Invoices & payment collections
-sdk.vendor        // Vendors & expenses
-sdk.bill          // Vendor bills
-sdk.payout        // Payouts
-sdk.billing       // Platform billing & subscriptions
-```
-
-## How this documentation is organized
-
-1. **[Quick Start](getting-started/quick-start.md)** — install, authenticate, and make your first calls.
-2. **[Overview](getting-started/overview.md)** — configuration, auth, headers, responses, and errors.
-3. **Features** — one page per domain with feature background, then every SDK function documented with parameters, headers, query fields, request body, and response.
-
-{% hint style="info" %}
-This documentation describes **SDK functions only**. Interact with Neucron through typed methods such as `sdk.wallet.createWallet(...)`.
-{% endhint %}
-
 ## Requirements
 
-- Node.js 18+ (or a modern bundler / React Native environment)
-- TypeScript 5+ recommended (JavaScript works; types are included)
-- A Neucron account (email + password) or an existing auth token
+- Node.js 20.19+ (or modern browser / React Native)
+- TypeScript 5+ recommended
+- Neucron business account ([sign up](https://console.neucron.io))
 
-## Next step
+## Support
 
-Start with the [Quick Start](getting-started/quick-start.md) guide.
+- **Documentation**: You're here
+- **Console**: [console.neucron.io](https://console.neucron.io)
+- **Issues**: [GitHub Issues](https://github.com/timechainlabs/neucron-ts-sdk-v2/issues)
