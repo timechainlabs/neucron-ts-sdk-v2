@@ -1,4 +1,10 @@
 # Changelog
+## [2.2.1] - 2026-07-28
+
+### Fixed
+
+- Rebuilt the published package from the current source so generated dist files no longer expose the unsupported `pay_vendor` MCP payout mode.
+
 ## [2.2.0] - 2026-07-28
 
 ### Added
