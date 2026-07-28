@@ -180,7 +180,7 @@ describe('Billing Service', () => {
     });
 
     it('should top up credits', async () => {
-        const options = { amount: 100, provider: 'MANUAL' as const };
+        const options = { amount: 100, currency: 'USD', provider: 'MANUAL' as const };
         const response = {
             subscription_id: 'sub-1',
             business_id: 'biz-1',
@@ -190,7 +190,10 @@ describe('Billing Service', () => {
         };
         mockHttpClient.post.mockResolvedValue(mockHttpResponse(response));
         const result = await billing.creditsTopUp(options);
-        expect(mockHttpClient.post).toHaveBeenCalledWith('/credits/topup', options, AUTH_HEADERS);
+        expect(mockHttpClient.post).toHaveBeenCalledWith('/billing/credit/topup', null, AUTH_HEADERS, {
+            amount: options.amount,
+            currency: options.currency,
+        });
         expect(result.data).toEqual(response);
     });
 

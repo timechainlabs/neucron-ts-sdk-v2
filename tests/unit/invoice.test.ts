@@ -164,9 +164,9 @@ describe('Invoice Service', () => {
     it('should finalise an invoice', async () => {
         const response = { message: 'Finalised' };
         mockValidator.messageResponse.mockReturnValue(response);
-        mockHttpClient.post.mockResolvedValue(mockHttpResponse(response));
+        mockHttpClient.put.mockResolvedValue(mockHttpResponse(response));
         const result = await invoice.finaliseInvoice(invoiceId);
-        expect(mockHttpClient.post).toHaveBeenCalledWith('/invoice/finalise', null, BUSINESS_HEADERS, {
+        expect(mockHttpClient.put).toHaveBeenCalledWith('/invoice', { status: 'DUE' }, BUSINESS_HEADERS, {
             invoiceID: 'inv-1',
         });
         expect(result.data).toEqual(response);
@@ -314,19 +314,19 @@ describe('Invoice Service', () => {
         expect(result.data).toEqual(response);
     });
 
-    it('should check payment collection', async () => {
+    it('should check payment collection using the backend payment session verifier', async () => {
         const response = { status: 'CONFIRMED' };
         mockHttpClient.post.mockResolvedValue(mockHttpResponse(response));
         const result = await invoice.checkPaymentCollection({
             businessId: BUSINESS_ID,
-            collectionID: 'col-1',
+            sessionID: 'session-1',
             txHash: 'tx-1',
         });
         expect(mockHttpClient.post).toHaveBeenCalledWith(
-            '/payment-collection/check',
+            '/payment-collection/session/check',
             { tx_hash: 'tx-1' },
             BUSINESS_HEADERS,
-            { collectionID: 'col-1' }
+            { sessionID: 'session-1' }
         );
         expect(result.data).toEqual(response);
     });

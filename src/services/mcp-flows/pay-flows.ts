@@ -194,7 +194,7 @@ export async function neucron_schedule_payment(services: McpFlowServices, option
 }
 
 /**
- * Send funds via direct transfer, standalone payout, or direct vendor payment.
+ * Send funds via direct transfer or standalone payout.
  * MCP Tool: `neucron_create_payout`
  */
 export async function neucron_create_payout(services: McpFlowServices, options: NeucronCreatePayoutOptions) {
@@ -224,11 +224,6 @@ export async function neucron_create_payout(services: McpFlowServices, options: 
         }
 
         return { balances: balances?.data, transfer: transfer.data };
-    }
-
-    if (options.mode === 'pay_vendor') {
-        const result = await services.vendor.payVendor(options.options);
-        return { result: result.data };
     }
 
     const payout = await services.payout.createPayout(options.options);

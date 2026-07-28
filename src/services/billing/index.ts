@@ -152,7 +152,13 @@ export class Billing {
             this.auth.validate();
             this.validator.topUpCredits(options);
             const headers = buildAuthHeaders(this.auth);
-            const resp = await this.httpClient.post<SubscriptionInfo>(Routes.BILLING.CREDITS_TOPUP, options, headers);
+            const params: QueryParams = { amount: options.amount, currency: options.currency };
+            const resp = await this.httpClient.post<SubscriptionInfo>(
+                Routes.BILLING.CREDITS_TOPUP,
+                null,
+                headers,
+                params
+            );
             return resp;
         } catch (err) {
             handleError(err);

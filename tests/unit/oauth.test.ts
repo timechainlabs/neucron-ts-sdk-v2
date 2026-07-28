@@ -159,20 +159,17 @@ describe('OAuth Service', () => {
                 access_token: 'access-token-123',
             });
 
-            mockHttpClient.post.mockResolvedValue({
+            mockHttpClient.get.mockResolvedValue({
                 data: { access_token: 'access-token-123' },
                 status: 200,
             });
 
             const result = await oauth.exchangeToken(request);
 
-            const [path, body, headers] = mockHttpClient.post.mock.calls[0];
+            const [path, headers, params] = mockHttpClient.get.mock.calls[0];
             expect(path).toBe('/oauth/token');
-            expect(headers).toEqual({ 'Content-Type': 'application/x-www-form-urlencoded' });
-
-            // Form-encoded body, so the secret never reaches the query string.
-            expect(body).toBeInstanceOf(URLSearchParams);
-            expect(Object.fromEntries(body as URLSearchParams)).toEqual({
+            expect(headers).toEqual({ Accept: 'application/json' });
+            expect(params).toEqual({
                 grant_type: 'authorization_code',
                 code: 'auth-code-123',
                 redirect_uri: 'https://app.example.com/auth/callback',
@@ -197,7 +194,7 @@ describe('OAuth Service', () => {
                 state: 'state-123',
             });
             mockValidator.tokenResponse.mockReturnValue({ access_token: 'access-token-123' });
-            mockHttpClient.post.mockResolvedValue({
+            mockHttpClient.get.mockResolvedValue({
                 data: { access_token: 'access-token-123' },
                 status: 200,
             });
@@ -211,7 +208,7 @@ describe('OAuth Service', () => {
             });
 
             expect(result.data.access_token).toBe('access-token-123');
-            expect(mockHttpClient.post).toHaveBeenCalledTimes(1);
+            expect(mockHttpClient.get).toHaveBeenCalledTimes(1);
         });
 
         it('should reject a mismatched state without exchanging the code', async () => {
@@ -223,7 +220,7 @@ describe('OAuth Service', () => {
                 })
             ).rejects.toThrow(/state mismatch/i);
 
-            expect(mockHttpClient.post).not.toHaveBeenCalled();
+            expect(mockHttpClient.get).not.toHaveBeenCalled();
         });
 
         it('should reject an empty expected state rather than trusting the callback', async () => {
@@ -235,7 +232,7 @@ describe('OAuth Service', () => {
                 })
             ).rejects.toThrow(/state mismatch/i);
 
-            expect(mockHttpClient.post).not.toHaveBeenCalled();
+            expect(mockHttpClient.get).not.toHaveBeenCalled();
         });
     });
 

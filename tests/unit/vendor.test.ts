@@ -217,20 +217,17 @@ describe('Vendor Service', () => {
         expect(result.data).toEqual(response);
     });
 
-    it('should pay a vendor', async () => {
+    it('should fail fast for unsupported direct vendor payments', async () => {
         const payDTO = {
             amount_in_fiat: 100,
             asset_id: 'asset-1',
             currency: 'INR',
             sender_wallet_id: 'wallet-1',
         };
-        const response = { message: 'Paid' };
-        mockHttpClient.post.mockResolvedValue(mockHttpResponse(response));
-        const result = await vendor.payVendor({ businessId: BUSINESS_ID, vendorId: 'vendor-1', payDTO });
-        expect(mockHttpClient.post).toHaveBeenCalledWith('/vendor/pay', payDTO, BUSINESS_HEADERS, {
-            vendorID: 'vendor-1',
-        });
-        expect(result.data).toEqual(response);
+        await expect(vendor.payVendor({ businessId: BUSINESS_ID, vendorId: 'vendor-1', payDTO })).rejects.toThrow(
+            /not supported by the current Neucron backend/i
+        );
+        expect(mockHttpClient.post).not.toHaveBeenCalled();
     });
 
     it('should throw when not authenticated', async () => {

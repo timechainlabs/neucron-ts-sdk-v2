@@ -110,5 +110,6 @@ describe('mcp flow schemas', () => {
             },
         });
         expect(parsed.mode).toBe('transfer');
+        expect(() => flow.neucronCreatePayoutSchema.parse({ mode: 'pay_vendor', options: {} })).toThrow();
     });
 });

@@ -118,9 +118,9 @@ export class Invoice {
             this.validator.invoiceId(options);
             const headers = buildAuthHeaders(this.auth, { businessId: options.businessId });
             const params: QueryParams = { invoiceID: options.invoiceID };
-            const resp = await this.httpClient.post<InvoiceMessageResponse>(
+            const resp = await this.httpClient.put<InvoiceMessageResponse>(
                 Routes.INVOICE.FINALISE,
-                null,
+                { status: 'DUE' },
                 headers,
                 params
             );
@@ -357,7 +357,7 @@ export class Invoice {
             this.auth.validate();
             this.validator.checkPayment(options);
             const headers = buildAuthHeaders(this.auth, { businessId: options.businessId });
-            const params: QueryParams = { collectionID: options.collectionID };
+            const params: QueryParams = { sessionID: options.sessionID };
             const body = options.txHash ? { tx_hash: options.txHash } : null;
             return await this.httpClient.post<PaymentCollectionResponse>(
                 Routes.PAYMENT_COLLECTION.CHECK,

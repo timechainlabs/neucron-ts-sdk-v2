@@ -108,7 +108,7 @@ export const sessionIdSchema = businessIdSchema.extend({
 });
 
 export const checkPaymentSchema = businessIdSchema.extend({
-    collectionID: nonEmptyString,
+    sessionID: nonEmptyString,
     txHash: z.string().optional(),
 });
 

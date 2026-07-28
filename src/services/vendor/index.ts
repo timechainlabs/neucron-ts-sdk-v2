@@ -189,19 +189,9 @@ export class Vendor {
     }
 
     async payVendor(options: PayVendor): Promise<HttpResponse<VendorMessageResponse>> {
-        try {
-            this.auth.validate();
-            this.validator.payVendor(options);
-            const headers = buildAuthHeaders(this.auth, { businessId: options.businessId });
-            const params: QueryParams = { vendorID: options.vendorId };
-            return await this.httpClient.post<VendorMessageResponse>(
-                Routes.VENDOR.PAY,
-                options.payDTO,
-                headers,
-                params
-            );
-        } catch (err) {
-            handleError(err);
-        }
+        void options;
+        throw new Error(
+            'Direct vendor payments are not supported by the current Neucron backend. Create a payout and map it to a bill with Bill.mapBillToPayout instead.'
+        );
     }
 }

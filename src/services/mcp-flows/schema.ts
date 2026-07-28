@@ -27,7 +27,6 @@ import {
     createVendorSchema,
     expenseGraphFiltersSchema,
     listVendorsSchema,
-    payVendorSchema,
     setVendorSuspensionSchema,
     updateVendorSchema,
     vendorIdSchema,
@@ -264,9 +263,9 @@ export const neucronManageInvoicePaymentCollectionSchema = z.object({
     collectionID: z.string().optional(),
     mapToInvoice: z.boolean().optional().describe('Map the collection to the invoice.'),
     checkPayment: checkPaymentSchema
-        .pick({ collectionID: true, txHash: true })
+        .pick({ sessionID: true, txHash: true })
         .optional()
-        .describe('Check a payment against the collection.'),
+        .describe('Check a payment session and propagate invoice status updates.'),
 });
 
 export const neucronGetRevenueSchema = revenueGraphFiltersSchema;
@@ -306,10 +305,9 @@ export const neucronSchedulePaymentSchema = z.object({
 const payoutModeOptions = {
     transfer: payRequestSchema,
     payout: createPayoutSchema,
-    pay_vendor: payVendorSchema,
 } as const;
 
-export const payoutModeSchema = z.enum(['transfer', 'payout', 'pay_vendor']);
+export const payoutModeSchema = z.enum(['transfer', 'payout']);
 
 export const neucronCreatePayoutSchema = z
     .object({
@@ -318,7 +316,6 @@ export const neucronCreatePayoutSchema = z
         options: z.union([
             payRequestSchema.describe('mode=transfer: direct wallet transfer (paymail, email, or address).'),
             createPayoutSchema.describe('mode=payout: create (and optionally trigger) a payout.'),
-            payVendorSchema.describe('mode=pay_vendor: direct vendor payment.'),
         ]),
         updateBeforeTrigger: updatePayoutSchema
             .optional()

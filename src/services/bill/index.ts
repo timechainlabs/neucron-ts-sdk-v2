@@ -128,22 +128,10 @@ export class Bill {
     }
 
     async payBill(options: PayBill): Promise<HttpResponse<PayBillResponse>> {
-        try {
-            this.auth.validate();
-            this.validator.payBill(options);
-            const headers = buildAuthHeaders(this.auth, { businessId: options.businessId });
-            const params: QueryParams = { billID: options.billID };
-            const resp = await this.httpClient.post<PayBillResponse>(
-                Routes.VENDOR.BILL_PAY,
-                options.payDTO,
-                headers,
-                params
-            );
-            this.validator.payBillResponse(resp.data);
-            return resp;
-        } catch (err) {
-            handleError(err);
-        }
+        void options;
+        throw new Error(
+            'Direct bill payments are not supported by the current Neucron backend. Create a payout and map it to the bill with Bill.mapBillToPayout instead.'
+        );
     }
 
     async mapBillToPayout(options: MapBillToPayout): Promise<HttpResponse<UpdateBillResponse>> {

@@ -272,7 +272,7 @@ export async function neucron_manage_invoice_payment_collection(
     if (options.checkPayment) {
         const check = await services.invoice.checkPaymentCollection({
             businessId,
-            collectionID: options.checkPayment.collectionID,
+            sessionID: options.checkPayment.sessionID,
             txHash: options.checkPayment.txHash,
         });
         paymentCheck = check.data;

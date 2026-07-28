@@ -68,8 +68,8 @@ export class OAuth {
      * Exchange an authorization code for an access token.
      * Automatically stores the token on the linked Authentication instance.
      *
-     * Sent as a form POST so the client secret stays out of the URL, where it
-     * would otherwise be captured by access logs and proxies.
+     * The current Neucron backend exposes this as a GET endpoint with token
+     * fields in query parameters, so mirror that contract exactly.
      */
     async exchangeToken(options: OAuthTokenExchangeRequest): Promise<HttpResponse<OAuthTokenResponse>> {
         try {
@@ -80,18 +80,20 @@ export class OAuth {
                 redirect_uri: options.redirect_uri ?? this.clientConfig.redirectUri ?? '',
             });
 
-            const body = new URLSearchParams({
+            const params: QueryParams = {
                 grant_type: parsed.grant_type,
                 code: parsed.code,
                 redirect_uri: parsed.redirect_uri,
                 client_id: parsed.client_id,
                 client_secret: parsed.client_secret,
                 state: parsed.state,
-            });
+            };
 
-            const resp = await this.httpClient.post<OAuthTokenResponse>(Routes.OAUTH.TOKEN, body, {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            });
+            const resp = await this.httpClient.get<OAuthTokenResponse>(
+                Routes.OAUTH.TOKEN,
+                { Accept: 'application/json' },
+                params
+            );
             const data = this.validator.tokenResponse(resp.data);
             this.auth.setToken(data.access_token);
             return { ...resp, data };

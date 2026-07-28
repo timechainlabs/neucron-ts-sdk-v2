@@ -165,16 +165,12 @@ describe('Bill Service', () => {
         expect(result.data).toEqual(response);
     });
 
-    it('should pay a bill', async () => {
+    it('should fail fast for unsupported direct bill payments', async () => {
         const payDTO = { asset_id: 'asset-1', sender_wallet_id: 'wallet-1' };
-        const response = { payout_id: 'payout-1', txmeta: 'meta' };
-        mockValidator.payBillResponse.mockReturnValue(response);
-        mockHttpClient.post.mockResolvedValue(mockHttpResponse(response));
-        const result = await bill.payBill({ businessId: BUSINESS_ID, billID: 'bill-1', payDTO });
-        expect(mockHttpClient.post).toHaveBeenCalledWith('/vendor/bill/pay', payDTO, BUSINESS_HEADERS, {
-            billID: 'bill-1',
-        });
-        expect(result.data).toEqual(response);
+        await expect(bill.payBill({ businessId: BUSINESS_ID, billID: 'bill-1', payDTO })).rejects.toThrow(
+            /not supported by the current Neucron backend/i
+        );
+        expect(mockHttpClient.post).not.toHaveBeenCalled();
     });
 
     it('should map bill to payout', async () => {

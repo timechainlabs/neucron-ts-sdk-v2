@@ -44,7 +44,8 @@ export const subscriptionInfoSchema = z.object({
 
 export const topUpCreditsSchema = z.object({
     amount: z.number(),
-    provider: z.enum(['MANUAL', 'STRIPE', 'PAYPAL']),
+    currency: nonEmptyString,
+    provider: z.enum(['MANUAL', 'STRIPE', 'PAYPAL']).optional(),
 });
 
 export const graphDataSchema = z.object({

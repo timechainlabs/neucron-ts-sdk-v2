@@ -26,7 +26,6 @@ import type {
     VendorId,
     SetVendorSuspension,
     AcceptVendor,
-    PayVendor,
 } from '../vendor/types.js';
 import type { CreateBill, UpdateBill, ListBills, ReviewBill } from '../bill/types.js';
 import type { CreatePayout, ListPayouts, ConfirmPayout, PayoutId } from '../payout/types.js';
@@ -210,7 +209,7 @@ export interface NeucronManageInvoicePaymentCollectionOptions {
     supportedAssets?: PaymentCollection['supportedAssets'];
     collectionID?: string;
     mapToInvoice?: boolean;
-    checkPayment?: { collectionID: string; txHash?: string };
+    checkPayment?: { sessionID: string; txHash?: string };
 }
 
 export type NeucronGetRevenueOptions = RevenueGraphFilters;
@@ -263,8 +262,7 @@ export type NeucronCreatePayoutOptions =
           options: CreatePayout;
           trigger?: boolean;
           updateBeforeTrigger?: PayoutId & { payload: CreatePayout['payload'] };
-      }
-    | { mode: 'pay_vendor'; options: PayVendor };
+      };
 
 export interface NeucronGetPayoutHistoryOptions extends ListPayouts {
     payoutID?: string;
