@@ -1,6 +1,41 @@
 import { z } from 'zod';
 import { businessIdSchema, nonEmptyString, pageMetaSchema } from '../../utils/schema/common.js';
 
+export const customerContactPersonSchema = z.object({
+    first_name: z.string().optional(),
+    last_name: z.string().optional(),
+    email: z.string().optional(),
+    phone_number: z.string().optional(),
+    work_number: z.string().optional(),
+    designation: z.string().optional(),
+    department: z.string().optional(),
+    salulation: z.string().optional(),
+    language: z.string().optional(),
+});
+
+export const customerIndividualDetailsSchema = z.object({
+    first_name: z.string().optional(),
+    last_name: z.string().optional(),
+    email: z.string().optional(),
+    phone_number: z.string().optional(),
+});
+
+export const customerPaymentDetailsSchema = z.object({
+    currency: z.string().optional(),
+    payment_terms: z.string().optional(),
+    opening_balance: z.union([z.number(), z.string()]).optional(),
+    place_of_supply: z.string().optional(),
+    payment_address: z.string().optional(),
+    deposit_wallet: z.string().optional(),
+});
+
+export const customerTaxPayerInfoSchema = z.object({
+    gst_treatment: z.string().optional(),
+    pan: z.string().optional(),
+    vat_gstin: z.string().optional(),
+    tds: z.string().optional(),
+});
+
 export const customerApiSchema = z.object({
     address_details: z
         .object({
@@ -22,13 +57,13 @@ export const customerApiSchema = z.object({
             phone_number: z.string().optional(),
         })
         .optional(),
-    contact_persons: z.array(z.record(z.string(), z.unknown())).default([]),
+    contact_persons: z.array(customerContactPersonSchema).default([]),
     created_at: z.string().optional(),
     customer_id: z.string().optional(),
     customer_type: z.enum(['BUSINESS', 'INDIVIDUAL']).optional(),
-    individual_details: z.record(z.string(), z.unknown()).optional(),
-    payment_details: z.record(z.string(), z.unknown()).optional(),
-    tax_payer_info: z.record(z.string(), z.unknown()).optional(),
+    individual_details: customerIndividualDetailsSchema.optional(),
+    payment_details: customerPaymentDetailsSchema.optional(),
+    tax_payer_info: customerTaxPayerInfoSchema.optional(),
     team_id: z.string().optional(),
     business_id: z.string().optional(),
     status: z.string().optional(),

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { businessIdSchema, messageResponseSchema, nonEmptyString } from '../../utils/schema/common.js';
+import { businessIdSchema, messageResponseSchema, metadataSchema, nonEmptyString } from '../../utils/schema/common.js';
 
 export const vendorAddressDetailsSchema = z.object({
     address: z.string(),
@@ -96,7 +96,7 @@ export const payVendorSchema = vendorIdSchema.extend({
         currency: nonEmptyString,
         schedule_at: z.string().optional(),
         sender_wallet_id: nonEmptyString,
-        meta: z.record(z.string(), z.unknown()).optional(),
+        meta: metadataSchema.optional(),
     }),
 });
 

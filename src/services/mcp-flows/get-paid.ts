@@ -6,8 +6,9 @@ import type {
     NeucronManageInvoicePaymentCollectionOptions,
     NeucronGetRevenueOptions,
 } from './types.js';
-import type { GetCustomer } from '../customer/types.js';
+import type { GetCustomer, ListCustomers } from '../customer/types.js';
 import { normalizeInvoiceDates, normalizeInvoicePayload } from '../../utils/schema/normalize.js';
+import { resolveFlowUpload } from './file.js';
 
 /**
  * Create a universal payment collection link for a wallet.
@@ -160,13 +161,17 @@ export async function neucron_create_invoice(services: McpFlowServices, options:
     const steps: Record<string, unknown> = {};
 
     if (options.customerList) {
-        const customers = await services.customer.getCustomers(options.customerList);
+        const { businessId: customerBusinessId, ...customerFilters } = options.customerList;
+        const customers = await services.customer.getCustomers({
+            ...customerFilters,
+            businessId: customerBusinessId ?? businessId,
+        } as ListCustomers);
         steps.customers = customers.data;
     }
 
     let attachment: unknown;
     if (options.attachment) {
-        const uploaded = await services.blob.uploadDocument(options.attachment);
+        const uploaded = await services.blob.uploadDocument(resolveFlowUpload(options.attachment));
         attachment = uploaded.data;
         steps.attachment = attachment;
     }

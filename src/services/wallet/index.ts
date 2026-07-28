@@ -21,6 +21,10 @@ import type {
     TransactionDetailsResponse,
     ImportAsset,
     ImportAssetResponse,
+    NotificationList,
+    NotificationListResponse,
+    MarkNotificationsRead,
+    MarkNotificationsReadResponse,
 } from './types.js';
 import { Authentication } from '../authentication/index.js';
 import { buildAuthHeaders } from '../../utils/http/headers.js';
@@ -295,6 +299,50 @@ export class Wallet {
             };
             const resp = await this.httpClient.post<ImportAssetResponse>(Routes.WALLET.ASSET_IMPORT, payload, headers);
             this.validator.importAssetResponse(resp.data);
+            return resp;
+        } catch (err) {
+            handleError(err);
+        }
+    }
+
+    async getNotifications(options: NotificationList = {}): Promise<HttpResponse<NotificationListResponse>> {
+        try {
+            this.auth.validate();
+            this.validator.notificationList(options);
+            const headers = buildAuthHeaders(this.auth, { businessId: options.businessId });
+            const params: QueryParams = {
+                state: options.state,
+                pageNumber: options.pageNumber,
+                pageSize: options.pageSize,
+            };
+            const resp = await this.httpClient.get<NotificationListResponse>(
+                Routes.WALLET.NOTIFICATIONS,
+                headers,
+                params
+            );
+            this.validator.notificationListResponse(resp.data);
+            return resp;
+        } catch (err) {
+            handleError(err);
+        }
+    }
+
+    async markNotificationsAsRead(
+        options: MarkNotificationsRead
+    ): Promise<HttpResponse<MarkNotificationsReadResponse>> {
+        try {
+            this.auth.validate();
+            this.validator.markNotificationsRead(options);
+            const headers = buildAuthHeaders(this.auth);
+            const payload = {
+                notification_ids: options.notificationIds,
+            };
+            const resp = await this.httpClient.post<MarkNotificationsReadResponse>(
+                Routes.WALLET.NOTIFICATION_READ,
+                payload,
+                headers
+            );
+            this.validator.markNotificationsReadResponse(resp.data);
             return resp;
         } catch (err) {
             handleError(err);

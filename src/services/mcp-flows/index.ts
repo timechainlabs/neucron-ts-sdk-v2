@@ -10,6 +10,7 @@ import * as dataIntegrity from './data-integrity.js';
 import * as assetIssuance from './asset-issuance.js';
 
 export * from './types.js';
+export type { FlowFile, Base64FileContent, UploadableFile } from './file.js';
 
 /**
  * MCP flow orchestrators that chain existing SDK service methods in UI-flow order.

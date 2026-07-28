@@ -22,4 +22,5 @@ export * as vendorSchemas from './services/vendor/schema.js';
 export * as billSchemas from './services/bill/schema.js';
 export * as payoutSchemas from './services/payout/schema.js';
 export * as billingSchemas from './services/billing/schema.js';
+export * as mcpFlowSchemas from './services/mcp-flows/schema.js';
 export * as commonSchemas from './utils/schema/common.js';

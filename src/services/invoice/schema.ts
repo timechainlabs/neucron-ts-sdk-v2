@@ -1,5 +1,11 @@
 import { z } from 'zod';
-import { businessIdSchema, messageResponseSchema, nonEmptyString, pageMetaSchema } from '../../utils/schema/common.js';
+import {
+    businessIdSchema,
+    messageResponseSchema,
+    metadataSchema,
+    nonEmptyString,
+    pageMetaSchema,
+} from '../../utils/schema/common.js';
 
 export const createInvoicePayloadSchema = z.object({
     currency: z.string(),
@@ -81,7 +87,7 @@ export const createPublicPaymentCollectionSchema = businessIdSchema.extend({
     data: z.object({
         amount: z.number().optional(),
         currency: z.string().optional(),
-        metadata: z.record(z.string(), z.unknown()).optional(),
+        metadata: metadataSchema.optional(),
         wallet_id: z.string(),
     }),
 });
@@ -94,7 +100,7 @@ export const paymentCollectionSchema = invoiceIdSchema.extend({
 export const paymentSessionSchema = businessIdSchema.extend({
     collectionID: nonEmptyString,
     assetID: nonEmptyString,
-    metadata: z.record(z.string(), z.unknown()).optional(),
+    metadata: metadataSchema.optional(),
 });
 
 export const sessionIdSchema = businessIdSchema.extend({

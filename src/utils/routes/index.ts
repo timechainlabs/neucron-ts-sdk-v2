@@ -72,6 +72,8 @@ export const Routes = {
         HISTORY: '/wallet/history',
         TRANSACTION: '/wallet/transaction',
         ASSET_IMPORT: '/wallet/asset/import',
+        NOTIFICATIONS: '/notification/all',
+        NOTIFICATION_READ: '/notification/read',
     },
     EVENT: {
         DETAILS: '/event/details',

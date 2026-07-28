@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { networkEnum, nonEmptyString, pageMetaSchema } from '../../utils/schema/common.js';
+import { metadataSchema, networkEnum, nonEmptyString, pageMetaSchema } from '../../utils/schema/common.js';
 
 export const messageResponseSchema = z.object({
     message: z.string(),
@@ -44,7 +44,7 @@ export const registerBodySchema = z.object({
             icon: z.string().optional(),
             decimal: z.number().optional(),
             feeStructure: z.array(feeStructureSchema).optional(),
-            holder_identity_config: z.record(z.string(), z.unknown()).optional(),
+            holder_identity_config: metadataSchema.optional(),
             request_config: z
                 .object({
                     min_approval: z.number(),

@@ -4,13 +4,14 @@ import type {
     NeucronInscribeTextOptions,
     NeucronInscribeTextArrayOptions,
 } from './types.js';
+import { resolveFlowFile } from './file.js';
 
 /**
  * Inscribe a file on-chain for immutable proof of existence.
  * MCP Tool: `neucron_inscribe_document`
  */
 export async function neucron_inscribe_document(services: McpFlowServices, options: NeucronInscribeDocumentOptions) {
-    const inscription = await services.dataIntegrity.fileUpload(options);
+    const inscription = await services.dataIntegrity.fileUpload({ ...options, file: resolveFlowFile(options.file) });
     return { inscription: inscription.data };
 }
 

@@ -7,7 +7,6 @@ import type {
     NeucronExportTransactionHistoryOptions,
     NeucronGetNotificationLogsOptions,
 } from './types.js';
-import { NeucronError } from '../../utils/errors/sdk-error.js';
 
 /**
  * List all wallets for the authenticated user or selected business.
@@ -81,7 +80,8 @@ export async function neucron_get_transaction_history(
     services: McpFlowServices,
     options: NeucronGetTransactionHistoryOptions
 ) {
-    const history = await services.wallet.getTransactions(options);
+    const historyOptions = { page: 1, limit: 25, ...options };
+    const history = await services.wallet.getTransactions(historyOptions);
 
     let transactionDetails: unknown;
     if (options.includeDetails && options.txid && options.chain && options.network) {
@@ -182,11 +182,20 @@ export async function neucron_get_notification_logs(
     services: McpFlowServices,
     options: NeucronGetNotificationLogsOptions = {}
 ) {
-    void services;
-    void options;
-    throw new NeucronError(
-        'Notification APIs (GET /notification/all, POST /notification/read) are not yet exposed on the Wallet SDK service.',
-        new Error('notifications not implemented'),
-        { type: 'internal' }
-    );
+    const notifications = await services.wallet.getNotifications({
+        state: options.state,
+        pageNumber: options.pageNumber,
+        pageSize: options.pageSize,
+    });
+
+    let markedAsRead: unknown;
+    if (options.notificationIds && options.notificationIds.length > 0) {
+        const marked = await services.wallet.markNotificationsAsRead({ notificationIds: options.notificationIds });
+        markedAsRead = marked.data;
+    }
+
+    return {
+        notifications: notifications.data,
+        markedAsRead,
+    };
 }
