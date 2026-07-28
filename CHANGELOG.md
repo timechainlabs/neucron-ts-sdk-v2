@@ -1,4 +1,10 @@
 # Changelog
+## [2.2.2] - 2026-07-28
+
+### Fixed
+
+- Added backend-supported resolved payout destination fields (`vendor_id`, `bill_id`, `destination_wallet_id`, `user_name`) to payout creation schemas. Direct vendor payouts are supported through `payout.createPayout()` / `neucron_create_payout` in `payout` mode by passing `payload.vendor_id`. The removed `pay_vendor` mode remains invalid because `/vendor/pay` is not registered by the current backend router.
+
 ## [2.2.1] - 2026-07-28
 
 ### Fixed

@@ -82,6 +82,25 @@ describe('Payout Service', () => {
         expect(result.data).toEqual(response);
     });
 
+    it('should create a direct vendor payout with vendor_id', async () => {
+        const payload = {
+            amount_in_fiat: 250,
+            asset_id: 'asset-1',
+            currency: 'USD',
+            vendor_id: 'vendor-1',
+            wallet_id: 'wallet-1',
+        };
+        const response = { payout_id: 'payout-vendor-1' };
+        mockValidator.createPayoutResponse.mockReturnValue(response);
+        mockHttpClient.post.mockResolvedValue(mockHttpResponse(response));
+
+        const result = await payout.createPayout({ businessId: BUSINESS_ID, payload });
+
+        expect(mockValidator.createPayout).toHaveBeenCalledWith({ businessId: BUSINESS_ID, payload });
+        expect(mockHttpClient.post).toHaveBeenCalledWith('/payout', payload, BUSINESS_HEADERS);
+        expect(result.data).toEqual(response);
+    });
+
     it('should create a payout request', async () => {
         const payload = {
             amount: '100',

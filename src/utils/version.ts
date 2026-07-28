@@ -3,4 +3,4 @@
  * sync with package.json (checked by tests/unit/version.test.ts).
  */
 export const SDK_NAME = 'neucron-ts-sdk';
-export const SDK_VERSION = '2.2.1';
+export const SDK_VERSION = '2.2.2';

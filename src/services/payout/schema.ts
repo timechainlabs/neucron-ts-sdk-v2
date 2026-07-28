@@ -14,12 +14,16 @@ export const payoutUpsertPayloadSchema = z.object({
     amount: z.string().optional(),
     amount_in_fiat: z.number().optional(),
     asset_id: z.string().optional(),
+    bill_id: z.string().optional(),
     currency: z.string().optional(),
     destination_wallet: z.string().optional(),
+    destination_wallet_id: z.string().optional(),
     email: z.string().optional(),
     meta: payoutMetaSchema.optional(),
     paymail: z.string().optional(),
     scheduled_at: z.string().optional(),
+    user_name: z.string().optional(),
+    vendor_id: z.string().optional(),
     wallet_id: z.string().optional(),
 });
 

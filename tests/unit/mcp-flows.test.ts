@@ -112,4 +112,24 @@ describe('mcp flow schemas', () => {
         expect(parsed.mode).toBe('transfer');
         expect(() => flow.neucronCreatePayoutSchema.parse({ mode: 'pay_vendor', options: {} })).toThrow();
     });
+
+    it('exposes backend-supported direct vendor payout via payout vendor_id', () => {
+        const parsed = flow.neucronCreatePayoutSchema.parse({
+            mode: 'payout',
+            trigger: true,
+            options: {
+                businessId: 'biz_1',
+                payload: {
+                    amount_in_fiat: 250,
+                    asset_id: 'asset_1',
+                    currency: 'USD',
+                    vendor_id: 'vendor_1',
+                    wallet_id: 'wallet_1',
+                },
+            },
+        });
+
+        expect(parsed.mode).toBe('payout');
+        expect(parsed.options.payload.vendor_id).toBe('vendor_1');
+    });
 });
