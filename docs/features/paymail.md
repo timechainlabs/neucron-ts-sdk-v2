@@ -2,7 +2,7 @@
 
 ## What is Paymail?
 
-**Paymail** is a human-readable payment address for Bitcoin SV, similar to an email address (for example `alice@neucron.io`). Instead of sharing long blockchain addresses, users and businesses share a paymail that resolves to the correct wallet destination.
+**Paymail** is a human-readable payment address, similar to an email address (for example `alice@neucron.io`). Instead of sharing long blockchain addresses, users and businesses share a paymail that resolves to the correct wallet destination. Paymail originates from the Bitcoin SV ecosystem; use it alongside the address-based methods that cover Neucron's other supported chains.
 
 In Neucron:
 

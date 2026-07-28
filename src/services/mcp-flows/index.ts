@@ -13,7 +13,7 @@ export * from './types.js';
 
 /**
  * MCP flow orchestrators that chain existing SDK service methods in UI-flow order.
- * Each public method maps 1:1 to an MCP tool name from `mcp-flows-sop.md`.
+ * Each public method maps 1:1 to an MCP tool name from `docs/internal/mcp-flows-sop.md`.
  */
 export class McpFlows {
     private readonly services: McpFlowServices;
