@@ -1,4 +1,23 @@
 # Changelog
+## [2.1.0] - 2026-07-28
+
+### Changed
+
+- **Fintech rebrand**: Updated package description, keywords, README, and
+  documentation to position Neucron as wallet infrastructure for fintechs.
+- Package description now emphasizes MPC wallets, stablecoins, mass payouts,
+  invoicing, subscriptions, KYC/KYB, and policy controls.
+- README rewritten with clear value proposition, use cases, and getting started flow.
+- Documentation updated with fintech-focused positioning.
+- GitHub repo description and topics updated.
+
+### Improved
+
+- Consolidated branches (deleted stale feature/dependabot branches).
+- Cleaned up tooling configs (.gitignore, .prettierignore, eslint.config.mjs).
+- Moved internal API docs to `docs/internal/`.
+- GitHub Actions updated to v7.
+
 
 All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
